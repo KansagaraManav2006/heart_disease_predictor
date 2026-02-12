@@ -1,0 +1,17 @@
+project/
+│
+├── data/
+│   ├── heart_raw.csv
+│   ├── diabetes_raw.csv
+│   ├── cleaned_heart.csv
+│   └── cleaned_diabetes.csv
+│
+├── notebooks/
+│   ├── heart_cleaning.ipynb
+│   ├── diabetes_cleaning.ipynb
+│   ├── heart_data_preparation.ipynb
+│   └── diabetes_data_preparation.ipynb
+│
+├── models/
+│
+└── app/
