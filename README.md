@@ -9,12 +9,12 @@
    pip install -r requirements.txt  # or manually: streamlit pandas numpy scikit-learn matplotlib
    ```
 
-3. Place data under `data/` and models under `models/` (pickles are referenced by absolute paths in `app.py`).
+3. Place data under `data/` and models under `models/` (pickles are referenced by absolute paths in `app1.py`).
 
 ## Running the app
 
 ```bash
-streamlit run app.py
+streamlit run app1.py
 ```
 
 The app loads `diabetes_model.pkl`, `heart_model.pkl`, and their scalers, then serves diabetes and heart risk prediction forms plus model metrics.
@@ -30,7 +30,7 @@ The app loads `diabetes_model.pkl`, `heart_model.pkl`, and their scalers, then s
 1. Run the cleaning/prep notebooks to regenerate cleaned data and encoded features.
 2. Split into train/validation; fit scaler on X, then fit the classifier.
 3. Persist artifacts to `models/` as `*_scaler.pkl` and `*_model.pkl`.
-4. Ensure scaler/model expect the exact feature order above before replacing the pickles used by `app.py`.
+4. Ensure scaler/model expect the exact feature order above before replacing the pickles used by `app1.py`.
 
 ## Validating artifacts
 
@@ -46,3 +46,13 @@ This checks that scaler and model input dimensions match the prepared feature ma
 
 - The app shows accuracy, F1, and a confusion matrix computed against the cleaned datasets (cached loads). Large datasets may take a moment on first load.
 - If you add another disease (e.g., liver), follow the same pattern: prep notebook → feature list constant → scaler/model → UI branch.
+
+## Usage
+
+1. Create and activate a virtual environment.
+2. Install dependencies (see Setup above).
+3. Start the app:
+
+   ```bash
+   streamlit run app1.py
+   ```
