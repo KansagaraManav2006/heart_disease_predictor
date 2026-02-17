@@ -7,7 +7,7 @@ from pathlib import Path
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from app1 import build_pdf_report
+from app import build_pdf_report
 
 
 def test_pdf_report_generation():

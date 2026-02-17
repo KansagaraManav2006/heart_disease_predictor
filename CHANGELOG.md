@@ -7,7 +7,7 @@ All notable changes to the Disease Prediction System project.
 ### Added - PDF Report Generation
 
 - **PDF Report Functionality**: Implemented professional PDF report generation using fpdf library
-  - `build_pdf_report()` function in app1.py
+  - `build_pdf_report()` function in app.py
   - Generates reports with patient info, test parameters, and prediction results
   - Professional formatting with headers, sections, and color-coded risk levels
   - Automatic filename generation using patient names
@@ -60,7 +60,7 @@ All notable changes to the Disease Prediction System project.
   - Added Testing section with test commands
   - Added Project Structure visualization
   - Added PDF Report Features section
-  - Added Architecture section documenting app1.py and utils.py
+  - Added Architecture section documenting app.py and utils.py
   - Added Development section with contribution guidelines
   - Fixed markdown linting issues
 
@@ -85,7 +85,7 @@ All notable changes to the Disease Prediction System project.
 
 #### File Changes
 
-- Modified: `app1.py` (added build_pdf_report, updated render functions)
+- Modified: `app.py` (added build_pdf_report, updated render functions)
 - Modified: `README.md` (comprehensive documentation update)
 - Created: `tests/test_pdf_report.py` (PDF generation tests)
 - Created: `CHANGELOG.md` (this file)
@@ -106,7 +106,7 @@ python -m tests.test_pdf_report       # ✅ PASSED
 - Diabetes risk prediction
 - Heart disease risk prediction
 - Interactive Streamlit UI with Orange & Gold theme
-- Modular architecture (app1.py + utils.py)
+- Modular architecture (app.py + utils.py)
 - Model and scaler loading with error handling
 - Feature engineering for both diseases
 - Real-time predictions with probability scores

@@ -9,7 +9,7 @@ A machine learning-powered web application for predicting diabetes and heart dis
 - 📄 **PDF Reports**: Generate professional medical reports with patient data
 - 🎯 **Accurate Models**: Trained scikit-learn models with scalers
 - 🧪 **Comprehensive Testing**: Unit tests for all major components
-- 📦 **Modular Architecture**: Separated business logic (`utils.py`) from UI (`app1.py`)
+- 📦 **Modular Architecture**: Separated business logic (`utils.py`) from UI (`app.py`)
 
 ## Setup
 
@@ -28,12 +28,12 @@ A machine learning-powered web application for predicting diabetes and heart dis
    - `matplotlib>=3.7.0` - Visualization
    - `fpdf>=1.7.2` - PDF report generation
 
-3. Place data under `data/` and models under `models/` (pickles are referenced by absolute paths in `app1.py`).
+3. Place data under `data/` and models under `models/` (pickles are referenced by absolute paths in `app.py`).
 
 ## Running the app
 
 ```bash
-streamlit run app1.py
+streamlit run app.py
 ```
 
 The app loads `diabetes_model.pkl`, `heart_model.pkl`, and their scalers, then serves diabetes and heart risk prediction forms with:
@@ -67,7 +67,7 @@ Test coverage includes:
 
 ```text
 .
-├── app1.py                  # Main Streamlit application (UI layer)
+├── app.py                   # Main Streamlit application (UI layer)
 ├── utils.py                 # Business logic (model loading, predictions, feature engineering)
 ├── requirements.txt         # Python dependencies
 ├── models/                  # Trained ML models and scalers
@@ -104,7 +104,7 @@ Test coverage includes:
 1. Run the cleaning/prep notebooks to regenerate cleaned data and encoded features.
 2. Split into train/validation; fit scaler on X, then fit the classifier.
 3. Persist artifacts to `models/` as `*_scaler.pkl` and `*_model.pkl`.
-4. Ensure scaler/model expect the exact feature order above before replacing the pickles used by `app1.py`.
+4. Ensure scaler/model expect the exact feature order above before replacing the pickles used by `app.py`.
 
 ## Validating artifacts
 
@@ -128,7 +128,7 @@ This checks that scaler and model input dimensions match the prepared feature ma
 3. Start the app:
 
    ```bash
-   streamlit run app1.py
+   streamlit run app.py
    ```
 
 4. In the web interface:
@@ -154,7 +154,7 @@ Reports are automatically named using the patient's name for easy organization.
 
 The application follows a clean, modular architecture:
 
-### app1.py - UI Layer
+### app.py - UI Layer
 
 - Streamlit-based user interface
 - Custom Orange & Gold theme with animations
@@ -206,15 +206,15 @@ To add a new disease prediction:
 3. Add loader functions in `utils.py`
 4. Add feature builder function with proper encoding
 5. Add prediction wrapper function
-6. Create render section in `app1.py`
+6. Create render section in `app.py`
 7. Add tests in `tests/`
 
 ### Contributing
 
 When making changes:
 1. Run tests: `python -m tests.test_imports` and `python -m tests.test_pdf_report`
-2. Verify no syntax errors: `python -m py_compile app1.py utils.py`
-3. Test the app: `streamlit run app1.py`
+2. Verify no syntax errors: `python -m py_compile app.py utils.py`
+3. Test the app: `streamlit run app.py`
 4. Update documentation as needed
 
 ## License

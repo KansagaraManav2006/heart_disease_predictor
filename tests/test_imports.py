@@ -2,7 +2,7 @@
 
 import types
 
-import app1
+import app
 import utils
 
 
@@ -73,9 +73,9 @@ def test_prediction_helpers_return_types():
 
 
 def test_app_imports_expose_main():
-    print("Testing app1 main function...")
-    assert isinstance(getattr(app1, "main"), types.FunctionType), "main should be a function"
-    assert callable(app1.main), "main should be callable"
+    print("Testing app main function...")
+    assert isinstance(getattr(app, "main"), types.FunctionType), "main should be a function"
+    assert callable(app.main), "main should be callable"
     print("✅ App main function test passed")
 
 
