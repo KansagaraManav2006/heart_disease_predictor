@@ -1,13 +1,32 @@
 # Disease Prediction System (Diabetes & Heart)
 
+A machine learning-powered web application for predicting diabetes and heart disease risk with professional PDF report generation.
+
+## Features
+
+- 🩺 **Dual Disease Prediction**: Diabetes and Heart Disease risk assessment
+- 📊 **Interactive UI**: Modern Orange & Gold themed Streamlit interface
+- 📄 **PDF Reports**: Generate professional medical reports with patient data
+- 🎯 **Accurate Models**: Trained scikit-learn models with scalers
+- 🧪 **Comprehensive Testing**: Unit tests for all major components
+- 📦 **Modular Architecture**: Separated business logic (`utils.py`) from UI (`app1.py`)
+
 ## Setup
 
 1. Create/activate a Python 3.10+ environment.
 2. Install dependencies:
 
    ```bash
-   pip install -r requirements.txt  # or manually: streamlit pandas numpy scikit-learn matplotlib
+   pip install -r requirements.txt
    ```
+
+   Core dependencies:
+   - `streamlit>=1.31.0` - Web UI framework
+   - `pandas>=2.0.0` - Data manipulation
+   - `numpy>=1.24.0` - Numerical computing
+   - `scikit-learn>=1.3.0` - Machine learning models
+   - `matplotlib>=3.7.0` - Visualization
+   - `fpdf>=1.7.2` - PDF report generation
 
 3. Place data under `data/` and models under `models/` (pickles are referenced by absolute paths in `app1.py`).
 
@@ -17,7 +36,62 @@
 streamlit run app1.py
 ```
 
-The app loads `diabetes_model.pkl`, `heart_model.pkl`, and their scalers, then serves diabetes and heart risk prediction forms plus model metrics.
+The app loads `diabetes_model.pkl`, `heart_model.pkl`, and their scalers, then serves diabetes and heart risk prediction forms with:
+
+- Patient name input for personalized reports
+- Real-time risk prediction with probability scores
+- Professional PDF report generation
+- Interactive visualizations and progress bars
+
+## Testing
+
+Run the test suite to verify all functionality:
+
+```bash
+# Test imports and prediction pipeline
+python -m tests.test_imports
+
+# Test PDF report generation
+python -m tests.test_pdf_report
+```
+
+Test coverage includes:
+
+- ✅ Artifact loading (models and scalers)
+- ✅ Prediction function return types
+- ✅ Feature engineering for both diseases
+- ✅ PDF report generation with various inputs
+- ✅ Main application entry point
+
+## Project Structure
+
+```text
+.
+├── app1.py                  # Main Streamlit application (UI layer)
+├── utils.py                 # Business logic (model loading, predictions, feature engineering)
+├── requirements.txt         # Python dependencies
+├── models/                  # Trained ML models and scalers
+│   ├── diabetes_model.pkl
+│   ├── diabetes_scaler.pkl
+│   ├── heart_model.pkl
+│   └── heart_scaler.pkl
+├── data/                    # Training and cleaned datasets
+│   ├── cleaned_diabetes.csv
+│   ├── cleaned_heart.csv
+│   ├── diabetes.csv
+│   └── heart.csv
+├── tests/                   # Test suite
+│   ├── test_imports.py     # Import and prediction tests
+│   └── test_pdf_report.py  # PDF generation tests
+├── preparation/             # Data preparation notebooks
+│   ├── clean_diab.ipynb
+│   ├── clean_heart.ipynb
+│   ├── diabetes_data_preparation.ipynb
+│   └── heart_data_preparation.ipynb
+└── models/                  # Model training notebooks
+    ├── diabetes_model.ipynb
+    └── heart_model.ipynb
+```
 
 ## Data preparation & training
 
@@ -56,3 +130,97 @@ This checks that scaler and model input dimensions match the prepared feature ma
    ```bash
    streamlit run app1.py
    ```
+
+4. In the web interface:
+   - Enter patient name (optional, but recommended for reports)
+   - Select disease type (Diabetes or Heart Disease)
+   - Fill in all required health parameters
+   - Click "INITIATE SCAN" to get prediction
+   - Download PDF report with detailed analysis
+
+## PDF Report Features
+
+The generated PDF reports include:
+
+- **Header**: Disease Prediction Report title with professional formatting
+- **Patient Information**: Name, generation timestamp, and condition type
+- **Input Parameters**: Complete list of all submitted health metrics
+- **Results**: Risk prediction (High/Low Risk) with probability percentage
+- **Recommendations**: Basic guidance based on risk level
+
+Reports are automatically named using the patient's name for easy organization.
+
+## Architecture
+
+The application follows a clean, modular architecture:
+
+### app1.py - UI Layer
+
+- Streamlit-based user interface
+- Custom Orange & Gold theme with animations
+- Modular render functions for each section
+- Patient name input and disease selection
+- PDF download buttons
+
+Key functions:
+- `load_artifacts()` - Load all models and scalers with error handling
+- `inject_theme()` - Apply custom CSS styling
+- `render_header()` - Display main header
+- `render_sidebar()` - Show sidebar information
+- `render_diabetes_section()` - Diabetes prediction UI
+- `render_heart_section()` - Heart disease prediction UI
+- `render_footer()` - Application footer
+- `build_pdf_report()` - Generate PDF reports
+- `main()` - Application entry point
+
+### utils.py - Business Logic Layer
+
+- Model and scaler loading with error handling
+- Feature engineering for both diseases
+- Prediction wrapper functions
+
+Key functions:
+- `load_diabetes_model()` / `load_heart_model()` - Load trained models
+- `load_diabetes_scaler()` / `load_heart_scaler()` - Load fitted scalers
+- `build_diabetes_features()` - Convert UI inputs to DataFrame for diabetes
+- `build_heart_features()` - Convert UI inputs with one-hot encoding for heart disease
+- `predict_diabetes()` / `predict_heart()` - Make predictions and return probabilities
+
+Custom exception:
+- `ArtifactLoadError` - Raised when model/scaler loading fails
+
+## Development
+
+### Code Style
+
+- Follow PEP 8 guidelines for Python code
+- Use type hints where applicable
+- Keep functions focused and single-purpose
+- Separate UI logic from business logic
+
+### Adding New Predictions
+
+To add a new disease prediction:
+1. Create data preparation notebook in `preparation/`
+2. Train model and save scaler + model pickles in `models/`
+3. Add loader functions in `utils.py`
+4. Add feature builder function with proper encoding
+5. Add prediction wrapper function
+6. Create render section in `app1.py`
+7. Add tests in `tests/`
+
+### Contributing
+
+When making changes:
+1. Run tests: `python -m tests.test_imports` and `python -m tests.test_pdf_report`
+2. Verify no syntax errors: `python -m py_compile app1.py utils.py`
+3. Test the app: `streamlit run app1.py`
+4. Update documentation as needed
+
+## License
+
+Educational project for machine learning demonstration.
+
+## Credits
+
+Built by Smit Kansagara
