@@ -390,9 +390,9 @@ def render_header():
     st.markdown(
         """
 <div class="main-header">
-    <h1>🏥 DISEASE PREDICTION SYSTEM</h1>
-    <p>⚡ AI-POWERED HEALTH RISK ASSESSMENT ⚡</p>
-    <p style="font-size: 0.9rem; color: #ff9500; margin-top: 0.5rem;">DIABETES • HEART DISEASE • SMART ANALYSIS</p>
+    <h1>≡ƒÅÑ DISEASE PREDICTION SYSTEM</h1>
+    <p>ΓÜí AI-POWERED HEALTH RISK ASSESSMENT ΓÜí</p>
+    <p style="font-size: 0.9rem; color: #ff9500; margin-top: 0.5rem;">DIABETES ΓÇó HEART DISEASE ΓÇó SMART ANALYSIS</p>
 </div>
 """,
         unsafe_allow_html=True,
@@ -412,12 +412,12 @@ def render_sidebar():
             unsafe_allow_html=True,
         )
 
-        st.markdown("### 📋 SYSTEM INFO")
+        st.markdown("### ≡ƒôï SYSTEM INFO")
         st.info(
             """
     This application uses **Machine Learning** to predict the risk of:
-    - 🍬 **Diabetes**
-    - ❤️ **Heart Disease**
+    - ≡ƒì¼ **Diabetes**
+    - Γ¥ñ∩╕Å **Heart Disease**
 
     Enter your health metrics and get instant predictions!
     """
@@ -425,7 +425,7 @@ def render_sidebar():
 
         st.markdown("---")
 
-        st.markdown("### 🔬 HOW IT WORKS")
+        st.markdown("### ≡ƒö¼ HOW IT WORKS")
         st.markdown(
             """
     ```
@@ -438,7 +438,7 @@ def render_sidebar():
         )
 
         st.markdown("---")
-        st.markdown("### ⚠️ DISCLAIMER")
+        st.markdown("### ΓÜá∩╕Å DISCLAIMER")
         st.warning(
             "This tool is for educational purposes only. Always consult a healthcare professional for medical advice."
         )
@@ -456,7 +456,7 @@ def render_diabetes_section(diabetes_model, diabetes_scaler, patient_name):
             unsafe_allow_html=True,
         )
     with col_title:
-        st.markdown("## 🍬 DIABETES RISK SCAN")
+        st.markdown("## ≡ƒì¼ DIABETES RISK SCAN")
         st.markdown(
             """
         <p style="color: #ffd700; font-family: 'Poppins', sans-serif; font-size: 1rem;">
@@ -469,44 +469,44 @@ def render_diabetes_section(diabetes_model, diabetes_scaler, patient_name):
     st.markdown(
         """
     <div class="info-box">
-        📡 <strong>INITIALIZING DIABETES ANALYSIS MODULE...</strong> Enter health parameters below.
+        ≡ƒôí <strong>INITIALIZING DIABETES ANALYSIS MODULE...</strong> Enter health parameters below.
     </div>
     """,
         unsafe_allow_html=True,
     )
 
-    st.markdown("#### 👤 BIOMETRIC DATA")
+    st.markdown("#### ≡ƒæñ BIOMETRIC DATA")
     col1, col2 = st.columns(2)
     with col1:
-        age = st.number_input("🎂 Age (years) [1-120]", 1, 120, 30, help="Enter your age in years (Range: 1-120)")
-        gender_opt = st.selectbox("⚧ Gender", ["Female", "Male", "Other"], index=0)
+        age = st.number_input("≡ƒÄé Age (years) [1-120]", 1, 120, 30, help="Enter your age in years (Range: 1-120)")
+        gender_opt = st.selectbox("ΓÜº Gender", ["Female", "Male", "Other"], index=0)
     with col2:
-        bmi = st.number_input("⚖️ BMI [10.0-60.0]", 10.0, 60.0, 25.0, help="Body Mass Index (Range: 10.0-60.0 kg/m²)")
+        bmi = st.number_input("ΓÜû∩╕Å BMI [10.0-60.0]", 10.0, 60.0, 25.0, help="Body Mass Index (Range: 10.0-60.0 kg/m┬▓)")
         smoking_opt = st.selectbox(
-            "🚬 Smoking History",
+            "≡ƒÜ¼ Smoking History",
             ["never", "former", "ever", "current", "not current"],
             index=0,
         )
 
-    st.markdown("#### 🏥 MEDICAL RECORDS")
+    st.markdown("#### ≡ƒÅÑ MEDICAL RECORDS")
     col3, col4 = st.columns(2)
     with col3:
         hypertension_opt = st.selectbox(
-            "💊 Hypertension", ["No", "Yes"], index=0, help="Do you have high blood pressure?"
+            "≡ƒÆè Hypertension", ["No", "Yes"], index=0, help="Do you have high blood pressure?"
         )
         hba1c = st.number_input(
-            "🔬 HbA1c Level [3.0-15.0]", 3.0, 15.0, 5.5, help="Hemoglobin A1c percentage (Range: 3.0-15.0%)"
+            "≡ƒö¼ HbA1c Level [3.0-15.0]", 3.0, 15.0, 5.5, help="Hemoglobin A1c percentage (Range: 3.0-15.0%)"
         )
     with col4:
-        heart_disease_opt = st.selectbox("❤️ Heart Disease History", ["No", "Yes"], index=0)
+        heart_disease_opt = st.selectbox("Γ¥ñ∩╕Å Heart Disease History", ["No", "Yes"], index=0)
         glucose = st.number_input(
-            "🩸 Blood Glucose Level [50-300]", 50, 300, 100, help="Fasting blood glucose (Range: 50-300 mg/dL)"
+            "≡ƒ⌐╕ Blood Glucose Level [50-300]", 50, 300, 100, help="Fasting blood glucose (Range: 50-300 mg/dL)"
         )
 
     st.markdown("---")
 
-    if st.button("⚡ INITIATE DIABETES SCAN", use_container_width=True):
-        with st.spinner("🔄 ANALYZING BIOMETRIC DATA..."):
+    if st.button("ΓÜí INITIATE DIABETES SCAN", use_container_width=True):
+        with st.spinner("≡ƒöä ANALYZING BIOMETRIC DATA..."):
             diabetes_features = build_diabetes_features(
                 age=age,
                 hypertension_opt=hypertension_opt,
@@ -525,29 +525,29 @@ def render_diabetes_section(diabetes_model, diabetes_scaler, patient_name):
             )
             probability_percent = probability * 100
 
-            st.markdown("### 📊 SCAN RESULTS")
+            st.markdown("### ≡ƒôè SCAN RESULTS")
 
             st.progress(probability)
 
             col_res1, col_res2 = st.columns([2, 1])
             with col_res1:
                 if prediction == 1:
-                    st.error("⚠️ **HIGH RISK DETECTED**")
+                    st.error("ΓÜá∩╕Å **HIGH RISK DETECTED**")
                     st.markdown(
                         f"""
                     <div style="background: rgba(244, 67, 54, 0.15); padding: 1rem; border-radius: 10px; border: 1px solid #f44336; box-shadow: 0 0 20px rgba(244, 67, 54, 0.2);">
-                        <h4 style="color: #f44336; margin: 0; font-family: 'Montserrat', sans-serif;">⚠️ RISK LEVEL: {probability_percent:.1f}%</h4>
+                        <h4 style="color: #f44336; margin: 0; font-family: 'Montserrat', sans-serif;">ΓÜá∩╕Å RISK LEVEL: {probability_percent:.1f}%</h4>
                         <p style="margin: 0.5rem 0 0 0; color: #ff8a80;">RECOMMENDATION: Consult healthcare provider immediately.</p>
                     </div>
                     """,
                         unsafe_allow_html=True,
                     )
                 else:
-                    st.success("✅ **LOW RISK DETECTED**")
+                    st.success("Γ£à **LOW RISK DETECTED**")
                     st.markdown(
                         f"""
                     <div style="background: rgba(76, 175, 80, 0.15); padding: 1rem; border-radius: 10px; border: 1px solid #4caf50; box-shadow: 0 0 20px rgba(76, 175, 80, 0.2);">
-                        <h4 style="color: #4caf50; margin: 0; font-family: 'Montserrat', sans-serif;">✅ RISK LEVEL: {probability_percent:.1f}%</h4>
+                        <h4 style="color: #4caf50; margin: 0; font-family: 'Montserrat', sans-serif;">Γ£à RISK LEVEL: {probability_percent:.1f}%</h4>
                         <p style="margin: 0.5rem 0 0 0; color: #a5d6a7;">STATUS: Maintain healthy lifestyle protocols.</p>
                     </div>
                     """,
@@ -584,7 +584,7 @@ def render_diabetes_section(diabetes_model, diabetes_scaler, patient_name):
             if pdf_bytes:
                 safe_filename = (patient_name.strip() or "Unknown").replace(" ", "_")
                 st.download_button(
-                    label="📥 DOWNLOAD REPORT",
+                    label="≡ƒôÑ DOWNLOAD REPORT",
                     data=pdf_bytes,
                     file_name=f"Diabetes_Report_{safe_filename}.pdf",
                     mime="application/pdf",
@@ -604,7 +604,7 @@ def render_heart_section(heart_model, heart_scaler, patient_name):
             unsafe_allow_html=True,
         )
     with col_title:
-        st.markdown("## ❤️ CARDIAC RISK SCAN")
+        st.markdown("## Γ¥ñ∩╕Å CARDIAC RISK SCAN")
         st.markdown(
             """
         <p style="color: #ff8a65; font-family: 'Poppins', sans-serif; font-size: 1rem;">
@@ -617,55 +617,55 @@ def render_heart_section(heart_model, heart_scaler, patient_name):
     st.markdown(
         """
     <div class="info-box">
-        📡 <strong>INITIALIZING CARDIAC ANALYSIS MODULE...</strong> Enter cardiovascular parameters.
+        ≡ƒôí <strong>INITIALIZING CARDIAC ANALYSIS MODULE...</strong> Enter cardiovascular parameters.
     </div>
     """,
         unsafe_allow_html=True,
     )
 
-    st.markdown("#### 👤 BIOMETRIC DATA")
+    st.markdown("#### ≡ƒæñ BIOMETRIC DATA")
     col1, col2 = st.columns(2)
     with col1:
-        age = st.number_input("🎂 Age (years) [1-120]", 1, 120, 45, help="Enter your age in years (Range: 1-120)")
-        gender = st.selectbox("⚧ Gender", ["Male", "Female"], index=0)
+        age = st.number_input("≡ƒÄé Age (years) [1-120]", 1, 120, 45, help="Enter your age in years (Range: 1-120)")
+        gender = st.selectbox("ΓÜº Gender", ["Male", "Female"], index=0)
     with col2:
         height_cm = st.number_input(
-            "📏 Height (cm) [120-220]", 120, 220, 170, help="Height in centimeters (Range: 120-220)"
+            "≡ƒôÅ Height (cm) [120-220]", 120, 220, 170, help="Height in centimeters (Range: 120-220)"
         )
         weight_kg = st.number_input(
-            "⚖️ Weight (kg) [30-200]", 30.0, 200.0, 70.0, help="Weight in kilograms (Range: 30-200)"
+            "ΓÜû∩╕Å Weight (kg) [30-200]", 30.0, 200.0, 70.0, help="Weight in kilograms (Range: 30-200)"
         )
 
-    st.markdown("#### 🩺 VITAL STATISTICS")
+    st.markdown("#### ≡ƒ⌐║ VITAL STATISTICS")
     col3, col4 = st.columns(2)
     with col3:
         systolic_bp = st.number_input(
-            "🔴 Systolic BP (mmHg) [80-200]", 80, 200, 120, help="Upper blood pressure reading (Range: 80-200)"
+            "≡ƒö┤ Systolic BP (mmHg) [80-200]", 80, 200, 120, help="Upper blood pressure reading (Range: 80-200)"
         )
         cholesterol = st.number_input(
-            "🧪 Cholesterol (mg/dL) [100-400]", 100, 400, 200, help="Cholesterol level (Range: 100-400)"
+            "≡ƒº¬ Cholesterol (mg/dL) [100-400]", 100, 400, 200, help="Cholesterol level (Range: 100-400)"
         )
     with col4:
         diastolic_bp = st.number_input(
-            "🔵 Diastolic BP (mmHg) [50-120]", 50, 120, 80, help="Lower blood pressure reading (Range: 50-120)"
+            "≡ƒö╡ Diastolic BP (mmHg) [50-120]", 50, 120, 80, help="Lower blood pressure reading (Range: 50-120)"
         )
         glucose = st.number_input(
-            "🩸 Glucose (mg/dL) [50-300]", 50, 300, 100, help="Blood glucose level (Range: 50-300)"
+            "≡ƒ⌐╕ Glucose (mg/dL) [50-300]", 50, 300, 100, help="Blood glucose level (Range: 50-300)"
         )
 
-    st.markdown("#### 🏃 LIFESTYLE PARAMETERS")
+    st.markdown("#### ≡ƒÅâ LIFESTYLE PARAMETERS")
     col5, col6, col7 = st.columns(3)
     with col5:
-        smoke = st.checkbox("🚬 Smoker", value=False)
+        smoke = st.checkbox("≡ƒÜ¼ Smoker", value=False)
     with col6:
-        alco = st.checkbox("🍷 Alcohol Use", value=False)
+        alco = st.checkbox("≡ƒì╖ Alcohol Use", value=False)
     with col7:
-        active = st.checkbox("🏃 Physically Active", value=True)
+        active = st.checkbox("≡ƒÅâ Physically Active", value=True)
 
     st.markdown("---")
 
-    if st.button("⚡ INITIATE CARDIAC SCAN", use_container_width=True):
-        with st.spinner("🔄 ANALYZING CARDIOVASCULAR DATA..."):
+    if st.button("ΓÜí INITIATE CARDIAC SCAN", use_container_width=True):
+        with st.spinner("≡ƒöä ANALYZING CARDIOVASCULAR DATA..."):
             heart_features, bmi_val = build_heart_features(
                 age=age,
                 gender=gender,
@@ -687,29 +687,29 @@ def render_heart_section(heart_model, heart_scaler, patient_name):
             )
             probability_percent = probability * 100
 
-            st.markdown("### 📊 SCAN RESULTS")
+            st.markdown("### ≡ƒôè SCAN RESULTS")
 
             st.progress(probability)
 
             col_res1, col_res2 = st.columns([2, 1])
             with col_res1:
                 if prediction == 1:
-                    st.error("⚠️ **HIGH RISK DETECTED**")
+                    st.error("ΓÜá∩╕Å **HIGH RISK DETECTED**")
                     st.markdown(
                         f"""
                     <div style="background: rgba(244, 67, 54, 0.15); padding: 1rem; border-radius: 10px; border: 1px solid #f44336; box-shadow: 0 0 20px rgba(244, 67, 54, 0.2);">
-                        <h4 style="color: #f44336; margin: 0; font-family: 'Montserrat', sans-serif;">⚠️ RISK LEVEL: {probability_percent:.1f}%</h4>
+                        <h4 style="color: #f44336; margin: 0; font-family: 'Montserrat', sans-serif;">ΓÜá∩╕Å RISK LEVEL: {probability_percent:.1f}%</h4>
                         <p style="margin: 0.5rem 0 0 0; color: #ff8a80;">RECOMMENDATION: Consult cardiologist immediately.</p>
                     </div>
                     """,
                         unsafe_allow_html=True,
                     )
                 else:
-                    st.success("✅ **LOW RISK DETECTED**")
+                    st.success("Γ£à **LOW RISK DETECTED**")
                     st.markdown(
                         f"""
                     <div style="background: rgba(76, 175, 80, 0.15); padding: 1rem; border-radius: 10px; border: 1px solid #4caf50; box-shadow: 0 0 20px rgba(76, 175, 80, 0.2);">
-                        <h4 style="color: #4caf50; margin: 0; font-family: 'Montserrat', sans-serif;">✅ RISK LEVEL: {probability_percent:.1f}%</h4>
+                        <h4 style="color: #4caf50; margin: 0; font-family: 'Montserrat', sans-serif;">Γ£à RISK LEVEL: {probability_percent:.1f}%</h4>
                         <p style="margin: 0.5rem 0 0 0; color: #a5d6a7;">STATUS: Cardiac health parameters within normal range.</p>
                     </div>
                     """,
@@ -751,7 +751,7 @@ def render_heart_section(heart_model, heart_scaler, patient_name):
             if pdf_bytes:
                 safe_filename = (patient_name.strip() or "Unknown").replace(" ", "_")
                 st.download_button(
-                    label="📥 DOWNLOAD REPORT",
+                    label="≡ƒôÑ DOWNLOAD REPORT",
                     data=pdf_bytes,
                     file_name=f"Heart_Disease_Report_{safe_filename}.pdf",
                     mime="application/pdf",
@@ -765,13 +765,13 @@ def render_footer():
         """
 <div style="text-align: center; padding: 1.5rem; background: rgba(30, 30, 60, 0.6); border-radius: 15px; border: 1px solid rgba(255, 149, 0, 0.3);">
     <p style="font-family: 'Montserrat', sans-serif; color: #ff9500; margin: 0; letter-spacing: 2px;">
-        ⚡ POWERED BY MACHINE LEARNING ⚡
+        ΓÜí POWERED BY MACHINE LEARNING ΓÜí
     </p>
     <p style="color: #ffd700; font-size: 0.9rem; margin: 0.5rem 0 0 0;">
         DISEASE PREDICTION SYSTEM 
     </p>
     <p style="color: #fff; font-size: 0.7rem; margin-top: 0.5rem;">
-        🔬 Built By Smit Kansagara
+        ≡ƒö¼ Built By Smit Kansagara
     </p>
 </div>
 """,
@@ -782,7 +782,7 @@ def render_footer():
 def main():
     st.set_page_config(
         page_title="Disease Prediction System",
-        page_icon="🩺",
+        page_icon="≡ƒ⌐║",
         layout="centered",
         initial_sidebar_state="expanded",
     )
@@ -794,10 +794,10 @@ def main():
     render_header()
     render_sidebar()
 
-    st.markdown("### 👤 PATIENT NAME")
+    st.markdown("### ≡ƒæñ PATIENT NAME")
     patient_name = st.text_input("Enter your name")
 
-    st.markdown("### 🎯 SELECT SCAN TYPE")
+    st.markdown("### ≡ƒÄ» SELECT SCAN TYPE")
     disease = st.selectbox(
         "Choose a condition",
         ["Diabetes", "Heart Disease"],
