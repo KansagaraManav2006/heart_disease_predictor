@@ -112,401 +112,267 @@ def inject_theme():
     st.markdown(
         """
 <style>
-    /* Import modern font */
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
     
-    /* Main background with warm gradient */
+    * {
+        font-family: 'Inter', sans-serif;
+    }
+    
     .stApp {
-        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #1f1f3d 50%, #2d2d5a 75%, #1a1a2e 100%);
-        background-size: 400% 400%;
-        animation: gradientShift 15s ease infinite;
+        background-color: #0f172a;
+        color: #f8fafc;
     }
     
-    @keyframes gradientShift {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-    
-    /* Floating particles effect using pseudo-elements */
-    .stApp::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: 
-            radial-gradient(2px 2px at 20px 30px, #ff9500, transparent),
-            radial-gradient(2px 2px at 40px 70px, #ffcc00, transparent),
-            radial-gradient(2px 2px at 50px 160px, #ff6b35, transparent),
-            radial-gradient(2px 2px at 90px 40px, #ffd700, transparent),
-            radial-gradient(2px 2px at 130px 80px, #ff9500, transparent),
-            radial-gradient(2px 2px at 160px 120px, #ffcc00, transparent),
-            radial-gradient(2px 2px at 200px 200px, #ff6b35, transparent),
-            radial-gradient(2px 2px at 250px 50px, #ffd700, transparent),
-            radial-gradient(2px 2px at 300px 150px, #ff9500, transparent);
-        background-repeat: repeat;
-        background-size: 350px 350px;
-        opacity: 0.25;
-        pointer-events: none;
-        z-index: 0;
-    }
-    
-    /* Main container styling */
     .main .block-container {
-        padding: 2rem;
-        position: relative;
-        z-index: 1;
+        max-width: 100%;
+        padding: 2rem 1.5rem;
     }
     
-    /* Header styling - Warm Orange */
-    .main-header {
-        text-align: center;
-        padding: 2rem;
-        background: linear-gradient(135deg, rgba(255, 149, 0, 0.15) 0%, rgba(255, 204, 0, 0.1) 50%, rgba(255, 107, 53, 0.15) 100%);
-        border-radius: 20px;
-        margin-bottom: 2rem;
-        border: 1px solid rgba(255, 149, 0, 0.4);
-        box-shadow: 
-            0 0 30px rgba(255, 149, 0, 0.2),
-            inset 0 0 30px rgba(255, 149, 0, 0.05);
-        backdrop-filter: blur(10px);
-    }
-    
-    .main-header h1 {
-        font-family: 'Montserrat', sans-serif;
-        color: #ff9500;
-        margin-bottom: 0.5rem;
-        text-shadow: 0 0 20px rgba(255, 149, 0, 0.5);
-        letter-spacing: 3px;
-    }
-    
-    .main-header p {
-        font-family: 'Poppins', sans-serif;
-        color: #ffd700;
-        font-size: 1.2rem;
-        letter-spacing: 2px;
-    }
-    
-    /* All text styling */
     h1, h2, h3, h4, h5, h6 {
-        font-family: 'Montserrat', sans-serif !important;
-        color: #ff9500 !important;
-        text-shadow: 0 0 10px rgba(255, 149, 0, 0.3);
+        color: #ffffff;
+        font-weight: 700;
     }
     
-    p, span, label, .stMarkdown {
-        font-family: 'Poppins', sans-serif !important;
+    h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
     }
     
-    /* Card styling */
-    .prediction-card {
-        background: rgba(30, 30, 60, 0.8);
-        padding: 1.5rem;
-        border-radius: 15px;
-        border: 1px solid rgba(255, 149, 0, 0.3);
-        margin: 1rem 0;
-        box-shadow: 0 0 20px rgba(255, 149, 0, 0.1);
+    h2 {
+        font-size: 1.75rem;
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
     }
     
-    /* Button styling - Orange Glow */
-    .stButton > button {
-        width: 100%;
-        background: linear-gradient(135deg, rgba(255, 149, 0, 0.3) 0%, rgba(255, 204, 0, 0.2) 100%);
-        color: #ffd700;
-        border: 2px solid #ff9500;
-        padding: 0.75rem 1.5rem;
+    h3 {
+        font-size: 1.3rem;
+        margin-top: 1rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    p {
+        color: #cbd5e1;
+        line-height: 1.6;
+    }
+    
+    .header {
+        background: #1e293b;
+        border: 1px solid rgba(34, 197, 94, 0.2);
+        border-radius: 12px;
+        padding: 2.5rem 2rem;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .header h1 {
+        color: #22c55e;
+        margin: 0 0 0.5rem 0;
+    }
+    
+    .header p {
+        margin: 0.5rem 0;
+        color: #cbd5e1;
+    }
+    
+    .info-box {
+        background: rgba(34, 197, 94, 0.08);
+        border: 1px solid rgba(34, 197, 94, 0.2);
         border-radius: 10px;
-        font-size: 1.1rem;
+        padding: 1.2rem;
+        margin: 1.5rem 0;
+    }
+    
+    .info-box strong {
+        color: #22c55e;
+    }
+    
+    .stButton > button {
+        background: #22c55e;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        width: 100%;
+        padding: 0.75rem 1.5rem;
         font-weight: 600;
-        font-family: 'Montserrat', sans-serif;
-        letter-spacing: 2px;
-        transition: all 0.3s ease;
-        text-transform: uppercase;
-        box-shadow: 
-            0 0 15px rgba(255, 149, 0, 0.3),
-            inset 0 0 15px rgba(255, 149, 0, 0.1);
+        font-size: 1rem;
+        transition: all 0.2s ease;
     }
     
     .stButton > button:hover {
-        background: linear-gradient(135deg, rgba(255, 149, 0, 0.5) 0%, rgba(255, 204, 0, 0.4) 100%);
-        box-shadow: 
-            0 0 30px rgba(255, 149, 0, 0.5),
-            0 0 60px rgba(255, 149, 0, 0.3),
-            inset 0 0 20px rgba(255, 149, 0, 0.2);
+        background: #16a34a;
         transform: translateY(-2px);
-        color: #ffffff;
     }
     
-    /* Input field styling */
     .stNumberInput > div > div > input,
     .stTextInput > div > div > input {
-        background: linear-gradient(135deg, rgba(45, 45, 80, 0.9) 0%, rgba(60, 60, 100, 0.9) 100%) !important;
-        border: 2px solid rgba(255, 149, 0, 0.5) !important;
-        border-radius: 10px !important;
-        color: #ffffff !important;
-        font-family: 'Poppins', sans-serif !important;
-        padding: 0.5rem !important;
-        box-shadow: 0 0 10px rgba(255, 149, 0, 0.1), inset 0 0 10px rgba(0, 0, 0, 0.2) !important;
+        background: rgba(15, 23, 42, 0.7) !important;
+        border: 1px solid rgba(148, 163, 184, 0.3) !important;
+        border-radius: 8px !important;
+        color: #f8fafc !important;
+        padding: 0.75rem !important;
     }
     
     .stNumberInput > div > div > input:focus,
     .stTextInput > div > div > input:focus {
-        border-color: #ffd700 !important;
-        box-shadow: 0 0 20px rgba(255, 215, 0, 0.4), inset 0 0 10px rgba(0, 0, 0, 0.2) !important;
-        background: linear-gradient(135deg, rgba(55, 55, 90, 0.95) 0%, rgba(70, 70, 110, 0.95) 100%) !important;
+        border-color: #22c55e !important;
+        box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2) !important;
     }
     
-    /* Selectbox styling */
     .stSelectbox > div > div {
-        background: linear-gradient(135deg, rgba(45, 45, 80, 0.9) 0%, rgba(60, 60, 100, 0.9) 100%) !important;
-        border: 2px solid rgba(255, 149, 0, 0.5) !important;
-        border-radius: 10px !important;
-        box-shadow: 0 0 10px rgba(255, 149, 0, 0.1) !important;
+        background: rgba(15, 23, 42, 0.7) !important;
+        border: 1px solid rgba(148, 163, 184, 0.3) !important;
+        border-radius: 8px !important;
+        color: #f8fafc !important;
     }
     
     .stSelectbox > div > div:hover {
-        border-color: #ffd700 !important;
-        box-shadow: 0 0 15px rgba(255, 215, 0, 0.3) !important;
+        border-color: #22c55e !important;
     }
     
-    /* Checkbox styling */
     .stCheckbox > label {
-        color: #ffd700 !important;
+        color: #e2e8f0 !important;
     }
     
-    .stCheckbox > label > div[data-testid="stCheckbox"] {
-        background: rgba(45, 45, 80, 0.9) !important;
-        border: 2px solid rgba(255, 149, 0, 0.5) !important;
-        border-radius: 5px !important;
-    }
-    
-    /* Success/Error message styling */
     .stSuccess {
-        background: rgba(76, 175, 80, 0.15) !important;
-        border: 1px solid #4caf50 !important;
-        border-radius: 10px;
-        box-shadow: 0 0 20px rgba(76, 175, 80, 0.2);
+        background: rgba(34, 197, 94, 0.15) !important;
+        border: 1px solid #22c55e !important;
+        border-radius: 8px !important;
+        color: #dcfce7 !important;
     }
     
     .stError {
-        background: rgba(244, 67, 54, 0.15) !important;
-        border: 1px solid #f44336 !important;
-        border-radius: 10px;
-        box-shadow: 0 0 20px rgba(244, 67, 54, 0.2);
+        background: rgba(239, 68, 68, 0.15) !important;
+        border: 1px solid #ef4444 !important;
+        border-radius: 8px !important;
+        color: #fee2e2 !important;
     }
     
-    /* Sidebar styling */
-    [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, rgba(26, 26, 46, 0.98) 0%, rgba(45, 45, 90, 0.95) 100%);
-        border-right: 1px solid rgba(255, 149, 0, 0.3);
+    .stWarning {
+        background: rgba(251, 146, 60, 0.15) !important;
+        border: 1px solid #fb923c !important;
+        border-radius: 8px !important;
+        color: #ffedd5 !important;
     }
     
-    [data-testid="stSidebar"] .stMarkdown {
-        color: #ffd700;
-    }
-    
-    /* Info box - Orange Theme */
-    .info-box {
-        background: rgba(255, 149, 0, 0.1);
-        padding: 1rem;
-        border-radius: 10px;
-        border: 1px solid rgba(255, 149, 0, 0.3);
-        margin: 1rem 0;
-        box-shadow: 0 0 15px rgba(255, 149, 0, 0.1);
-    }
-    
-    .info-box strong {
-        color: #ffd700;
-    }
-    
-    /* Section divider - Golden line */
-    .section-divider {
-        height: 2px;
-        background: linear-gradient(90deg, transparent, #ff9500, #ffd700, #ff6b35, #ff9500, transparent);
-        border-radius: 2px;
-        margin: 1.5rem 0;
-        box-shadow: 0 0 10px rgba(255, 149, 0, 0.5);
-    }
-    
-    /* Progress bar styling */
     .stProgress > div > div > div {
-        background: linear-gradient(90deg, #ff6b35, #ff9500, #ffd700) !important;
-        box-shadow: 0 0 10px rgba(255, 149, 0, 0.5);
+        background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%) !important;
     }
     
-    /* Metric styling */
     [data-testid="stMetricValue"] {
-        font-family: 'Montserrat', sans-serif !important;
-        color: #ffd700 !important;
-        text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        font-size: 2rem !important;
+        color: #22c55e !important;
     }
     
-    [data-testid="stMetricDelta"] {
-        font-family: 'Poppins', sans-serif !important;
+    [data-testid="stMetricLabel"] {
+        color: #cbd5e1 !important;
     }
     
-    /* Hide Streamlit branding */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    
-    /* Scrollbar styling */
-    ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
+    .divider {
+        height: 1px;
+        background: rgba(34, 197, 94, 0.3);
+        margin: 1.5rem 0;
     }
     
-    ::-webkit-scrollbar-track {
-        background: rgba(30, 30, 60, 0.5);
+    .footer {
+        text-align: center;
+        padding: 2.5rem 2rem;
+        margin-top: 3rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        color: #94a3b8;
     }
     
-    ::-webkit-scrollbar-thumb {
-        background: linear-gradient(180deg, #ff9500, #ffd700);
-        border-radius: 4px;
+    .footer p {
+        margin: 0.5rem 0;
+        color: #94a3b8;
     }
     
-    ::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(180deg, #ffd700, #ff6b35);
+    footer {
+        visibility: hidden;
     }
     
-    /* Glowing border animation for sections */
-    @keyframes borderGlow {
-        0%, 100% { border-color: rgba(255, 149, 0, 0.3); }
-        50% { border-color: rgba(255, 204, 0, 0.6); }
-    }
-    
-    .stExpander {
-        border: 1px solid rgba(255, 149, 0, 0.3);
-        border-radius: 10px;
-        animation: borderGlow 3s ease-in-out infinite;
+    @media (max-width: 768px) {
+        .main .block-container {
+            padding: 1rem;
+        }
+        
+        h1 {
+            font-size: 1.75rem;
+        }
+        
+        h2 {
+            font-size: 1.3rem;
+        }
+        
+        .header {
+            padding: 1.5rem 1rem;
+        }
     }
 </style>
 """,
         unsafe_allow_html=True,
     )
 
+
 def render_header():
     st.markdown(
         """
-<div class="main-header">
-    <h1>≡ƒÅÑ DISEASE PREDICTION SYSTEM</h1>
-    <p>ΓÜí AI-POWERED HEALTH RISK ASSESSMENT ΓÜí</p>
-    <p style="font-size: 0.9rem; color: #ff9500; margin-top: 0.5rem;">DIABETES ΓÇó HEART DISEASE ΓÇó SMART ANALYSIS</p>
+<div class="header">
+    <h1>Disease Prediction System</h1>
+    <p>AI-Powered Health Risk Assessment</p>
+    <p style="font-size: 0.95rem; margin-top: 1rem;">
+        Machine learning models to estimate health risks for Diabetes and Heart Disease.
+    </p>
 </div>
 """,
         unsafe_allow_html=True,
     )
 
 
-def render_sidebar():
-    with st.sidebar:
-        st.markdown(
-            """
-    <div style="text-align: center; padding: 1rem;">
-        <img src="https://cdn-icons-png.flaticon.com/512/2966/2966327.png" width="100" style="filter: drop-shadow(0 0 10px #ff9500);">
-        <h2 style="font-family: 'Montserrat', sans-serif; color: #ff9500; margin: 0.5rem 0; font-size: 1.2rem; text-shadow: 0 0 10px rgba(255, 149, 0, 0.5);">HEALTH PREDICTOR</h2>
-        <p style="color: #ffd700; font-size: 0.8rem; letter-spacing: 2px;"></p>
-    </div>
-    """,
-            unsafe_allow_html=True,
-        )
-
-        st.markdown("### ≡ƒôï SYSTEM INFO")
-        st.info(
-            """
-    This application uses **Machine Learning** to predict the risk of:
-    - ≡ƒì¼ **Diabetes**
-    - Γ¥ñ∩╕Å **Heart Disease**
-
-    Enter your health metrics and get instant predictions!
-    """
-        )
-
-        st.markdown("---")
-
-        st.markdown("### ≡ƒö¼ HOW IT WORKS")
-        st.markdown(
-            """
-    ```
-    [1] SELECT DISEASE TYPE
-    [2] INPUT HEALTH DATA  
-    [3] INITIATE SCAN
-    [4] RECEIVE AI ANALYSIS
-    ```
-    """
-        )
-
-        st.markdown("---")
-        st.markdown("### ΓÜá∩╕Å DISCLAIMER")
-        st.warning(
-            "This tool is for educational purposes only. Always consult a healthcare professional for medical advice."
-        )
-
-
 def render_diabetes_section(diabetes_model, diabetes_scaler, patient_name):
-    col_img, col_title = st.columns([1, 2])
-    with col_img:
-        st.markdown(
-            """
-        <div style="text-align: center; padding: 1rem;">
-            <img src="https://cdn-icons-png.flaticon.com/512/2751/2751460.png" width="120" style="filter: drop-shadow(0 0 15px #ff9500);">
-        </div>
-        """,
-            unsafe_allow_html=True,
-        )
-    with col_title:
-        st.markdown("## ≡ƒì¼ DIABETES RISK SCAN")
-        st.markdown(
-            """
-        <p style="color: #ffd700; font-family: 'Poppins', sans-serif; font-size: 1rem;">
-            Advanced glucose & metabolic analysis system
-        </p>
-        """,
-            unsafe_allow_html=True,
-        )
-
+    st.markdown("## Diabetes Risk Assessment")
     st.markdown(
         """
-    <div class="info-box">
-        ≡ƒôí <strong>INITIALIZING DIABETES ANALYSIS MODULE...</strong> Enter health parameters below.
-    </div>
-    """,
+<div class="info-box">
+    <strong>Analysis Module</strong><br>
+    Enter your health parameters for personalized diabetes risk evaluation.
+</div>
+""",
         unsafe_allow_html=True,
     )
 
-    st.markdown("#### ≡ƒæñ BIOMETRIC DATA")
+    st.markdown("### Biometric Data")
     col1, col2 = st.columns(2)
     with col1:
-        age = st.number_input("≡ƒÄé Age (years) [1-120]", 1, 120, 30, help="Enter your age in years (Range: 1-120)")
-        gender_opt = st.selectbox("ΓÜº Gender", ["Female", "Male", "Other"], index=0)
+        age = st.number_input("Age (years)", 1, 120, 30, help="Range: 1-120", key="diab_age")
+        gender_opt = st.selectbox("Gender", ["Female", "Male", "Other"], index=0, key="diab_gender")
     with col2:
-        bmi = st.number_input("ΓÜû∩╕Å BMI [10.0-60.0]", 10.0, 60.0, 25.0, help="Body Mass Index (Range: 10.0-60.0 kg/m┬▓)")
+        bmi = st.number_input("BMI (kg/m²)", 10.0, 60.0, 25.0, help="Range: 10.0-60.0", key="diab_bmi")
         smoking_opt = st.selectbox(
-            "≡ƒÜ¼ Smoking History",
+            "Smoking History",
             ["never", "former", "ever", "current", "not current"],
             index=0,
+            key="diab_smoking"
         )
 
-    st.markdown("#### ≡ƒÅÑ MEDICAL RECORDS")
+    st.markdown("### Medical Records")
     col3, col4 = st.columns(2)
     with col3:
         hypertension_opt = st.selectbox(
-            "≡ƒÆè Hypertension", ["No", "Yes"], index=0, help="Do you have high blood pressure?"
+            "Hypertension", ["No", "Yes"], index=0, key="diab_hypertension"
         )
         hba1c = st.number_input(
-            "≡ƒö¼ HbA1c Level [3.0-15.0]", 3.0, 15.0, 5.5, help="Hemoglobin A1c percentage (Range: 3.0-15.0%)"
+            "HbA1c Level (%)", 3.0, 15.0, 5.5, help="Range: 3.0-15.0%", key="diab_hba1c"
         )
     with col4:
-        heart_disease_opt = st.selectbox("Γ¥ñ∩╕Å Heart Disease History", ["No", "Yes"], index=0)
+        heart_disease_opt = st.selectbox("Heart Disease History", ["No", "Yes"], index=0, key="diab_heart_disease")
         glucose = st.number_input(
-            "≡ƒ⌐╕ Blood Glucose Level [50-300]", 50, 300, 100, help="Fasting blood glucose (Range: 50-300 mg/dL)"
+            "Blood Glucose (mg/dL)", 50, 300, 100, help="Range: 50-300", key="diab_glucose"
         )
 
-    st.markdown("---")
+    st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
-    if st.button("ΓÜí INITIATE DIABETES SCAN", use_container_width=True):
-        with st.spinner("≡ƒöä ANALYZING BIOMETRIC DATA..."):
+    if st.button("Run Diabetes Analysis", use_container_width=True, key="diab_scan"):
+        with st.spinner("Analyzing biometric data..."):
             diabetes_features = build_diabetes_features(
                 age=age,
                 hypertension_opt=hypertension_opt,
@@ -525,32 +391,21 @@ def render_diabetes_section(diabetes_model, diabetes_scaler, patient_name):
             )
             probability_percent = probability * 100
 
-            st.markdown("### ≡ƒôè SCAN RESULTS")
-
+            st.markdown("### Analysis Results")
             st.progress(probability)
 
             col_res1, col_res2 = st.columns([2, 1])
             with col_res1:
                 if prediction == 1:
-                    st.error("ΓÜá∩╕Å **HIGH RISK DETECTED**")
+                    st.error("HIGH RISK DETECTED")
                     st.markdown(
-                        f"""
-                    <div style="background: rgba(244, 67, 54, 0.15); padding: 1rem; border-radius: 10px; border: 1px solid #f44336; box-shadow: 0 0 20px rgba(244, 67, 54, 0.2);">
-                        <h4 style="color: #f44336; margin: 0; font-family: 'Montserrat', sans-serif;">ΓÜá∩╕Å RISK LEVEL: {probability_percent:.1f}%</h4>
-                        <p style="margin: 0.5rem 0 0 0; color: #ff8a80;">RECOMMENDATION: Consult healthcare provider immediately.</p>
-                    </div>
-                    """,
+                        f"**Risk Level: {probability_percent:.1f}%**\n\nRecommendation: Consult healthcare provider immediately.",
                         unsafe_allow_html=True,
                     )
                 else:
-                    st.success("Γ£à **LOW RISK DETECTED**")
+                    st.success("LOW RISK DETECTED")
                     st.markdown(
-                        f"""
-                    <div style="background: rgba(76, 175, 80, 0.15); padding: 1rem; border-radius: 10px; border: 1px solid #4caf50; box-shadow: 0 0 20px rgba(76, 175, 80, 0.2);">
-                        <h4 style="color: #4caf50; margin: 0; font-family: 'Montserrat', sans-serif;">Γ£à RISK LEVEL: {probability_percent:.1f}%</h4>
-                        <p style="margin: 0.5rem 0 0 0; color: #a5d6a7;">STATUS: Maintain healthy lifestyle protocols.</p>
-                    </div>
-                    """,
+                        f"**Risk Level: {probability_percent:.1f}%**\n\nStatus: Maintain healthy lifestyle protocols.",
                         unsafe_allow_html=True,
                     )
 
@@ -558,7 +413,7 @@ def render_diabetes_section(diabetes_model, diabetes_scaler, patient_name):
                 st.metric(
                     "RISK INDEX",
                     f"{probability_percent:.1f}%",
-                    delta="CRITICAL" if prediction == 1 else "NORMAL",
+                    delta="HIGH" if prediction == 1 else "LOW",
                     delta_color="inverse",
                 )
 
@@ -584,7 +439,7 @@ def render_diabetes_section(diabetes_model, diabetes_scaler, patient_name):
             if pdf_bytes:
                 safe_filename = (patient_name.strip() or "Unknown").replace(" ", "_")
                 st.download_button(
-                    label="≡ƒôÑ DOWNLOAD REPORT",
+                    label="Download PDF Report",
                     data=pdf_bytes,
                     file_name=f"Diabetes_Report_{safe_filename}.pdf",
                     mime="application/pdf",
@@ -593,79 +448,60 @@ def render_diabetes_section(diabetes_model, diabetes_scaler, patient_name):
 
 
 def render_heart_section(heart_model, heart_scaler, patient_name):
-    col_img, col_title = st.columns([1, 2])
-    with col_img:
-        st.markdown(
-            """
-        <div style="text-align: center; padding: 1rem;">
-            <img src="https://cdn-icons-png.flaticon.com/512/3004/3004458.png" width="120" style="filter: drop-shadow(0 0 15px #e53935);">
-        </div>
-        """,
-            unsafe_allow_html=True,
-        )
-    with col_title:
-        st.markdown("## Γ¥ñ∩╕Å CARDIAC RISK SCAN")
-        st.markdown(
-            """
-        <p style="color: #ff8a65; font-family: 'Poppins', sans-serif; font-size: 1rem;">
-            Cardiovascular health monitoring & risk assessment
-        </p>
-        """,
-            unsafe_allow_html=True,
-        )
-
+    st.markdown("## Cardiac Health Assessment")
     st.markdown(
         """
-    <div class="info-box">
-        ≡ƒôí <strong>INITIALIZING CARDIAC ANALYSIS MODULE...</strong> Enter cardiovascular parameters.
-    </div>
-    """,
+<div class="info-box">
+    <strong>Cardiovascular Risk Module</strong><br>
+    Enter your cardiovascular parameters for personalized cardiac risk evaluation.
+</div>
+""",
         unsafe_allow_html=True,
     )
 
-    st.markdown("#### ≡ƒæñ BIOMETRIC DATA")
+    st.markdown("### Biometric Data")
     col1, col2 = st.columns(2)
     with col1:
-        age = st.number_input("≡ƒÄé Age (years) [1-120]", 1, 120, 45, help="Enter your age in years (Range: 1-120)")
-        gender = st.selectbox("ΓÜº Gender", ["Male", "Female"], index=0)
+        age = st.number_input("Age (years)", 1, 120, 45, help="Range: 1-120", key="heart_age")
+        gender = st.selectbox("Gender", ["Male", "Female"], index=0, key="heart_gender")
     with col2:
         height_cm = st.number_input(
-            "≡ƒôÅ Height (cm) [120-220]", 120, 220, 170, help="Height in centimeters (Range: 120-220)"
+            "Height (cm)", 120, 220, 170, help="Range: 120-220", key="heart_height"
         )
         weight_kg = st.number_input(
-            "ΓÜû∩╕Å Weight (kg) [30-200]", 30.0, 200.0, 70.0, help="Weight in kilograms (Range: 30-200)"
+            "Weight (kg)", 30.0, 200.0, 70.0, help="Range: 30-200", key="heart_weight"
         )
 
-    st.markdown("#### ≡ƒ⌐║ VITAL STATISTICS")
+    st.markdown("### Vital Statistics")
     col3, col4 = st.columns(2)
     with col3:
         systolic_bp = st.number_input(
-            "≡ƒö┤ Systolic BP (mmHg) [80-200]", 80, 200, 120, help="Upper blood pressure reading (Range: 80-200)"
+            "Systolic BP (mmHg)", 80, 200, 120, help="Range: 80-200", key="heart_systolic"
         )
         cholesterol = st.number_input(
-            "≡ƒº¬ Cholesterol (mg/dL) [100-400]", 100, 400, 200, help="Cholesterol level (Range: 100-400)"
+            "Cholesterol (mg/dL)", 100, 400, 200, help="Range: 100-400", key="heart_chol"
         )
     with col4:
         diastolic_bp = st.number_input(
-            "≡ƒö╡ Diastolic BP (mmHg) [50-120]", 50, 120, 80, help="Lower blood pressure reading (Range: 50-120)"
+            "Diastolic BP (mmHg)", 50, 120, 80, help="Range: 50-120", key="heart_diastolic"
         )
         glucose = st.number_input(
-            "≡ƒ⌐╕ Glucose (mg/dL) [50-300]", 50, 300, 100, help="Blood glucose level (Range: 50-300)"
+            "Blood Glucose (mg/dL)", 50, 300, 100, help="Range: 50-300", key="heart_glucose"
         )
 
-    st.markdown("#### ≡ƒÅâ LIFESTYLE PARAMETERS")
+    st.markdown("### Lifestyle Factors")
     col5, col6, col7 = st.columns(3)
     with col5:
-        smoke = st.checkbox("≡ƒÜ¼ Smoker", value=False)
+        smoke = st.checkbox("Smoker", value=False, key="heart_smoke")
     with col6:
-        alco = st.checkbox("≡ƒì╖ Alcohol Use", value=False)
+        alco = st.checkbox("Alcohol Use", value=False, key="heart_alco")
     with col7:
-        active = st.checkbox("≡ƒÅâ Physically Active", value=True)
+        active = st.checkbox("Physically Active", value=True, key="heart_active")
 
-    st.markdown("---")
+    st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
-    if st.button("ΓÜí INITIATE CARDIAC SCAN", use_container_width=True):
-        with st.spinner("≡ƒöä ANALYZING CARDIOVASCULAR DATA..."):
+    if st.button("Run Cardiac Analysis", use_container_width=True, key="heart_scan"):
+        with st.spinner("Analyzing cardiovascular data..."):
             heart_features, bmi_val = build_heart_features(
                 age=age,
                 gender=gender,
@@ -687,32 +523,21 @@ def render_heart_section(heart_model, heart_scaler, patient_name):
             )
             probability_percent = probability * 100
 
-            st.markdown("### ≡ƒôè SCAN RESULTS")
-
+            st.markdown("### Analysis Results")
             st.progress(probability)
 
             col_res1, col_res2 = st.columns([2, 1])
             with col_res1:
                 if prediction == 1:
-                    st.error("ΓÜá∩╕Å **HIGH RISK DETECTED**")
+                    st.error("HIGH RISK DETECTED")
                     st.markdown(
-                        f"""
-                    <div style="background: rgba(244, 67, 54, 0.15); padding: 1rem; border-radius: 10px; border: 1px solid #f44336; box-shadow: 0 0 20px rgba(244, 67, 54, 0.2);">
-                        <h4 style="color: #f44336; margin: 0; font-family: 'Montserrat', sans-serif;">ΓÜá∩╕Å RISK LEVEL: {probability_percent:.1f}%</h4>
-                        <p style="margin: 0.5rem 0 0 0; color: #ff8a80;">RECOMMENDATION: Consult cardiologist immediately.</p>
-                    </div>
-                    """,
+                        f"**Risk Level: {probability_percent:.1f}%**\n\nRecommendation: Consult cardiologist immediately.",
                         unsafe_allow_html=True,
                     )
                 else:
-                    st.success("Γ£à **LOW RISK DETECTED**")
+                    st.success("LOW RISK DETECTED")
                     st.markdown(
-                        f"""
-                    <div style="background: rgba(76, 175, 80, 0.15); padding: 1rem; border-radius: 10px; border: 1px solid #4caf50; box-shadow: 0 0 20px rgba(76, 175, 80, 0.2);">
-                        <h4 style="color: #4caf50; margin: 0; font-family: 'Montserrat', sans-serif;">Γ£à RISK LEVEL: {probability_percent:.1f}%</h4>
-                        <p style="margin: 0.5rem 0 0 0; color: #a5d6a7;">STATUS: Cardiac health parameters within normal range.</p>
-                    </div>
-                    """,
+                        f"**Risk Level: {probability_percent:.1f}%**\n\nStatus: Cardiac health parameters within normal range.",
                         unsafe_allow_html=True,
                     )
 
@@ -720,7 +545,7 @@ def render_heart_section(heart_model, heart_scaler, patient_name):
                 st.metric(
                     "RISK INDEX",
                     f"{probability_percent:.1f}%",
-                    delta="CRITICAL" if prediction == 1 else "NORMAL",
+                    delta="HIGH" if prediction == 1 else "LOW",
                     delta_color="inverse",
                 )
                 st.metric("BMI", f"{bmi_val:.1f}")
@@ -751,7 +576,7 @@ def render_heart_section(heart_model, heart_scaler, patient_name):
             if pdf_bytes:
                 safe_filename = (patient_name.strip() or "Unknown").replace(" ", "_")
                 st.download_button(
-                    label="≡ƒôÑ DOWNLOAD REPORT",
+                    label="Download PDF Report",
                     data=pdf_bytes,
                     file_name=f"Heart_Disease_Report_{safe_filename}.pdf",
                     mime="application/pdf",
@@ -760,19 +585,15 @@ def render_heart_section(heart_model, heart_scaler, patient_name):
 
 
 def render_footer():
-    st.markdown("---")
+    st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
     st.markdown(
         """
-<div style="text-align: center; padding: 1.5rem; background: rgba(30, 30, 60, 0.6); border-radius: 15px; border: 1px solid rgba(255, 149, 0, 0.3);">
-    <p style="font-family: 'Montserrat', sans-serif; color: #ff9500; margin: 0; letter-spacing: 2px;">
-        ΓÜí POWERED BY MACHINE LEARNING ΓÜí
-    </p>
-    <p style="color: #ffd700; font-size: 0.9rem; margin: 0.5rem 0 0 0;">
-        DISEASE PREDICTION SYSTEM 
-    </p>
-    <p style="color: #fff; font-size: 0.7rem; margin-top: 0.5rem;">
-        ≡ƒö¼ Built By Smit Kansagara
-    </p>
+<div class="footer">
+    <p><strong>Disease Prediction System</strong></p>
+    <p>Built with Streamlit and Scikit-learn</p>
+    <p>This system is for educational purposes only and is not a substitute for professional medical advice.</p>
+    <p>Always consult qualified healthcare professionals for proper diagnosis and treatment.</p>
+    <p style="margin-top: 1rem; color: #64748b; font-size: 0.85rem;">© 2026 Health AI</p>
 </div>
 """,
         unsafe_allow_html=True,
@@ -782,29 +603,39 @@ def render_footer():
 def main():
     st.set_page_config(
         page_title="Disease Prediction System",
-        page_icon="≡ƒ⌐║",
+        page_icon="🩺",
         layout="centered",
-        initial_sidebar_state="expanded",
+        initial_sidebar_state="collapsed",
     )
 
     inject_theme()
+    render_header()
+
+    # Hide sidebar
+    st.markdown(
+        """
+        <style>
+            [data-testid="stSidebar"] {
+                display: none;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 
     diabetes_model, heart_model, diabetes_scaler, heart_scaler = load_artifacts()
 
-    render_header()
-    render_sidebar()
+    st.markdown("### Patient Information")
+    patient_name = st.text_input("Enter your name (optional)")
 
-    st.markdown("### ≡ƒæñ PATIENT NAME")
-    patient_name = st.text_input("Enter your name")
-
-    st.markdown("### ≡ƒÄ» SELECT SCAN TYPE")
+    st.markdown("### Select Assessment Type")
     disease = st.selectbox(
-        "Choose a condition",
+        "Choose a condition to assess",
         ["Diabetes", "Heart Disease"],
         label_visibility="collapsed",
     )
 
-    st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
     if disease == "Diabetes":
         render_diabetes_section(diabetes_model, diabetes_scaler, patient_name)
