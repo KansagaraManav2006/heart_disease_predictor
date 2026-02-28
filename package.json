@@ -1,0 +1,17 @@
+{
+  "name": "disease-predictor-fullstack",
+  "version": "1.0.0",
+  "description": "Healthcare Prediction System with React Frontend and Express Backend",
+  "scripts": {
+    "install:all": "npm install --prefix server && npm install --prefix client",
+    "client": "npm run dev --prefix client",
+    "server": "npm run dev --prefix server",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "build": "npm run build --prefix client",
+    "start": "node server/index.js"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "shadcn": "^3.8.5"
+  }
+}

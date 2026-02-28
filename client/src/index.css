@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+@theme {
+  --color-darkBg: #0f172a;
+  --color-darkCard: #1e293b;
+  --color-primary: #22c55e;
+  --color-primaryHover: #16a34a;
+  --color-danger: #ef4444;
+  --color-textMain: #f8fafc;
+  --color-textMuted: #cbd5e1;
+}
+
+@layer base {
+  body {
+    @apply bg-darkBg text-textMain antialiased min-h-screen relative overflow-x-hidden;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer components {
+
+  /* Glassmorphism primitives */
+  .glass {
+    @apply backdrop-blur-xl border border-white/20 rounded-2xl;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  }
+
+  .glass-strong {
+    @apply backdrop-blur-2xl border border-white/20 rounded-2xl;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.8));
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    border-left: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .glass-hover {
+    @apply transition-all duration-300 hover:border-white/40 hover:-translate-y-1;
+
+    &:hover {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
+      box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4);
+    }
+  }
+
+  .glass-pill {
+    @apply backdrop-blur-xl border border-white/20 rounded-full transition-all duration-300;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  }
+
+  .glass-active {
+    @apply bg-danger/10 border-danger/30 text-danger shadow-lg shadow-danger/40;
+  }
+
+  .glass-input {
+    @apply w-full bg-slate-900/70 border border-slate-700/50 rounded-lg text-slate-100 p-3 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all duration-200 placeholder-slate-500;
+  }
+
+  .btn-primary {
+    @apply bg-primary hover:bg-primaryHover text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 transform hover:-translate-y-0.5 shadow-lg shadow-primary/20 w-full disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-lg border border-slate-600 transition-all duration-200 w-full;
+  }
+}
+
+/* Background effects */
+.bg-gradient-radial {
+  background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+}
+
+.gradient-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-green-300;
+}
