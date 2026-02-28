@@ -58,8 +58,94 @@ The compiled assets will be placed in `client/dist/` and automatically served st
 npm start
 ```
 
+## Deployment (Free Options)
+
+This fullstack application with Python ML integration can be deployed using several free platforms:
+
+### Option 1: Render (Recommended for Fullstack)
+
+**Render** offers free tiers for web services and supports both Node.js and Python.
+
+1. **Backend + Python ML Service**:
+   - Deploy `server/` as a Node.js Web Service
+   - Deploy `ml/` as a separate Python Web Service (Flask/FastAPI wrapper)
+   - Link both services via environment variables
+   - Free tier: 750 hours/month, auto-sleep after inactivity
+
+2. **Frontend**:
+   - Deploy `client/` as a Static Site
+   - Connect to backend API URL
+   - Free tier: Unlimited bandwidth
+
+**Setup**:
+
+```bash
+# Create render.yaml in root for automated deployment
+# Or use Render Dashboard to create services manually
+```
+
+### Option 2: Vercel (Frontend) + Railway (Backend + ML)
+
+**Best for**: Separate frontend/backend deployment
+
+- **Vercel** (Frontend):
+  - Deploy React app from `client/` folder
+  - 100GB bandwidth/month free
+  - Automatic HTTPS and CDN
+
+- **Railway** (Backend + ML):
+  - Deploy Express server and Python ML service
+  - $5 free credit monthly (~500 hours)
+  - Connect MongoDB/PostgreSQL if needed
+
+### Option 3: Fly.io (Fullstack + ML)
+
+**Best for**: Dockerized deployments
+
+- Deploy both Node.js backend and Python ML service
+- Free tier: 3 shared-cpu VMs, 3GB storage
+- Requires Docker configuration
+- Excellent for production-grade deployment
+
+### Option 4: Hugging Face Spaces (ML Model Only)
+
+**Best for**: ML model serving
+
+- Deploy Python ML models using Gradio/Streamlit interface
+- Unlimited free CPU inference
+- Community GPU available
+- Perfect for ML experimentation
+
+### Option 5: PythonAnywhere (Python ML Service)
+
+**Best for**: Python-focused deployment
+
+- Free tier: 1 web app, 512MB storage
+- Deploy `ml/predict.py` as Flask API
+- Combine with Vercel (frontend) + free Node backend elsewhere
+
+### Recommended Stack for This Project
+
+```text
+Frontend (React):     Vercel or Netlify
+Backend (Express):    Render or Railway
+ML Service (Python):  Render or Railway
+Database (if needed): MongoDB Atlas (Free 512MB)
+```
+
+### Pre-Deployment Checklist
+
+- [ ] Set environment variables (API URLs, ports)
+- [ ] Update CORS settings in `server/index.js`
+- [ ] Install Python dependencies from `ml/requirements.txt`
+- [ ] Test ML model loading and predictions
+- [ ] Configure production build settings
+- [ ] Set up CI/CD with GitHub Actions (optional)
+
 ## Legacy Streamlit
+
 The initial version of this project used a Streamlit frontend (`app.py`). This architecture has been **deprecated and removed** in favor of the React/Node.js stack for greater scalability and UI control.
 
 ## Credits
+
 Built by Smit Kansagara
