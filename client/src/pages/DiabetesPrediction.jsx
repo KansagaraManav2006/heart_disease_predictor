@@ -89,18 +89,18 @@ const DiabetesPrediction = () => {
     return (
         <div className="max-w-4xl mx-auto animate-fade-in-up pb-12">
             <div className="text-center mb-10">
-                <div className="bg-blue-500/20 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 text-blue-400">
+                <div className="bg-blue-500/10 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 text-blue-600 border border-blue-200">
                     <Activity size={32} />
                 </div>
-                <h1 className="text-3xl md:text-5xl font-black mb-4">Diabetes Risk Assessment</h1>
-                <p className="text-slate-400 max-w-2xl mx-auto">
+                <h1 className="text-3xl md:text-5xl font-black mb-4 text-slate-800">Diabetes Risk Assessment</h1>
+                <p className="text-slate-600 max-w-2xl mx-auto">
                     Enter patient biometrics and medical history below for a comprehensive metabolic risk evaluation.
                 </p>
             </div>
 
             <GlassCard className="mb-8">
                 <form onSubmit={handleSubmit}>
-                    <h2 className="text-xl font-bold text-white mb-6 border-b border-slate-700 pb-2">Patient Details</h2>
+                    <h2 className="text-xl font-bold text-slate-800 mb-6 border-b border-borderLight pb-2">Patient Details</h2>
 
                     <div className="grid md:grid-cols-2 gap-6 mb-8">
                         <InputField
@@ -141,7 +141,7 @@ const DiabetesPrediction = () => {
                         />
                     </div>
 
-                    <h2 className="text-xl font-bold text-white mb-6 border-b border-slate-700 pb-2">Medical Metrics</h2>
+                    <h2 className="text-xl font-bold text-slate-800 mb-6 border-b border-borderLight pb-2">Medical Metrics</h2>
 
                     <div className="grid md:grid-cols-2 gap-6 mb-8">
                         <InputField
@@ -180,7 +180,7 @@ const DiabetesPrediction = () => {
                         />
                     </div>
 
-                    <h2 className="text-xl font-bold text-white mb-6 border-b border-slate-700 pb-2">Medical History</h2>
+                    <h2 className="text-xl font-bold text-slate-800 mb-6 border-b border-borderLight pb-2">Medical History</h2>
 
                     <div className="grid md:grid-cols-2 gap-6 mb-8">
                         <SelectField

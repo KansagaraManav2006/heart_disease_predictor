@@ -1,6 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
+import Sidebar from './components/Sidebar';
+import Header from './components/Header';
+import Footer from './components/Footer';
 import Home from './pages/Home';
 import DiabetesPrediction from './pages/DiabetesPrediction';
 import HeartDiseasePrediction from './pages/HeartDiseasePrediction';
@@ -9,24 +11,33 @@ import About from './pages/About';
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-darkBg text-textMain selection:bg-primary/30 relative overflow-hidden">
-        {/* Vibrant Ambient Orbs for Glass Refraction */}
-        <div className="fixed top-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-primary/20 blur-[120px] pointer-events-none opacity-60"></div>
-        <div className="fixed bottom-[-10%] right-[-10%] w-[35vw] h-[35vw] rounded-full bg-blue-500/20 blur-[120px] pointer-events-none opacity-60"></div>
-        <div className="fixed top-[30%] left-[60%] w-[25vw] h-[25vw] rounded-full bg-purple-500/20 blur-[100px] pointer-events-none opacity-50"></div>
+      <div className="min-h-screen bg-background text-textMain flex font-sans">
+        
+        {/* Sidebar Left */}
+        <Sidebar className="hidden md:block" />
 
-        <div className="fixed inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] pointer-events-none mix-blend-overlay"></div>
+        {/* Main Wrapper */}
+        <div className="flex-1 flex flex-col md:ml-64 min-h-screen transition-all duration-300">
+          
+          {/* Top Header */}
+          <Header />
 
-        <Navbar />
+          {/* Page Content */}
+          <main className="flex-1 p-4 md:p-8 relative">
+            <div className="max-w-5xl mx-auto flex flex-col min-h-full">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/diabetes" element={<DiabetesPrediction />} />
+                <Route path="/heart" element={<HeartDiseasePrediction />} />
+                <Route path="/about" element={<About />} />
+              </Routes>
+            </div>
+          </main>
 
-        <main className="container mx-auto px-4 relative z-10 pb-20">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/diabetes" element={<DiabetesPrediction />} />
-            <Route path="/heart" element={<HeartDiseasePrediction />} />
-            <Route path="/about" element={<About />} />
-          </Routes>
-        </main>
+          {/* Footer at bottom */}
+          <Footer />
+
+        </div>
       </div>
     </Router>
   );

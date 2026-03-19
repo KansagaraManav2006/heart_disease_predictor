@@ -93,18 +93,18 @@ const HeartDiseasePrediction = () => {
     return (
         <div className="max-w-4xl mx-auto animate-fade-in-up pb-12">
             <div className="text-center mb-10">
-                <div className="bg-red-500/20 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 text-red-400">
+                <div className="bg-red-500/10 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 text-red-600 border border-red-200">
                     <Heart size={32} />
                 </div>
-                <h1 className="text-3xl md:text-5xl font-black mb-4">Cardiac Health Assessment</h1>
-                <p className="text-slate-400 max-w-2xl mx-auto">
+                <h1 className="text-3xl md:text-5xl font-black mb-4 text-slate-800">Cardiac Health Assessment</h1>
+                <p className="text-slate-600 max-w-2xl mx-auto">
                     Enter cardiovascular parameters for personalized cardiac risk evaluation based on advanced machine learning algorithms.
                 </p>
             </div>
 
             <GlassCard className="mb-8 border-t-4 border-t-red-500/50">
                 <form onSubmit={handleSubmit}>
-                    <h2 className="text-xl font-bold text-white mb-6 border-b border-slate-700 pb-2">Biometric Data</h2>
+                    <h2 className="text-xl font-bold text-slate-800 mb-6 border-b border-borderLight pb-2">Biometric Data</h2>
 
                     <div className="grid md:grid-cols-2 gap-6 mb-8">
                         <InputField label="Patient Name (Optional)" name="patientName" value={formData.patientName} onChange={handleChange} placeholder="Jane Doe" />
@@ -116,7 +116,7 @@ const HeartDiseasePrediction = () => {
                         </div>
                     </div>
 
-                    <h2 className="text-xl font-bold text-white mb-6 border-b border-slate-700 pb-2">Vital Statistics</h2>
+                    <h2 className="text-xl font-bold text-slate-800 mb-6 border-b border-borderLight pb-2">Vital Statistics</h2>
 
                     <div className="grid md:grid-cols-2 gap-6 mb-8">
                         <InputField label="Systolic BP (mmHg)" name="systolic_bp" type="number" value={formData.systolic_bp} onChange={handleChange} placeholder="120" min="80" max="200" required />
@@ -125,7 +125,7 @@ const HeartDiseasePrediction = () => {
                         <InputField label="Blood Glucose (mg/dL)" name="glucose" type="number" value={formData.glucose} onChange={handleChange} placeholder="100" min="50" max="300" required />
                     </div>
 
-                    <h2 className="text-xl font-bold text-white mb-6 border-b border-slate-700 pb-2">Lifestyle Factors</h2>
+                    <h2 className="text-xl font-bold text-slate-800 mb-6 border-b border-borderLight pb-2">Lifestyle Factors</h2>
 
                     <div className="grid md:grid-cols-3 gap-6 mb-8">
                         <SelectField label="Smoker" name="smoke" value={formData.smoke} onChange={handleChange} options={yesNoOptions} required />

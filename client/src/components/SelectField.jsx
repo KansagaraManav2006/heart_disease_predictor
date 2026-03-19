@@ -11,7 +11,7 @@ const SelectField = ({
     return (
         <div className="mb-4 w-full">
             {label && (
-                <label htmlFor={name} className="block text-sm font-medium text-slate-300 mb-1.5 ml-1">
+                <label htmlFor={name} className="block text-sm font-medium text-slate-700 mb-1.5 ml-1">
                     {label} {required && <span className="text-danger">*</span>}
                 </label>
             )}
@@ -22,11 +22,11 @@ const SelectField = ({
                     value={value}
                     onChange={onChange}
                     required={required}
-                    className="glass-input appearance-none w-full cursor-pointer pr-10"
+                    className="glass-input appearance-none w-full cursor-pointer pr-10 bg-white"
                 >
                     <option value="" disabled className="text-slate-500">Select an option</option>
                     {options.map((opt) => (
-                        <option key={opt.value} value={opt.value} className="bg-slate-800 text-white">
+                        <option key={opt.value} value={opt.value} className="bg-white text-slate-800">
                             {opt.label}
                         </option>
                     ))}

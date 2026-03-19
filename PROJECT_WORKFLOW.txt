@@ -1,0 +1,97 @@
+PROJECT STRUCTURE AND WORKFLOW
+=================================
+
+1) PROJECT OVERVIEW
+- This project is a full-stack health prediction system.
+- Frontend: React + Vite (client)
+- Backend API: Node.js + Express (server)
+- ML Engine: Python scripts/models (ml)
+
+
+2) FOLDER STRUCTURE
+
+Code/
+|- client/
+|  |- src/
+|  |  |- components/      -> Reusable UI components (Button, Navbar, Input, etc.)
+|  |  |- pages/           -> App pages (Home, About, Prediction pages)
+|  |  |- services/api.js  -> API request layer to backend
+|  |  |- App.jsx          -> Main app routing/layout
+|  |  |- main.jsx         -> React entry point
+|  |- public/             -> Static assets
+|  |- package.json        -> Frontend dependencies/scripts
+|
+|- server/
+|  |- index.js            -> Express server, API routes, ML invocation logic
+|  |- package.json        -> Backend dependencies/scripts
+|
+|- ml/
+|  |- predict.py          -> Prediction script used by backend
+|  |- utils.py            -> Helper functions for model/data handling
+|  |- data/               -> Dataset files
+|  |- models/             -> Trained model notebooks/artifacts
+|  |- notebooks/          -> Data prep and experimentation notebooks
+|  |- requirements.txt    -> Python dependencies
+|
+|- package.json           -> Root project scripts/dependencies
+|- README.md              -> Project documentation
+|- CHANGELOG.md           -> Version/change history
+
+
+3) END-TO-END WORKFLOW
+
+Step 1: User opens frontend (client)
+- User visits pages like Heart Disease Prediction or Diabetes Prediction.
+- User enters medical/input parameters in form fields.
+
+Step 2: Frontend sends API request
+- client/src/services/api.js sends data to server endpoints.
+- Request format is usually JSON.
+
+Step 3: Backend receives request (server)
+- server/index.js validates and parses incoming data.
+- Backend prepares command/input for Python prediction script.
+
+Step 4: Backend calls ML module
+- Node server invokes ml/predict.py (direct process call or integration wrapper).
+- Python script loads model/data processing logic from ml/.
+
+Step 5: ML generates prediction
+- predict.py preprocesses input.
+- Appropriate model is used to infer risk/result.
+- Result (prediction + confidence/details if available) is returned to backend.
+
+Step 6: Backend returns API response
+- Server formats result into JSON response.
+- Response sent back to frontend.
+
+Step 7: Frontend displays output
+- React page receives response.
+- ResultCard/related components render prediction to user.
+
+
+4) DEVELOPMENT WORKFLOW
+
+A) Frontend Development
+- Work inside client/src/components and client/src/pages.
+- Use client/src/services/api.js for API integration.
+
+B) Backend Development
+- Add/update routes in server/index.js.
+- Maintain input validation and error handling.
+
+C) ML Development
+- Train/experiment in ml/notebooks.
+- Keep prediction logic stable in ml/predict.py and utilities.
+- Track required packages in ml/requirements.txt.
+
+D) Integration Testing Flow
+- Run frontend and backend.
+- Submit form data from UI.
+- Confirm backend route execution.
+- Confirm Python script returns expected output.
+- Verify final UI result rendering.
+
+
+5) QUICK REQUEST FLOW (ONE LINE)
+UI Form -> API Call (client) -> Express Route (server) -> Python Prediction (ml) -> JSON Response -> UI Result

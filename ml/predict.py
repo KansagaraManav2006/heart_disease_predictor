@@ -39,21 +39,32 @@ def handle_diabetes(data):
         "risk_level": "High Risk" if prediction == 1 else "Low Risk"
     }
 
+def _to_bool(value):
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, (int, float)):
+        return value == 1
+    if isinstance(value, str):
+        return value.strip().lower() in {"1", "true", "yes"}
+    return False
+
+
 def handle_heart(data):
     model = load_heart_model()
     scaler = load_heart_scaler()
     features, bmi_val = build_heart_features(
         age=data.get('age', 0),
         gender=data.get('gender', '').capitalize(),
-        height_cm=data.get('height', 0),
-        weight_kg=data.get('weight', 0),
-        systolic_bp=data.get('systolic', 0),
-        diastolic_bp=data.get('diastolic', 0),
+        # Accept both current frontend keys and legacy payload keys.
+        height_cm=data.get('height_cm', data.get('height', 0)),
+        weight_kg=data.get('weight_kg', data.get('weight', 0)),
+        systolic_bp=data.get('systolic_bp', data.get('systolic', 0)),
+        diastolic_bp=data.get('diastolic_bp', data.get('diastolic', 0)),
         cholesterol=data.get('cholesterol', 0),
-        glucose=data.get('glucose_level', 0),
-        smoke=data.get('smoke') == '1',
-        alco=data.get('alco') == '1',
-        active=data.get('active') == '1'
+        glucose=data.get('glucose', data.get('glucose_level', 0)),
+        smoke=_to_bool(data.get('smoke')),
+        alco=_to_bool(data.get('alco')),
+        active=_to_bool(data.get('active'))
     )
     prediction, probability = predict_heart(model, scaler, features)
     return {

@@ -7,13 +7,16 @@ export default {
   theme: {
     extend: {
       colors: {
-        darkBg: '#0f172a',
-        darkCard: '#1e293b',
-        primary: '#22c55e',
-        primaryHover: '#16a34a',
-        danger: '#ef4444',
-        textMain: '#f8fafc',
-        textMuted: '#cbd5e1'
+        darkBg: '#0f172a', /* Kept just in case, but background will be light */
+        background: '#f5f7fa',
+        card: '#ffffff',
+        primary: '#1E88E5',
+        primaryHover: '#1565C0',
+        secondary: '#26A69A',
+        danger: '#EF5350',
+        textMain: '#1e293b',
+        textMuted: '#64748b',
+        borderLight: '#e2e8f0'
       }
     },
   },

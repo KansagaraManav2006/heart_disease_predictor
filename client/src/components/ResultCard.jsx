@@ -79,33 +79,38 @@ const ResultCard = ({ prediction, probability, riskLevel, extras = [] }) => {
 
     return (
         <GlassCard className="mt-8 animate-fade-in-up border-t-4" strong={true} style={{ borderTopColor: isHighRisk ? '#ef4444' : '#22c55e' }}>
-            <h3 className="text-xl font-bold mb-4 text-white text-center">Prediction Results</h3>
+            <h3 className="text-xl font-bold mb-4 text-slate-800 border-b pb-2">Prediction Results</h3>
 
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6 py-4">
                 <div className="flex-1 text-center md:text-left">
-                    <p className="text-slate-400 text-sm mb-1">Status Classification</p>
+                    <p className="text-slate-500 text-sm mb-1 font-medium">Status Classification</p>
                     <div className="flex items-center justify-center md:justify-start gap-3 mb-2">
-                        <span className={`inline-flex items-center justify-center w-3 h-3 rounded-full ${isHighRisk ? 'bg-danger animate-pulse' : 'bg-primary'}`}></span>
-                        <p className={`text-2xl font-bold ${isHighRisk ? 'text-danger' : 'text-primary'}`}>
+                        <span className={`inline-flex items-center justify-center w-3 h-3 rounded-full ${isHighRisk ? 'bg-danger animate-pulse shadow-sm shadow-danger/50' : 'bg-primary shadow-sm shadow-primary/50'}`}></span>
+                        <p className={`text-3xl font-bold ${isHighRisk ? 'text-danger' : 'text-primary'}`}>
                             {riskLevel}
                         </p>
                     </div>
 
-                    <p className="text-slate-300 mt-4 leading-relaxed">
+                    <p className="text-slate-600 mt-4 leading-relaxed font-medium">
                         {isHighRisk
                             ? "The model has detected patterns consistent with a high risk profile. It is strongly recommended to consult a healthcare professional for a formal diagnosis."
                             : "The parameters provided indicate a low risk profile. Continue to maintain a healthy lifestyle and regular check-ups."}
                     </p>
                 </div>
 
-                <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-700 w-full md:w-auto text-center min-w-[200px] flex flex-col justify-center items-center">
-                    <p className="text-slate-400 text-sm mb-2">Confidence Score</p>
-                    <p className="text-4xl font-black text-white">{probPercent}%</p>
+                <div className="bg-slate-50 p-6 rounded-xl border border-borderLight w-full md:w-auto text-center min-w-[200px] flex flex-col justify-center items-center shadow-sm">
+                    <p className="text-slate-500 text-sm mb-2 font-medium">Confidence Score</p>
+                    <p className="text-5xl font-black text-slate-800">{probPercent}%</p>
+
+                    {/* Progress Bar Indicator */}
+                    <div className="w-full bg-slate-200 rounded-full h-2.5 mt-4 overflow-hidden">
+                        <div className={`h-2.5 rounded-full ${isHighRisk ? 'bg-danger' : 'bg-primary'}`} style={{ width: `${probPercent}%` }}></div>
+                    </div>
                 </div>
             </div>
 
-            <div className="mt-8 flex justify-center">
-                <Button onClick={generatePDF} variant="secondary" className="flex items-center gap-2">
+            <div className="mt-6 flex justify-center border-t border-borderLight pt-6">
+                <Button onClick={generatePDF} variant="secondary" className="flex items-center gap-2 max-w-xs">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                         <polyline points="7 10 12 15 17 10"></polyline>

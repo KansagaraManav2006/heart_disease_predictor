@@ -18,7 +18,15 @@ function runPythonPrediction(type, data) {
             path.join(__dirname, '../ml/predict.py'),
             type,
             JSON.stringify(data)
-        ]);
+    ], {
+      env: {
+        ...process.env,
+        OPENBLAS_NUM_THREADS: '1',
+        OMP_NUM_THREADS: '1',
+        MKL_NUM_THREADS: '1',
+        NUMEXPR_NUM_THREADS: '1',
+      },
+    });
 
         let outputData = '';
         let errorData = '';
