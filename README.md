@@ -147,6 +147,3 @@ Database (if needed): MongoDB Atlas (Free 512MB)
 
 The initial version of this project used a Streamlit frontend (`app.py`). This architecture has been **deprecated and removed** in favor of the React/Node.js stack for greater scalability and UI control.
 
-## Credits
-
-Built by Smit Kansagara
