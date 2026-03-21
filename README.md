@@ -1,14 +1,15 @@
 # Fullstack Disease Prediction System (Diabetes & Heart)
 
-A modernized web application for predicting diabetes and heart disease risk. The application features a robust Express backend API and a cutting-edge React frontend adorned with a Glassmorphism aesthetic.
+A modernized, clinical-grade web application for assessing diabetes and heart disease risk. The platform features a robust Express/Python backend engine and a professional medical dashboard frontend designed for healthcare environments.
 
-## Features
+## Core Features
 
-- 🩺 **Dual Disease Prediction**: Diabetes and Heart Disease risk assessment
-- 🔮 **Glassmorphism UI**: Beautiful, translucent interface powered by Tailwind CSS v4 and React 18
-- 🚀 **Fullstack Architecture**: Clean separation between the Node.js API layer and the React client
-- 🎯 **Accurate Models**: Trained scikit-learn models powering the data science layer
-- ⚡ **Rapid Development**: Configured with `concurrently` for one-command frontend and backend startup
+- 🩺 **Dual Disease Diagnostics**: Comprehensive risk assessment for both Diabetes and Cardiovascular conditions.
+- 🏥 **Clinical UI Design System**: A clean, professional medical dashboard layout (Medical Blue/Teal) built with React 19 and Tailwind CSS v4.
+- 📄 **Automated Medical Reporting**: Instantly generate and download clinical-grade PDF Diagnostic Reports complete with patient metrics and physician signature lines (via `jsPDF`).
+- 🚀 **Fullstack Architecture**: Complete separation of concerns between the Node.js Express API layer and the React client.
+- 🎯 **Machine Learning Engine**: Trained scikit-learn predictive models dynamically executed via Python child processes.
+- ⚡ **Rapid Development**: Configured with `concurrently` for instant one-command (`npm run dev`) full-stack startup.
 
 ## Architecture
 
