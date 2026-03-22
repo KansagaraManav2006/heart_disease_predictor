@@ -61,3 +61,38 @@ The system is built on a **split-layer architecture** bridging modern web develo
    utils.py        # The core feature-engineering rules ensuring Python matches Scikit
    /models         # The frozen memory states of our trained Random Forest AIs
 ```
+
+---
+
+## 4. Data Science Models & Methodology
+
+The core intelligence of the application is driven by specific Machine Learning algorithms tailored to the physical characteristics of clinical datasets. 
+
+### A. Concepts & Models Used
+
+#### 1. Data Preprocessing & Scaling (StandardScaler)
+- **Concept Used**: Feature Standardization
+- **Why it was used**: Health metrics have wildly different scales (e.g., Blood Glucose ranges from 80-300, while Age ranges from 20-80). Feeding raw numbers into a model causes it to unfairly prioritize larger numbers. We used `StandardScaler` to compress all features into a normalized standard deviation (mean of 0) so the model evaluates the *relative* severity of the metric, not the raw integer size.
+
+#### 2. Logistic Regression (Heart Disease)
+- **Concept Used**: Linear Probability Classification
+- **Why it was used for Heart Disease**: Heart disease triggers (like high blood pressure and cholesterol) often exhibit linear relationships with the outcome (e.g., the higher the cholesterol, the exponentially higher the risk). Logistic Regression is mathematically perfect for this because it outputs a strict probability curve (Sigmoid function) between 0 and 1. Clinically, it is **highly interpretable**—doctors can look at the model's coefficients and know exactly how much 1 unit of blood pressure increases the patient's risk.
+
+#### 3. Random Forest Classifier (Diabetes)
+- **Concept Used**: Ensemble Learning / Decision Trees
+- **Why it was used for Diabetes**: Diabetes diagnosis strongly depends on "thresholds" intersecting with each other (e.g., High BMI *combined* with specific Age *combined* with HbA1c > 6.5). Random Forest builds hundreds of decision trees that look for these exact boolean threshold intersections. It inherently captures these non-linear, multi-variable interactions much better than a straight line equation ever could, making it highly accurate for metabolic syndrome clustering.
+
+### B. Concepts NOT Used (And Why)
+
+#### 1. Deep Learning / Artificial Neural Networks (ANN/CNN)
+- **Concept NOT Used**: Multi-layer Perceptrons or Convolutional Networks
+- **Why it was rejected**: Neural Networks require massive amounts of data (often millions of rows) to generalize properly without memorizing the training data. Our tabular medical datasets are typically limited (thousands of rows). Using a Neural Network here would result in **severe overfitting**. Furthermore, Neural Networks act as "Black Boxes"—it is nearly impossible to tell a doctor *why* the AI made the diagnosis. In healthcare, explainability (Random Forest/Logistic) strictly overrides microscopic accuracy gains from Deep Learning.
+- **Why CNNs were rejected**: Convolutional Neural Networks are designed exclusively for spatial matrices (X-Rays, MRI scans, Images). We are dealing with structured, tabular biometric data (Excel-style rows), making CNNs mathematically incompatible.
+
+#### 2. Unsupervised Learning (K-Means, PCA clustering)
+- **Concept NOT Used**: Clustering without labels
+- **Why it was rejected**: Unsupervised learning asks the AI to find invisible patterns in data without knowing who is sick and who is healthy. Since our goal is **Diagnosis Prediction**, we already have historically verified medical labels for our training patients (1 = Sick, 0 = Healthy). Therefore, this is explicitly a *Supervised Classification* problem. Unsupervised clustering would be useless for giving a patient a definitive "Risk/No Risk" answer.
+
+#### 3. Support Vector Machines (SVM)
+- **Concept NOT Used**: Hyperplane Margin Classification
+- **Why it was rejected**: While SVMs are powerful, they are highly sensitive to outliers and scale, and they take exponentially longer to compute as dataset sizes scale up horizontally. Given that Random Forest inherently prevents overfitting via bootstrap aggregating (bagging) and handles missing variables or outliers natively, SVM was considered mathematically inefficient for this specific pipeline.
