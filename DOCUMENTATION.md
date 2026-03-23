@@ -169,3 +169,37 @@ Throughout the engineering lifecycle of this project, several critical roadblock
 ### E. EADDRINUSE (Ghost Server Port Collisions)
 - **The Problem**: Because we architected the system to run *both* the React frontend and the Express backend simultaneously via `concurrently` on a single command (`npm run dev`), unexpectedly stopping the terminal sometimes orphaned the Express Node process in the background. Trying to start the app again would crash entirely, screaming `Error: listen EADDRINUSE :::5000`.
 - **The Solution**: We standardized a port-kill routine. If Port 5000 experiences ghost deadlocks, the user can aggressively hunt and terminate the abandoned background Node process using Task Manager/PID sweeps, allowing the environment to boot cleanly again.
+
+---
+
+## 6. Datasets & Baseline Metrics
+
+To ensure clinical accuracy and replicability, the algorithms were trained on two of the most heavily scrutinized, publicly verified medical datasets available.
+
+### A. The Heart Disease Dataset (UCI Machine Learning Repository)
+- **Source**: Cleveland Clinic Foundation (via UCI / Kaggle)
+- **Total Patient Records (Rows)**: 303 strictly verified clinical patients
+- **Feature Count (Columns)**: 14 distinct biological markers
+- **The Target (Outcome)**: `1` = Presence of heart disease, `0` = Absence
+- **Key Metrics Tracked**: 
+  - Age & Sex
+  - Chest Pain Type (`cp`)
+  - Resting Blood Pressure (`trestbps`)
+  - Serum Cholesterol in mg/dl (`chol`)
+  - Maximum Heart Rate Achieved (`thalach`)
+  - Exercise Induced Angina (`exang`)
+- **Dataset Challenge**: The primary challenge of the UCI dataset is its relatively small sample size (303 rows). This is why Deep Learning / Neural Networks were strictly rejected in favor of Logistic Regression; Logistic Regression mathematically maximizes linear signal extraction from small datasets without "overfitting" or hallucinating patterns.
+
+### B. The Diabetes Dataset (Pima Indians / NIDDK)
+- **Source**: National Institute of Diabetes and Digestive and Kidney Diseases (via Kaggle)
+- **Total Patient Records (Rows)**: 768 strictly verified female patients of Pima Indian heritage
+- **Feature Count (Columns)**: 8 distinct metabolic markers
+- **The Target (Outcome)**: `1` = Tested positive for diabetes, `0` = Tested negative
+- **Key Metrics Tracked**: 
+  - Plasma Glucose Concentration (`Glucose`)
+  - Diastolic Blood Pressure (`BloodPressure`)
+  - Body Mass Index (`BMI`)
+  - Age (`Age`)
+  - 2-Hour Serum Insulin (`Insulin`)
+  - Diabetes Pedigree Function (Genetic History Multiplier)
+- **Dataset Challenge**: The Pima dataset is famous in data science for containing biologically impossible `0` values (e.g., a patient having a Blood Pressure or BMI identically equal to `0`). During our EDA pipeline step, we identified these missing artifacts and statistically imputed them using the verified median values so the AI wouldn't incorrectly learn that zero-blood-pressure meant "healthy".
