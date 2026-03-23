@@ -174,32 +174,30 @@ Throughout the engineering lifecycle of this project, several critical roadblock
 
 ## 6. Datasets & Baseline Metrics
 
-To ensure clinical accuracy and replicability, the algorithms were trained on two of the most heavily scrutinized, publicly verified medical datasets available.
+To ensure massive clinical accuracy and replicability, the algorithms were trained on two highly robust, high-volume verified medical datasets. 
 
-### A. The Heart Disease Dataset (UCI Machine Learning Repository)
-- **Source**: Cleveland Clinic Foundation (via UCI / Kaggle)
-- **Total Patient Records (Rows)**: 303 strictly verified clinical patients
-- **Feature Count (Columns)**: 14 distinct biological markers
-- **The Target (Outcome)**: `1` = Presence of heart disease, `0` = Absence
+### A. The Cardiovascular Disease Dataset (ml/data/heart.csv)
+- **Total Patient Records (Rows)**: 70,000 verified clinical patients.
+- **Feature Count (Columns)**: 12 distinct biological markers.
+- **The Target (Outcome)**: `cardio` (`1` = Presence of cardiovascular disease, `0` = Absence).
 - **Key Metrics Tracked**: 
-  - Age & Sex
-  - Chest Pain Type (`cp`)
-  - Resting Blood Pressure (`trestbps`)
-  - Serum Cholesterol in mg/dl (`chol`)
-  - Maximum Heart Rate Achieved (`thalach`)
-  - Exercise Induced Angina (`exang`)
-- **Dataset Challenge**: The primary challenge of the UCI dataset is its relatively small sample size (303 rows). This is why Deep Learning / Neural Networks were strictly rejected in favor of Logistic Regression; Logistic Regression mathematically maximizes linear signal extraction from small datasets without "overfitting" or hallucinating patterns.
+  - Age (in days) & Gender
+  - Height & Weight (used to engineer BMI)
+  - Systolic Blood Pressure (`ap_hi`)
+  - Diastolic Blood Pressure (`ap_lo`)
+  - Cholesterol & Glucose (`cholesterol`, `gluc`)
+  - Lifestyle Risk Factors (`smoke`, `alco`, `active`)
+- **Dataset Challenge**: The primary challenge of this 70,000 row dataset was outlier management. During EDA, we discovered impossible systolic/diastolic readings (e.g., negative blood pressures or 10,000+ mmHg), requiring aggressive mathematical filtering before Logistic Regression could linearly map the probabilities correctly.
 
-### B. The Diabetes Dataset (Pima Indians / NIDDK)
-- **Source**: National Institute of Diabetes and Digestive and Kidney Diseases (via Kaggle)
-- **Total Patient Records (Rows)**: 768 strictly verified female patients of Pima Indian heritage
-- **Feature Count (Columns)**: 8 distinct metabolic markers
-- **The Target (Outcome)**: `1` = Tested positive for diabetes, `0` = Tested negative
+### B. The Comprehensive Diabetes Dataset (ml/data/diabetes.csv)
+- **Total Patient Records (Rows)**: 100,000 strictly verified patients.
+- **Feature Count (Columns)**: 8 distinct metabolic markers.
+- **The Target (Outcome)**: `diabetes` (`1` = Tested positive for diabetes, `0` = Tested negative).
 - **Key Metrics Tracked**: 
-  - Plasma Glucose Concentration (`Glucose`)
-  - Diastolic Blood Pressure (`BloodPressure`)
-  - Body Mass Index (`BMI`)
-  - Age (`Age`)
-  - 2-Hour Serum Insulin (`Insulin`)
-  - Diabetes Pedigree Function (Genetic History Multiplier)
-- **Dataset Challenge**: The Pima dataset is famous in data science for containing biologically impossible `0` values (e.g., a patient having a Blood Pressure or BMI identically equal to `0`). During our EDA pipeline step, we identified these missing artifacts and statistically imputed them using the verified median values so the AI wouldn't incorrectly learn that zero-blood-pressure meant "healthy".
+  - Gender & Age
+  - Existing Medical Conditions (`hypertension`, `heart_disease`)
+  - Smoking History (`smoking_history`)
+  - Body Mass Index (`bmi`)
+  - Hemoglobin A1c Level (`HbA1c_level`)
+  - Blood Glucose Concentration (`blood_glucose_level`)
+- **Dataset Challenge**: Training an algorithm on 100,000 continuous rows takes serious CPU time. Utilizing a Random Forest ensemble across such massive data required precise Hyperparameter tuning (`max_depth` limits) to ensure the 100,000 records didn't overconsume RAM or result in a `.pkl` brain file that was too large for Node.js to dynamically boot instantly.
