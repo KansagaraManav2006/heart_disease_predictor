@@ -143,3 +143,29 @@ To build the intelligent models driving this application, a strict chronological
 #### Step 6: Model Serialization (Pickling)
 - **What was done**: The finalized, memory-mapped, exactly-tuned Models and their associated Scalers were saved to disk physically as `.pkl` (Pickle) binary blob files inside the `ml/models/` directory.
 - **Why**: It takes immense CPU power to train models on thousands of medical records. Serializing (Pickling) essentially freezes the "brain" of the AI into a hard drive file. Now, when a user clicks "Initiate Scan", the Python script instantly un-pickles that frozen brain into RAM (in single-digit milliseconds) to produce a prediction instantly, entirely detached from the original training payload.
+
+---
+
+## 5. Development Challenges & Solutions
+
+Throughout the engineering lifecycle of this project, several critical roadblocks were encountered and resolved.
+
+### A. Bridging Python Ecosystems with Node.js Servers
+- **The Problem**: Machine Learning is universally built on Python (`scikit-learn`, `pandas`). However, our REST API server is built on Node.js / Express for its unparalleled asynchronous speed handling web requests. Node natively *cannot* execute Python algorithms or read `.pkl` memory states.
+- **The Solution (IPC Bridge)**: We engineered an Inter-Process Communication (IPC) bridge. Node.js accepts the web request, sanitizes the JSON data, and uses its native `child_process.spawn` method to instantly boot an isolated, short-lived Python environment in the background. Node hands the data to Python via standard CLI arguments, and Python returns the diagnosis strictly by printing to standard output (`stdout`), which Node listens for and catches.
+
+### B. The Vite React & `jspdf-autotable` Crash
+- **The Problem**: When engineering the Automated PDF Report feature, we utilized `jsPDF` alongside its `jspdf-autotable` plugin. Older tutorials hook the table directly into the PDF prototype (`doc.autoTable(...)`). Because Vite uses highly strict ES-Module isolation, prototype mutation is blocked, causing the PDF generator to silently crash when compiling the risk tables.
+- **The Solution**: We completely refactored the PDF engine to bypass prototype injection entirely. We rewrote the compiler to use explicit Native Module bindings (`autoTable(doc, { ... })`). This decoupled the plugin architecture dynamically, allowing the client-side browser to construct clinical grids flawlessly.
+
+### C. Mismatched Machine Learning Architectures
+- **The Problem**: Pre-trained machine learning models expect the *exact same biological variables* fed into them in the *exact same array order* as they were originally trained on. If a user submits just 10 features but the model was trained on 13, it throws fatal matrix errors.
+- **The Solution**: We built a strict normalization firewall inside `ml/utils.py`. Before handing user data to the AI, Python intercepts it, dynamically matches the keys, fills in expected missing defaults, reshapes the 1D arrays into the hyper-dimensional 2D matrix required by scikit-learn, and forcibly guarantees that the array order perfectly matches the historical Pickled state.
+
+### D. CSS Aesthetics vs. Clinical Usability
+- **The Problem**: The prototype frontend utilized a heavily transparent "Glassmorphism" aesthetic. While visually trendy for portfolios, translucent designs destroy contrast readability, making them entirely unsuited for tense, data-heavy healthcare software environments.
+- **The Solution**: We initiated a full UI tear-down. All blurred acrylic backgrounds were stripped out and replaced with a formal "Medical Blue & Teal" Tailwind design system. We implemented locked structural sidebars, high-contrast text rendering, structured input grids, and overhauled the entire visual hierarchy to mimic extremely professional, trustworthy institutional medical dashboards.
+
+### E. EADDRINUSE (Ghost Server Port Collisions)
+- **The Problem**: Because we architected the system to run *both* the React frontend and the Express backend simultaneously via `concurrently` on a single command (`npm run dev`), unexpectedly stopping the terminal sometimes orphaned the Express Node process in the background. Trying to start the app again would crash entirely, screaming `Error: listen EADDRINUSE :::5000`.
+- **The Solution**: We standardized a port-kill routine. If Port 5000 experiences ghost deadlocks, the user can aggressively hunt and terminate the abandoned background Node process using Task Manager/PID sweeps, allowing the environment to boot cleanly again.
