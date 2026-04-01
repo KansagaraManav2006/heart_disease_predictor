@@ -4,8 +4,11 @@ import InputField from '../components/InputField';
 import SelectField from '../components/SelectField';
 import Button from '../components/Button';
 import ResultCard from '../components/ResultCard';
-import { predictDiabetes } from '../services/api';
-import { Activity } from 'lucide-react';
+import UploadReport from '../components/UploadReport';
+import ChatBot from '../components/ChatBot';
+import { predictDiabetes, saveHistory } from '../services/api';
+import { generateSuggestions } from '../utils/suggestionEngine';
+import { Activity, FileText, Keyboard, MessageSquare } from 'lucide-react';
 
 const DiabetesPrediction = () => {
     const [formData, setFormData] = useState({
@@ -23,6 +26,8 @@ const DiabetesPrediction = () => {
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState(null);
     const [error, setError] = useState('');
+    const [activeTab, setActiveTab] = useState('manual');
+    const [suggestions, setSuggestions] = useState([]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -45,26 +50,60 @@ const DiabetesPrediction = () => {
         setError('');
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const triggerPrediction = async (dataToPredict) => {
         setLoading(true);
         setError('');
-
+        
         try {
             const predictionResponse = await predictDiabetes({
-                ...formData,
-                age: Number(formData.age),
-                bmi: Number(formData.bmi),
-                hba1c: Number(formData.hba1c),
-                glucose: Number(formData.glucose)
+                ...dataToPredict,
+                age: Number(dataToPredict.age),
+                bmi: Number(dataToPredict.bmi),
+                hba1c: Number(dataToPredict.hba1c),
+                glucose: Number(dataToPredict.glucose)
             });
 
             setResult(predictionResponse);
+            
+            const sugs = generateSuggestions('diabetes', dataToPredict, predictionResponse);
+            setSuggestions(sugs);
+            
+            let userId = localStorage.getItem("userId");
+            if (!userId) {
+              userId = "user_" + Date.now();
+              localStorage.setItem("userId", userId);
+            }
+
+            // Save to history
+            saveHistory({
+                userId: userId,
+                userName: dataToPredict.patientName || 'Anonymous',
+                type: 'diabetes',
+                inputs: dataToPredict,
+                prediction: predictionResponse.prediction,
+                probability: predictionResponse.probability
+            }).catch(e => console.error("Failed to save history:", e));
+            
         } catch (err) {
             setError('Failed to connect to the prediction server. Please try again later.');
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        await triggerPrediction(formData);
+    };
+
+    const handleExtract = (extracted) => {
+        setFormData(prev => ({ ...prev, ...extracted }));
+        setActiveTab('manual');
+    };
+
+    const handleChatComplete = async (answers) => {
+        setFormData(prev => ({ ...prev, ...answers }));
+        await triggerPrediction(answers);
     };
 
     const genderOptions = [
@@ -98,6 +137,46 @@ const DiabetesPrediction = () => {
                 </p>
             </div>
 
+            <div className="flex justify-center mb-8">
+                <div className="bg-slate-100 p-1.5 rounded-2xl inline-flex text-sm shadow-inner shadow-slate-200/50">
+                    <button onClick={() => setActiveTab('manual')} className={`flex items-center gap-2 px-6 py-2.5 rounded-xl transition-all ${activeTab === 'manual' ? 'bg-white text-blue-600 shadow-sm font-bold' : 'text-slate-500 hover:text-slate-700 font-medium'}`}>
+                        <Keyboard size={18} /> Manual Entry
+                    </button>
+                    <button onClick={() => setActiveTab('upload')} className={`flex items-center gap-2 px-6 py-2.5 rounded-xl transition-all ${activeTab === 'upload' ? 'bg-white text-blue-600 shadow-sm font-bold' : 'text-slate-500 hover:text-slate-700 font-medium'}`}>
+                        <FileText size={18} /> Upload Report
+                    </button>
+                    <button onClick={() => setActiveTab('chat')} className={`flex items-center gap-2 px-6 py-2.5 rounded-xl transition-all ${activeTab === 'chat' ? 'bg-white text-blue-600 shadow-sm font-bold' : 'text-slate-500 hover:text-slate-700 font-medium'}`}>
+                        <MessageSquare size={18} /> Chat Assistant
+                    </button>
+                </div>
+            </div>
+
+            {activeTab === 'upload' && (
+                <GlassCard className="mb-8">
+                    <UploadReport onExtract={handleExtract} />
+                </GlassCard>
+            )}
+
+            {activeTab === 'chat' && (
+                <div className="mb-8">
+                    <ChatBot 
+                        initialData={formData}
+                        onComplete={handleChatComplete}
+                        questions={[
+                            { key: 'age', question: "What is the patient's age in years?" },
+                            { key: 'gender', question: "What is the patient's gender?", options: genderOptions },
+                            { key: 'bmi', question: "What is their Body Mass Index (BMI)?" },
+                            { key: 'glucose', question: "What is their fasting blood glucose level (mg/dL)?" },
+                            { key: 'hba1c', question: "What is their HbA1c percentage?" },
+                            { key: 'smokingHistory', question: "What is their smoking history?", options: smokingOptions },
+                            { key: 'hypertension', question: "Do they have hypertension (high blood pressure)?", options: yesNoOptions },
+                            { key: 'heartDisease', question: "Do they have any history of heart disease?", options: yesNoOptions }
+                        ]}
+                    />
+                </div>
+            )}
+
+            {activeTab === 'manual' && (
             <GlassCard className="mb-8">
                 <form onSubmit={handleSubmit}>
                     <h2 className="text-xl font-bold text-slate-800 mb-6 border-b border-borderLight pb-2">Patient Details</h2>
@@ -226,6 +305,7 @@ const DiabetesPrediction = () => {
                     </div>
                 </form>
             </GlassCard>
+            )}
 
             {result && (
                 <div id="diabetes-result" className="scroll-mt-24">
@@ -233,6 +313,7 @@ const DiabetesPrediction = () => {
                         prediction={result.prediction}
                         probability={result.probability}
                         riskLevel={result.risk_level}
+                        suggestions={suggestions}
                         extras={[
                             { label: 'Patient', value: formData.patientName || 'Anonymous' },
                             { label: 'BMI', value: formData.bmi },

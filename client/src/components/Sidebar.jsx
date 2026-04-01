@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, Activity, Heart, Info, Menu } from 'lucide-react';
+import { Home, Activity, Heart, Info, Menu, LineChart } from 'lucide-react';
 
 const Sidebar = () => {
     return (
@@ -18,6 +18,7 @@ const Sidebar = () => {
             {/* Navigation Links */}
             <div className="flex flex-col gap-2 px-4 py-8 flex-grow">
                 <NavItem to="/" icon={<Home size={20} />} label="Overview" />
+                <NavItem to="/dashboard" icon={<LineChart size={20} />} label="Dashboard" />
                 <NavItem to="/diabetes" icon={<Activity size={20} />} label="Diabetes Scan" />
                 <NavItem to="/heart" icon={<Heart size={20} />} label="Cardiac Scan" />
                 

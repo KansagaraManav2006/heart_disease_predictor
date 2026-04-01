@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import DiabetesPrediction from './pages/DiabetesPrediction';
 import HeartDiseasePrediction from './pages/HeartDiseasePrediction';
 import About from './pages/About';
+import Dashboard from './pages/Dashboard';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/diabetes" element={<DiabetesPrediction />} />
                 <Route path="/heart" element={<HeartDiseasePrediction />} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/about" element={<About />} />
               </Routes>
             </div>

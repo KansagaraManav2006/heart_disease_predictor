@@ -1,0 +1,118 @@
+{
+  "history": [
+    {
+      "id": "1775019725808",
+      "date": "2026-04-01T05:02:05.808Z",
+      "type": "diabetes",
+      "inputs": {
+        "patientName": "Harsh",
+        "age": "20",
+        "gender": "male",
+        "bmi": "60",
+        "smokingHistory": "never",
+        "hypertension": "1",
+        "heartDisease": "1",
+        "hba1c": "6.5",
+        "glucose": "200"
+      },
+      "prediction": 0,
+      "probability": 0.24381616340077428
+    },
+    {
+      "id": "1775019793799",
+      "date": "2026-04-01T05:03:13.799Z",
+      "type": "diabetes",
+      "inputs": {
+        "patientName": "Harsh",
+        "age": "20",
+        "gender": "male",
+        "bmi": "60",
+        "smokingHistory": "current",
+        "hypertension": "0",
+        "heartDisease": "0",
+        "hba1c": "6.5",
+        "glucose": "200"
+      },
+      "prediction": 0,
+      "probability": 0.02841098332974865
+    },
+    {
+      "id": "1775019869906",
+      "date": "2026-04-01T05:04:29.906Z",
+      "type": "diabetes",
+      "inputs": {
+        "patientName": "Manav",
+        "age": "20",
+        "gender": "male",
+        "bmi": "25.5",
+        "smokingHistory": "current",
+        "hypertension": "1",
+        "heartDisease": "0",
+        "hba1c": "5.5",
+        "glucose": "120"
+      },
+      "prediction": 0,
+      "probability": 0.12476720110114059
+    },
+    {
+      "id": "1775020879894",
+      "date": "2026-04-01T05:21:19.894Z",
+      "userId": "user_1775020628078",
+      "userName": "Manav",
+      "type": "diabetes",
+      "inputs": {
+        "patientName": "Manav",
+        "age": "20",
+        "gender": "male",
+        "bmi": "25.5",
+        "smokingHistory": "current",
+        "hypertension": "1",
+        "heartDisease": "1",
+        "hba1c": "5.5",
+        "glucose": "120"
+      },
+      "prediction": 0,
+      "probability": 0.21389539217308862
+    },
+    {
+      "id": "1775020922282",
+      "date": "2026-04-01T05:22:02.282Z",
+      "userId": "user_1775020628078",
+      "userName": "Harsh",
+      "type": "diabetes",
+      "inputs": {
+        "patientName": "Harsh",
+        "age": "25",
+        "gender": "male",
+        "bmi": "25.5",
+        "smokingHistory": "current",
+        "hypertension": "0",
+        "heartDisease": "1",
+        "hba1c": "6",
+        "glucose": "130"
+      },
+      "prediction": 0,
+      "probability": 0.05233696369936409
+    },
+    {
+      "id": "1775020982965",
+      "date": "2026-04-01T05:23:02.965Z",
+      "userId": "user_1775020628078",
+      "userName": "Manav",
+      "type": "diabetes",
+      "inputs": {
+        "patientName": "Manav",
+        "age": "25",
+        "gender": "male",
+        "bmi": "30",
+        "smokingHistory": "not current",
+        "hypertension": "1",
+        "heartDisease": "1",
+        "hba1c": "7",
+        "glucose": "150"
+      },
+      "prediction": 1,
+      "probability": 0.8933333333333333
+    }
+  ]
+}

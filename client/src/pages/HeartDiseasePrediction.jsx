@@ -4,8 +4,11 @@ import InputField from '../components/InputField';
 import SelectField from '../components/SelectField';
 import Button from '../components/Button';
 import ResultCard from '../components/ResultCard';
-import { predictHeartDisease } from '../services/api';
-import { Heart } from 'lucide-react';
+import UploadReport from '../components/UploadReport';
+import ChatBot from '../components/ChatBot';
+import { predictHeartDisease, saveHistory } from '../services/api';
+import { generateSuggestions } from '../utils/suggestionEngine';
+import { Heart, FileText, Keyboard, MessageSquare } from 'lucide-react';
 
 const HeartDiseasePrediction = () => {
     const [formData, setFormData] = useState({
@@ -26,6 +29,8 @@ const HeartDiseasePrediction = () => {
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState(null);
     const [error, setError] = useState('');
+    const [activeTab, setActiveTab] = useState('manual');
+    const [suggestions, setSuggestions] = useState([]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -51,33 +56,66 @@ const HeartDiseasePrediction = () => {
         setError('');
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const triggerPrediction = async (dataToPredict) => {
         setLoading(true);
         setError('');
 
         try {
             const payload = {
-                ...formData,
-                age: Number(formData.age),
-                height_cm: Number(formData.height_cm),
-                weight_kg: Number(formData.weight_kg),
-                systolic_bp: Number(formData.systolic_bp),
-                diastolic_bp: Number(formData.diastolic_bp),
-                cholesterol: Number(formData.cholesterol),
-                glucose: Number(formData.glucose),
-                smoke: formData.smoke === '1',
-                alco: formData.alco === '1',
-                active: formData.active === '1',
+                ...dataToPredict,
+                age: Number(dataToPredict.age),
+                height_cm: Number(dataToPredict.height_cm),
+                weight_kg: Number(dataToPredict.weight_kg),
+                systolic_bp: Number(dataToPredict.systolic_bp),
+                diastolic_bp: Number(dataToPredict.diastolic_bp),
+                cholesterol: Number(dataToPredict.cholesterol),
+                glucose: Number(dataToPredict.glucose),
+                smoke: dataToPredict.smoke === '1',
+                alco: dataToPredict.alco === '1',
+                active: dataToPredict.active === '1',
             };
 
             const predictionResponse = await predictHeartDisease(payload);
             setResult(predictionResponse);
+            
+            const sugs = generateSuggestions('heart', payload, predictionResponse);
+            setSuggestions(sugs);
+            
+            let userId = localStorage.getItem("userId");
+            if (!userId) {
+              userId = "user_" + Date.now();
+              localStorage.setItem("userId", userId);
+            }
+
+            // Save to history
+            saveHistory({
+                userId: userId,
+                userName: dataToPredict.patientName || 'Anonymous',
+                type: 'heart',
+                inputs: dataToPredict,
+                prediction: predictionResponse.prediction,
+                probability: predictionResponse.probability
+            }).catch(e => console.error("Failed to save history:", e));
         } catch (err) {
             setError('Failed to connect to the prediction server. Please try again later.');
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        await triggerPrediction(formData);
+    };
+
+    const handleExtract = (extracted) => {
+        setFormData(prev => ({ ...prev, ...extracted }));
+        setActiveTab('manual');
+    };
+
+    const handleChatComplete = async (answers) => {
+        setFormData(prev => ({ ...prev, ...answers }));
+        await triggerPrediction(answers);
     };
 
     const genderOptions = [
@@ -102,6 +140,49 @@ const HeartDiseasePrediction = () => {
                 </p>
             </div>
 
+            <div className="flex justify-center mb-8">
+                <div className="bg-slate-100 p-1.5 rounded-2xl inline-flex text-sm shadow-inner shadow-slate-200/50">
+                    <button onClick={() => setActiveTab('manual')} className={`flex items-center gap-2 px-6 py-2.5 rounded-xl transition-all ${activeTab === 'manual' ? 'bg-white text-red-600 shadow-sm font-bold' : 'text-slate-500 hover:text-slate-700 font-medium'}`}>
+                        <Keyboard size={18} /> Manual Entry
+                    </button>
+                    <button onClick={() => setActiveTab('upload')} className={`flex items-center gap-2 px-6 py-2.5 rounded-xl transition-all ${activeTab === 'upload' ? 'bg-white text-red-600 shadow-sm font-bold' : 'text-slate-500 hover:text-slate-700 font-medium'}`}>
+                        <FileText size={18} /> Upload Report
+                    </button>
+                    <button onClick={() => setActiveTab('chat')} className={`flex items-center gap-2 px-6 py-2.5 rounded-xl transition-all ${activeTab === 'chat' ? 'bg-white text-red-600 shadow-sm font-bold' : 'text-slate-500 hover:text-slate-700 font-medium'}`}>
+                        <MessageSquare size={18} /> Chat Assistant
+                    </button>
+                </div>
+            </div>
+
+            {activeTab === 'upload' && (
+                <GlassCard className="mb-8 border-t-4 border-t-red-500/50">
+                    <UploadReport onExtract={handleExtract} />
+                </GlassCard>
+            )}
+
+            {activeTab === 'chat' && (
+                <div className="mb-8 border-t-4 border-t-red-500/50 rounded-2xl overflow-hidden">
+                    <ChatBot 
+                        initialData={formData}
+                        onComplete={handleChatComplete}
+                        questions={[
+                            { key: 'age', question: "What is the patient's age in years?" },
+                            { key: 'gender', question: "What is the patient's gender?", options: genderOptions },
+                            { key: 'height_cm', question: "What is their height (in cm)?" },
+                            { key: 'weight_kg', question: "What is their weight (in kg)?" },
+                            { key: 'systolic_bp', question: "What is their Systolic Blood Pressure?" },
+                            { key: 'diastolic_bp', question: "What is their Diastolic Blood Pressure?" },
+                            { key: 'cholesterol', question: "What is their Cholesterol Level (mg/dL)?" },
+                            { key: 'glucose', question: "What is their Fasting Blood Glucose (mg/dL)?" },
+                            { key: 'smoke', question: "Are they a smoker?", options: yesNoOptions },
+                            { key: 'alco', question: "Do they consume alcohol regularly?", options: yesNoOptions },
+                            { key: 'active', question: "Are they physically active?", options: yesNoOptions }
+                        ]}
+                    />
+                </div>
+            )}
+
+            {activeTab === 'manual' && (
             <GlassCard className="mb-8 border-t-4 border-t-red-500/50">
                 <form onSubmit={handleSubmit}>
                     <h2 className="text-xl font-bold text-slate-800 mb-6 border-b border-borderLight pb-2">Biometric Data</h2>
@@ -157,6 +238,7 @@ const HeartDiseasePrediction = () => {
                     </div>
                 </form>
             </GlassCard>
+            )}
 
             {result && (
                 <div id="heart-result" className="scroll-mt-24">
@@ -164,6 +246,7 @@ const HeartDiseasePrediction = () => {
                         prediction={result.prediction}
                         probability={result.probability}
                         riskLevel={result.risk_level}
+                        suggestions={suggestions}
                         extras={[
                             { label: 'Patient', value: formData.patientName || 'Anonymous' },
                             { label: 'BMI', value: result.bmi_val ? `${result.bmi_val}` : 'N/A' },

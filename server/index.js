@@ -3,9 +3,26 @@ const cors = require('cors');
 const path = require('path');
 const morgan = require('morgan');
 const { spawn } = require('child_process');
+const fs = require('fs').promises;
+const fsSync = require('fs');
+const multer = require('multer');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Set up temp upload directory
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fsSync.existsSync(uploadDir)) {
+  fsSync.mkdirSync(uploadDir);
+}
+const upload = multer({ dest: uploadDir });
+
+// Set up data directory
+const dataDir = path.join(__dirname, 'data');
+if (!fsSync.existsSync(dataDir)) {
+  fsSync.mkdirSync(dataDir);
+  fsSync.writeFileSync(path.join(dataDir, 'db.json'), JSON.stringify({ history: [] }));
+}
 
 app.use(morgan('dev'));
 app.use(cors());
@@ -79,6 +96,84 @@ app.post('/api/predict/heart', async (req, res) => {
   } catch (err) {
     console.error("HEART DISEASE PREDICTION CRASH:", err);
     res.status(500).json({ error: "Internal Server Error", details: err.message });
+  }
+});
+// --- NEW ROUTES FOR OCR & HISTORY ---
+
+app.post('/api/extract', upload.single('report'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded' });
+  }
+  
+  try {
+    const filePath = req.file.path;
+    
+    // Spawn python script
+    const pythonProcess = spawn('python', [
+      path.join(__dirname, '../ml/extract.py'),
+      filePath
+    ]);
+
+    let outputData = '';
+    let errorData = '';
+
+    pythonProcess.stdout.on('data', (chunk) => { outputData += chunk.toString(); });
+    pythonProcess.stderr.on('data', (chunk) => { errorData += chunk.toString(); });
+
+    pythonProcess.on('close', async (code) => {
+      // Clean up uploaded file
+      try { await fs.unlink(filePath); } catch(e) { console.error('Failed to clean up', e); }
+
+      if (code !== 0) {
+        console.error('OCR Python script failed:', errorData);
+        return res.status(500).json({ error: 'OCR processing failed', details: errorData });
+      }
+
+      try {
+        const result = JSON.parse(outputData.trim());
+        res.json(result);
+      } catch (err) {
+        console.error('Failed to parse OCR output. Raw:', outputData);
+        res.status(500).json({ error: 'Invalid response from OCR model' });
+      }
+    });
+  } catch(err) {
+    res.status(500).json({ error: "Internal Server Error", details: err.message });
+  }
+});
+
+app.post('/api/history', async (req, res) => {
+  try {
+    const dbPath = path.join(__dirname, 'data', 'db.json');
+    const rawData = await fs.readFile(dbPath, 'utf8');
+    const db = JSON.parse(rawData);
+    
+    // Create new record
+    const newRecord = {
+      id: Date.now().toString(),
+      date: new Date().toISOString(),
+      ...req.body
+    };
+    
+    db.history.push(newRecord);
+    await fs.writeFile(dbPath, JSON.stringify(db, null, 2), 'utf8');
+    res.json({ success: true, record: newRecord });
+  } catch (err) {
+    console.error('Failed to save to history:', err);
+    res.status(500).json({ error: "Failed to save history" });
+  }
+});
+
+app.get('/api/history', async (req, res) => {
+  try {
+    const dbPath = path.join(__dirname, 'data', 'db.json');
+    if (!fsSync.existsSync(dbPath)) return res.json([]);
+    const rawData = await fs.readFile(dbPath, 'utf8');
+    const db = JSON.parse(rawData);
+    res.json(db.history || []);
+  } catch (err) {
+    console.error('Failed to retrieve history:', err);
+    res.status(500).json({ error: "Failed to load history" });
   }
 });
 

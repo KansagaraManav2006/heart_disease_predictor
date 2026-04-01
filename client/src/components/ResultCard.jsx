@@ -4,7 +4,7 @@ import Button from './Button';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-const ResultCard = ({ prediction, probability, riskLevel, extras = [] }) => {
+const ResultCard = ({ prediction, probability, riskLevel, extras = [], suggestions = [] }) => {
     const isHighRisk = prediction === 1;
     const probPercent = (probability * 100).toFixed(1);
 
@@ -103,15 +103,42 @@ const ResultCard = ({ prediction, probability, riskLevel, extras = [] }) => {
             });
         }
 
-        // 5. Official Signature Line
-        const finalY = doc?.lastAutoTable?.finalY ? doc.lastAutoTable.finalY + 30 : 220;
+        // 5. Smart Health Recommendations
+        let finalY = doc?.lastAutoTable?.finalY ? doc.lastAutoTable.finalY + 15 : 180;
+        
+        if (suggestions && suggestions.length > 0) {
+            doc.setFontSize(12);
+            doc.setTextColor(30, 41, 59);
+            doc.setFont("helvetica", "bold");
+            doc.text('Health Recommendations', 14, finalY);
+            doc.setLineWidth(0.5);
+            doc.line(14, finalY + 2, 196, finalY + 2);
+            
+            finalY += 10;
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10);
+            doc.setTextColor(50, 50, 50);
+            
+            suggestions.forEach((sug) => {
+                const textLines = doc.splitTextToSize(`• ${sug}`, 175);
+                doc.text(textLines, 14, finalY);
+                finalY += (textLines.length * 6) + 2; 
+                if (finalY > 270) {
+                    doc.addPage();
+                    finalY = 20;
+                }
+            });
+            finalY += 15;
+        }
+
+        // 6. Official Signature Line
         doc.setDrawColor(150, 150, 150);
         doc.line(140, finalY, 196, finalY);
         doc.setFontSize(10);
         doc.setTextColor(100, 100, 100);
         doc.text("Attending Physician / Reviewer", 145, finalY + 6);
 
-        // 6. Footer (Applies to all pages)
+        // 7. Footer (Applies to all pages)
         const pageCount = doc.internal.getNumberOfPages();
         for (let i = 1; i <= pageCount; i++) {
             doc.setPage(i);
@@ -157,6 +184,26 @@ const ResultCard = ({ prediction, probability, riskLevel, extras = [] }) => {
                     </div>
                 </div>
             </div>
+
+            {/* Smart Suggestions UI */}
+            {suggestions && suggestions.length > 0 && (
+                <div className="mt-8 bg-blue-50/50 rounded-xl p-6 border border-blue-100">
+                    <h4 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <svg className="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                        Personalized Recommendations
+                    </h4>
+                    <ul className="space-y-3">
+                        {suggestions.map((sug, idx) => (
+                            <li key={idx} className="flex items-start gap-3">
+                                <div className="mt-1 flex-shrink-0 w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                                </div>
+                                <p className="text-slate-700 font-medium leading-relaxed">{sug}</p>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
 
             <div className="mt-6 flex justify-center border-t border-borderLight pt-6">
                 <Button onClick={generatePDF} variant="secondary" className="flex items-center gap-2 max-w-xs">

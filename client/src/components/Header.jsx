@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu, Bell, User } from 'lucide-react';
+import { Menu } from 'lucide-react';
 
 const Header = () => {
     return (
@@ -10,19 +10,10 @@ const Header = () => {
                 </button>
                 <div>
                     <h2 className="text-xl font-bold text-slate-800">Disease Prediction System</h2>
-                    <p className="text-xs text-slate-500 font-medium hidden sm:block">AI-Based Health Risk Assessment Dashboard</p>
+                    <p className="text-xs text-slate-500 font-medium hidden sm:block">AI-Based Health Risk Assessment</p>
                 </div>
             </div>
-
-            <div className="flex items-center gap-4">
-                <button className="p-2 text-slate-400 hover:text-primary transition-colors relative">
-                    <Bell size={20} />
-                    <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-danger rounded-full"></span>
-                </button>
-                <div className="h-8 w-8 rounded-full bg-primary/10 text-primary flex items-center justify-center border border-primary/20">
-                    <User size={16} />
-                </div>
-            </div>
+            {/* Kept header clean right side */}
         </header>
     );
 };
