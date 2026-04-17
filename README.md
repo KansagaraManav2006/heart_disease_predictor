@@ -1,149 +1,205 @@
-# Fullstack Disease Prediction System (Diabetes & Heart)
+# Health Disease Predictor
 
-A modernized, clinical-grade web application for assessing diabetes and heart disease risk. The platform features a robust Express/Python backend engine and a professional medical dashboard frontend designed for healthcare environments.
+Full-stack healthcare risk assessment application for Diabetes and Heart Disease prediction.
+
+This project combines:
+- React + Vite frontend
+- Node.js + Express backend
+- Python machine learning inference (scikit-learn)
+- Optional OCR extraction pipeline for lab report uploads
+
+The application allows users to enter patient vitals, run predictive inference, view risk confidence, export reports, and store/retrieve assessment history.
+
+## Project Overview
+
+### What this system does
+- Predicts Diabetes risk from clinical inputs.
+- Predicts Heart Disease risk from clinical inputs.
+- Shows prediction probability and risk level.
+- Supports report upload with OCR-based value extraction.
+- Stores prediction history in a lightweight JSON datastore.
+
+### High-level architecture
+1. Frontend submits form data to /api routes.
+2. Express backend receives and validates payloads.
+3. Backend spawns Python process (ml/predict.py) with payload.
+4. Python loads trained model/scaler artifacts from ml/models.
+5. Prediction response is returned to frontend as JSON.
+
+## Repository Structure
+
+heart_disease_predictor-main/
+|- client/                  React app (UI)
+|  |- src/components/       Reusable UI components
+|  |- src/pages/            Screen-level pages
+|  |- src/services/api.js   API client methods
+|- server/                  Express API
+|  |- index.js              Routes + Python bridge + history + OCR upload
+|  |- data/db.json          Local history storage
+|- ml/                      Python inference and data utilities
+|  |- predict.py            Entry point for predictions
+|  |- extract.py            OCR extraction logic
+|  |- utils.py              Feature engineering + artifact loading
+|  |- models/               Trained model/scaler artifacts (.pkl)
+|  |- requirements.txt      Python dependencies
+|- README.md
+|- DOCUMENTATION.md
 
 ## Core Features
 
-- 🩺 **Dual Disease Diagnostics**: Comprehensive risk assessment for both Diabetes and Cardiovascular conditions.
-- 🏥 **Clinical UI Design System**: A clean, professional medical dashboard layout (Medical Blue/Teal) built with React 19 and Tailwind CSS v4.
-- 📄 **Automated Medical Reporting**: Instantly generate and download clinical-grade PDF Diagnostic Reports complete with patient metrics and physician signature lines (via `jsPDF`).
-- 🚀 **Fullstack Architecture**: Complete separation of concerns between the Node.js Express API layer and the React client.
-- 🎯 **Machine Learning Engine**: Trained scikit-learn predictive models dynamically executed via Python child processes.
-- ⚡ **Rapid Development**: Configured with `concurrently` for instant one-command (`npm run dev`) full-stack startup.
+- Dual disease prediction workflows.
+- Clinical form UX with structured numeric/categorical inputs.
+- PDF report generation on client side.
+- OCR extraction from PDF/image reports (optional).
+- Assessment history save and fetch endpoints.
+- One-command dev startup for client and server.
 
-## Architecture
+## Technology Stack
 
-The application has been upgraded from a monolithic Python Streamlit app to a modular MERN-inspired stack:
+### Frontend
+- React 19
+- Vite 7
+- React Router 7
+- Tailwind CSS 4
+- jsPDF + jspdf-autotable
 
-### `client/` (Frontend)
-- **Framework**: React 18 built with Vite
-- **Styling**: Tailwind CSS v4 using modern `@theme` CSS variables
-- **Components**: Reusable, pure-functional components (`GlassCard`, `Button`, `ResultCard`)
-- **Routing**: `react-router-dom` handling multi-page navigation
+### Backend
+- Node.js
+- Express 4
+- Multer (file uploads)
+- Morgan (logging)
+- CORS
 
-### `server/` (Backend)
-- **Framework**: Node.js with Express
-- **API**: RESTful endpoints (`/api/predict/diabetes`, `/api/predict/heart`) taking structured JSON payloads
-- **CORS**: Configured for cross-origin local development
+### ML Layer
+- Python 3.10+
+- pandas
+- numpy
+- scikit-learn
+- matplotlib
+- fpdf
 
-### `ml/` (Python Data Science Layer)
-- `ml/utils.py` contains the feature engineering logic and artifact loading.
-- Pretrained models and scalers (`ml/models/`) are loaded via Python. *(Note: Integration between Express and the Python models requires either an HTTP microservice like Flask or `child_process` spawning, depending on deployment environment.)*
+### OCR (used by ml/extract.py)
+- PyMuPDF (fitz) for PDF text extraction
+- Pillow + pytesseract for image OCR
+- Tesseract OCR binary installed on OS PATH (system dependency)
 
-## Setup and Development
+## API Endpoints
 
-1. **Install Root Dependencies**
-   The root package manages concurrent execution:
-   ```bash
-   npm install
-   npm run install:all  # Triggers npm install in both /client and /server
-   ```
+### Prediction
+- POST /api/predict/diabetes
+- POST /api/predict/heart
 
-2. **Run the Development Server**
-   Start both the Express backend and Vite frontend simultaneously:
-   ```bash
-   npm run dev
-   ```
-   - The React app will be available at `http://localhost:5173`
-   - The Express API will be running on `http://localhost:5000`
+### OCR
+- POST /api/extract (multipart/form-data, field name: report)
 
-## Production Build
+### History
+- POST /api/history
+- GET /api/history
 
-To compile the React frontend for production distribution:
+## Prerequisites
 
-```bash
+Install these before running the app:
+- Node.js 18+
+- npm 9+
+- Python 3.10+
+
+Optional for OCR image extraction:
+- Tesseract OCR installed and available in PATH
+
+## Setup and Run (Development)
+
+### 1. Install Node dependencies
+
+From project root:
+
+npm install
+npm run install:all
+
+### 2. Install Python dependencies
+
+From project root:
+
+pip install -r ml/requirements.txt
+
+If you want OCR support, also install:
+
+pip install pymupdf pillow pytesseract
+
+### 3. Verify ML artifacts exist
+
+Ensure these files are present under ml/models:
+- diabetes_model.pkl
+- diabetes_scaler.pkl
+- heart_model.pkl
+- heart_scaler.pkl
+
+### 4. Start full stack
+
+From project root:
+
+npm run dev
+
+Default local URLs:
+- Frontend: http://localhost:5173
+- Backend: http://localhost:5000
+
+Note: Vite proxy forwards /api requests to backend port 5000.
+
+## Production Commands
+
+Build frontend bundle:
+
 npm run build
-```
-The compiled assets will be placed in `client/dist/` and automatically served statically by the Express server when `NODE_ENV=production`. You can start the production server with:
-```bash
+
+Run server:
+
 npm start
-```
 
-## Deployment (Free Options)
+When NODE_ENV=production, Express serves static files from client/dist.
 
-This fullstack application with Python ML integration can be deployed using several free platforms:
+## Important Implementation Notes
 
-### Option 1: Render (Recommended for Fullstack)
+- Backend currently invokes Python using command name: python.
+   Make sure python is available in terminal PATH, or update spawn command in server/index.js.
 
-**Render** offers free tiers for web services and supports both Node.js and Python.
+- History storage is file-based (server/data/db.json).
+   This is suitable for local/small deployments and should be replaced with a database for larger scale.
 
-1. **Backend + Python ML Service**:
-   - Deploy `server/` as a Node.js Web Service
-   - Deploy `ml/` as a separate Python Web Service (Flask/FastAPI wrapper)
-   - Link both services via environment variables
-   - Free tier: 750 hours/month, auto-sleep after inactivity
+- OCR endpoint accepts uploaded files, stores temporary files in server/uploads, and cleans them after processing.
 
-2. **Frontend**:
-   - Deploy `client/` as a Static Site
-   - Connect to backend API URL
-   - Free tier: Unlimited bandwidth
+## Common Issues and Fixes
 
-**Setup**:
+### 1. Prediction fails with model loading errors
+- Cause: Missing or wrong .pkl files in ml/models.
+- Fix: Recreate or place correct artifacts with expected names.
 
-```bash
-# Create render.yaml in root for automated deployment
-# Or use Render Dashboard to create services manually
-```
+### 2. Python process fails from backend
+- Cause: python command not found or missing packages.
+- Fix: Confirm Python PATH and install dependencies from ml/requirements.txt.
 
-### Option 2: Vercel (Frontend) + Railway (Backend + ML)
+### 3. OCR extraction fails for images
+- Cause: Tesseract not installed or not in PATH.
+- Fix: Install Tesseract and restart terminal.
 
-**Best for**: Separate frontend/backend deployment
+### 4. Port already in use
+- Cause: Previous server process still running on 5000 or frontend on 5173.
+- Fix: Stop old process or change ports.
 
-- **Vercel** (Frontend):
-  - Deploy React app from `client/` folder
-  - 100GB bandwidth/month free
-  - Automatic HTTPS and CDN
+## Scripts Reference
 
-- **Railway** (Backend + ML):
-  - Deploy Express server and Python ML service
-  - $5 free credit monthly (~500 hours)
-  - Connect MongoDB/PostgreSQL if needed
+Root package.json scripts:
+- npm run install:all  -> install server and client dependencies
+- npm run client       -> run frontend only
+- npm run server       -> run backend only
+- npm run dev          -> run frontend and backend concurrently
+- npm run build        -> build client
+- npm start            -> start backend entry point
 
-### Option 3: Fly.io (Fullstack + ML)
+## Future Improvements
 
-**Best for**: Dockerized deployments
-
-- Deploy both Node.js backend and Python ML service
-- Free tier: 3 shared-cpu VMs, 3GB storage
-- Requires Docker configuration
-- Excellent for production-grade deployment
-
-### Option 4: Hugging Face Spaces (ML Model Only)
-
-**Best for**: ML model serving
-
-- Deploy Python ML models using Gradio/Streamlit interface
-- Unlimited free CPU inference
-- Community GPU available
-- Perfect for ML experimentation
-
-### Option 5: PythonAnywhere (Python ML Service)
-
-**Best for**: Python-focused deployment
-
-- Free tier: 1 web app, 512MB storage
-- Deploy `ml/predict.py` as Flask API
-- Combine with Vercel (frontend) + free Node backend elsewhere
-
-### Recommended Stack for This Project
-
-```text
-Frontend (React):     Vercel or Netlify
-Backend (Express):    Render or Railway
-ML Service (Python):  Render or Railway
-Database (if needed): MongoDB Atlas (Free 512MB)
-```
-
-### Pre-Deployment Checklist
-
-- [ ] Set environment variables (API URLs, ports)
-- [ ] Update CORS settings in `server/index.js`
-- [ ] Install Python dependencies from `ml/requirements.txt`
-- [ ] Test ML model loading and predictions
-- [ ] Configure production build settings
-- [ ] Set up CI/CD with GitHub Actions (optional)
-
-## Legacy Streamlit
-
-The initial version of this project used a Streamlit frontend (`app.py`). This architecture has been **deprecated and removed** in favor of the React/Node.js stack for greater scalability and UI control.
+- Replace JSON history store with MongoDB/PostgreSQL.
+- Add request validation and schema guards for all API payloads.
+- Add unit and integration tests for Node and Python layers.
+- Containerize full stack for reproducible deployment.
+- Add CI pipeline for lint, tests, and build checks.
 
