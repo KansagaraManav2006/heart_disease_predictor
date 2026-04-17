@@ -2,6 +2,7 @@
 
 All notable changes to the Disease Prediction System project.
 
+
 ## [3.0.0] - 2026-02-28
 
 ### Changed - Architecture & Tech Stack
