@@ -113,6 +113,18 @@
       },
       "prediction": 1,
       "probability": 0.8933333333333333
+    },
+    {
+      "id": "1777630736567",
+      "date": "2026-05-01T10:18:56.567Z",
+      "userId": "test_user",
+      "userName": "Test Patient",
+      "type": "heart",
+      "inputs": {
+        "systolic_bp": 145
+      },
+      "prediction": 1,
+      "probability": 0.76
     }
   ]
 }

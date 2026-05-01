@@ -1,34 +1,10 @@
-# Health Disease Predictor
+# Fullstack Disease Prediction System (v2.0)
 
-Full-stack healthcare risk assessment application for Diabetes and Heart Disease prediction.
-
-
-This project combines:
-- React + Vite frontend
-- Node.js + Express backend
-- Python machine learning inference (scikit-learn)
-- Optional OCR extraction pipeline for lab report uploads
-
-The application allows users to enter patient vitals, run predictive inference, view risk confidence, export reports, and store/retrieve assessment history.
-
-## Project Overview
-
-### What this system does
-- Predicts Diabetes risk from clinical inputs.
-- Predicts Heart Disease risk from clinical inputs.
-- Shows prediction probability and risk level.
-- Supports report upload with OCR-based value extraction.
-- Stores prediction history in a lightweight JSON datastore.
-
-### High-level architecture
-1. Frontend submits form data to /api routes.
-2. Express backend receives and validates payloads.
-3. Backend spawns Python process (ml/predict.py) with payload.
-4. Python loads trained model/scaler artifacts from ml/models.
-5. Prediction response is returned to frontend as JSON.
+A modernized, clinical-grade web application for assessing diabetes and heart disease risk. The platform features a robust Express/Python backend engine, an AI-driven Chat Assistant, Automated OCR Report extraction, and a professional medical dashboard designed for healthcare environments.
 
 ## Repository Structure
 
+```text
 heart_disease_predictor-main/
 |- client/                  React app (UI)
 |  |- src/components/       Reusable UI components
@@ -45,57 +21,84 @@ heart_disease_predictor-main/
 |  |- requirements.txt      Python dependencies
 |- README.md
 |- DOCUMENTATION.md
+```
 
-## Core Features
+---
 
-- Dual disease prediction workflows.
-- Clinical form UX with structured numeric/categorical inputs.
-- PDF report generation on client side.
-- OCR extraction from PDF/image reports (optional).
-- Assessment history save and fetch endpoints.
-- One-command dev startup for client and server.
+## 🚀 Core Features
 
-## Technology Stack
+- 🩺 **Dual Disease Diagnostics**: Comprehensive risk assessment for both Diabetes and Cardiovascular conditions utilizing Pre-Trained Machine Learning Models (Random Forest & Logistic Regression).
+- 🏥 **Clinical UI Design System**: A clean, professional medical dashboard layout built with React 18 and Tailwind CSS v4, optimized for clinical trust and readability.
+- 📄 **Automated Medical Reporting**: Instantly generate and download clinical-grade PDF Diagnostic Reports complete with patient metrics and actionable suggestions (via `jsPDF`).
+- 📸 **Automated OCR Upload**: Upload laboratory PDFs or images (via `Tesseract OCR` and `PyMuPDF`) to automatically extract vital signs like Blood Pressure, Glucose, and BMI to fill out the diagnostic forms instantly.
+- 💬 **AI Chat Assistant**: A conversational user interface that guides patients step-by-step to input their biological metrics without the stress of navigating large clinical forms.
+- 📈 **Longitudinal Dashboard**: A dedicated dashboard to track a patient's historical scans, comparing their current health metrics to their previous tests (e.g. tracking improving blood pressure).
+- 💡 **Suggestion Engine**: Rule-based logic evaluating user metrics to provide tailored, actionable lifestyle advice.
 
-### Frontend
-- React 19
-- Vite 7
-- React Router 7
-- Tailwind CSS 4
-- jsPDF + jspdf-autotable
+---
 
-### Backend
-- Node.js
-- Express 4
-- Multer (file uploads)
-- Morgan (logging)
-- CORS
+## 🏗️ System Architecture
 
-### ML Layer
-- Python 3.10+
-- pandas
-- numpy
-- scikit-learn
-- matplotlib
-- fpdf
+The application operates on a powerful, split-layer MERN-inspired stack:
 
-### OCR (used by ml/extract.py)
-- PyMuPDF (fitz) for PDF text extraction
-- Pillow + pytesseract for image OCR
-- Tesseract OCR binary installed on OS PATH (system dependency)
+### `client/` (Frontend)
+- **Framework**: React 18 built with Vite for sub-second hot module replacement.
+- **Styling**: Tailwind CSS v4.
+- **Components**: Reusable, pure-functional components (`GlassCard`, `Button`, `ResultCard`, `ChatBot`).
+- **Routing**: `react-router-dom` handling multi-page navigation.
 
-## API Endpoints
+### `server/` (Backend)
+- **Framework**: Node.js with Express.
+- **API**: RESTful endpoints (`/api/predict/diabetes`, `/api/predict/heart`, `/api/history`, `/api/extract`) taking structured JSON payloads.
+- **Persistence**: Lightweight JSON-based local database (`db.json`) tied to browser-generated `userId`.
+- **Bridge**: Utilizes `child_process.spawn` to instantiate Python instances asynchronously on-demand.
 
-### Prediction
-- POST /api/predict/diabetes
-- POST /api/predict/heart
+### `ml/` (Python Data Science Layer)
+- **Engine**: Python 3.10+
+- **Libraries**: `pandas`, `scikit-learn`, `pytesseract`, `PyMuPDF`, `numpy`.
+- **Workflow**: `predict.py` executes models stored in `.pkl` format, taking sanitized CLI arguments from Node.js and outputting the final diagnostic probabilities.
 
-### OCR
-- POST /api/extract (multipart/form-data, field name: report)
+*(See `DOCUMENTATION.md` for an extremely detailed deep-dive into the architectural decisions, machine learning algorithms, and engineering challenges.)*
 
-### History
-- POST /api/history
-- GET /api/history
+---
+
+## 💻 Setup and Local Development
+
+### 1. Prerequisites
+- **Node.js** (v18+)
+- **Python** (v3.9+)
+- **Tesseract OCR**: You *must* have the Tesseract binary installed on your host system to use the OCR upload feature.
+   - Windows: Install via [UB-Mannheim installer](https://github.com/UB-Mannheim/tesseract/wiki) and add to PATH.
+   - Mac: `brew install tesseract`
+   - Linux: `sudo apt install tesseract-ocr`
+
+### 2. Install Dependencies
+```bash
+# Clone the repository
+git clone <repo-url>
+cd <repo-name>
+
+# Install the Python dependencies
+cd ml
+pip install -r requirements.txt
+cd ..
+
+# Install the Node/React dependencies
+npm install
+npm run install:all  # Triggers npm install in both /client and /server
+```
+
+### 3. Run the Development Server
+Start both the Express backend and Vite frontend simultaneously:
+```bash
+npm run dev
+```
+- The React App will be running at `http://localhost:5173`
+- The Express API will be running on `http://localhost:5000`
+
+---
+
+## 📦 Production Build
 
 ## Prerequisites
 
@@ -151,56 +154,52 @@ Note: Vite proxy forwards /api requests to backend port 5000.
 Build frontend bundle:
 
 npm run build
+```bash
+npm run build
+```
+The compiled assets will be placed in `client/dist/`. 
 
-Run server:
+---
 
-npm start
+## 🌐 Deployment Guidelines
 
-When NODE_ENV=production, Express serves static files from client/dist.
+Because this application relies on a Node.js server interacting directly with a Python execution layer, you must deploy the backend to a service that supports custom environments.
 
-## Important Implementation Notes
+### Recommended Production Stack
+- **Frontend**: Vercel or Netlify (Deploy `client/`)
+- **Backend & ML**: Render or Railway (Deploy `server/` and `ml/`)
 
-- Backend currently invokes Python using command name: python.
-   Make sure python is available in terminal PATH, or update spawn command in server/index.js.
+**Backend Deployment Steps (Render/Railway):**
+1. Ensure the platform supports installing both Node.js and Python.
+2. In your build command, you must install both environments:
+   ```bash
+   npm install && cd ml && pip install -r requirements.txt && cd ..
+   ```
+3. Set the start command to boot the Express server: `npm start`
+4. Make sure Tesseract OCR is available in the deployment container (via `apt-get` in a Dockerfile or Buildpack).
 
-- History storage is file-based (server/data/db.json).
-   This is suitable for local/small deployments and should be replaced with a database for larger scale.
+---
 
-- OCR endpoint accepts uploaded files, stores temporary files in server/uploads, and cleans them after processing.
-
-## Common Issues and Fixes
+## 🔧 Common Issues and Fixes
 
 ### 1. Prediction fails with model loading errors
-- Cause: Missing or wrong .pkl files in ml/models.
-- Fix: Recreate or place correct artifacts with expected names.
+- **Cause:** Missing or wrong `.pkl` files in `ml/models`.
+- **Fix:** Recreate or place correct artifacts with expected names.
 
 ### 2. Python process fails from backend
-- Cause: python command not found or missing packages.
-- Fix: Confirm Python PATH and install dependencies from ml/requirements.txt.
+- **Cause:** `python` command not found or missing packages.
+- **Fix:** Confirm Python PATH and install dependencies from `ml/requirements.txt`.
 
 ### 3. OCR extraction fails for images
-- Cause: Tesseract not installed or not in PATH.
-- Fix: Install Tesseract and restart terminal.
+- **Cause:** Tesseract not installed or not in PATH.
+- **Fix:** Install Tesseract and restart terminal.
 
 ### 4. Port already in use
-- Cause: Previous server process still running on 5000 or frontend on 5173.
-- Fix: Stop old process or change ports.
+- **Cause:** Previous server process still running on 5000 or frontend on 5173.
+- **Fix:** Stop old process or change ports.
 
-## Scripts Reference
+---
 
-Root package.json scripts:
-- npm run install:all  -> install server and client dependencies
-- npm run client       -> run frontend only
-- npm run server       -> run backend only
-- npm run dev          -> run frontend and backend concurrently
-- npm run build        -> build client
-- npm start            -> start backend entry point
+## 📄 Detailed Documentation
 
-## Future Improvements
-
-- Replace JSON history store with MongoDB/PostgreSQL.
-- Add request validation and schema guards for all API payloads.
-- Add unit and integration tests for Node and Python layers.
-- Containerize full stack for reproducible deployment.
-- Add CI pipeline for lint, tests, and build checks.
-
+For a highly detailed technical breakdown answering **"What we use and exactly why we use it"**, covering the supervised learning methodologies, data engineering challenges, the suggestion engine, and the IPC bridging mechanics, please see the enclosed [`DOCUMENTATION.md`](./DOCUMENTATION.md) file.

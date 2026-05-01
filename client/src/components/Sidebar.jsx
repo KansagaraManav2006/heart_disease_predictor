@@ -4,7 +4,7 @@ import { Home, Activity, Heart, Info, Menu, LineChart } from 'lucide-react';
 
 const Sidebar = () => {
     return (
-        <aside className="w-64 bg-card border-r border-borderLight h-screen fixed left-0 top-0 flex flex-col z-40 hidden md:flex hidden">
+        <aside className="w-64 bg-card border-r border-borderLight h-screen fixed left-0 top-0 flex flex-col z-40 hidden md:flex">
             {/* Logo Area */}
             <div className="flex items-center gap-3 px-6 py-8 border-b border-borderLight h-20">
                 <div className="bg-primary/10 p-2 rounded-lg text-primary">

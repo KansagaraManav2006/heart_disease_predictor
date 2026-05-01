@@ -29,28 +29,42 @@ export const generateSuggestions = (type, data, predictionResult) => {
         if (['current', 'ever'].includes(smoking)) {
             suggestions.push("Smoking increases insulin resistance. Ceasing smoking will have an immediate positive impact on your cardiovascular and metabolic health.");
         }
+
     } else if (type === 'heart') {
-        const sys = Number(data.trestbps);
-        const chol = Number(data.chol);
-        const maxHR = Number(data.thalach);
+        const sys = Number(data.systolic_bp);
+        const chol = Number(data.cholesterol);
         const age = Number(data.age);
+        // Support both string ('1'/'0') and boolean values for lifestyle flags
+        const smoke = data.smoke === '1' || data.smoke === true || data.smoke === 1;
+        const alco = data.alco === '1' || data.alco === true || data.alco === 1;
+        const active = data.active === '1' || data.active === true || data.active === 1;
 
         if (sys >= 140) {
-            suggestions.push("Blood pressure is elevated (>140 mmHg). Reduce sodium intake to under 1,500mg daily, manage stress, and consider the DASH diet.");
+            suggestions.push("Blood pressure is elevated (≥140 mmHg). Reduce sodium intake to under 1,500mg daily, manage stress, and consider the DASH diet.");
         } else if (sys >= 130) {
             suggestions.push("Blood pressure is slightly elevated. Lifestyle modifications including regular aerobic exercise are recommended.");
         }
 
         if (chol > 240) {
-            suggestions.push("High serum cholesterol detected. Replace saturated fats with healthy fats (like avocados, nuts) and increase dietary fiber from oats and legumes.");
+            suggestions.push("High cholesterol detected. Replace saturated fats with healthy fats (like avocados, nuts) and increase dietary fiber from oats and legumes.");
         } else if (chol >= 200) {
             suggestions.push("Borderline high cholesterol. Moderate your intake of animal fats and processed foods.");
         }
 
-        // Generic age-based heart advice if maxHR is low
-        const expectedMaxHR = 220 - age;
-        if (maxHR < expectedMaxHR * 0.7 && maxHR > 40) {
-            suggestions.push("Your maximum achieved heart rate is lower than optimal for your age bracket. Gradually increase cardiovascular aerobic exercise tolerance with medical permission.");
+        if (smoke) {
+            suggestions.push("Smoking significantly increases cardiovascular risk. Quitting smoking is one of the most impactful steps you can take for your heart health.");
+        }
+
+        if (alco) {
+            suggestions.push("Regular alcohol consumption increases blood pressure and heart risk. Consider reducing or eliminating alcohol intake.");
+        }
+
+        if (!active) {
+            suggestions.push("Physical inactivity is a major cardiac risk factor. Aim for at least 150 minutes of moderate aerobic exercise per week.");
+        }
+
+        if (age >= 55) {
+            suggestions.push("Regular cardiac screening is especially important at your age. Annual check-ups with a cardiologist are highly recommended.");
         }
     }
 
@@ -58,7 +72,7 @@ export const generateSuggestions = (type, data, predictionResult) => {
     if (isHighRisk && suggestions.length < 3) {
         suggestions.push("Prioritize a comprehensive clinical evaluation. The system detected high-risk complex patterns.");
     }
-    
+
     if (suggestions.length === 0 && !isHighRisk) {
         suggestions.push("Your biometric indicators look exceptional. Continue maintaining your current active lifestyle and balanced diet!");
     }

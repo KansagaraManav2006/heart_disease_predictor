@@ -69,8 +69,8 @@ def parse_medical_data(text):
     # 3. BP (Systolic and Diastolic)
     bp_match = re.search(r'(?i)(?:bp|blood pressure)[\s\.\,\:\=]*(\d{2,3})\s*[/\\\|\-]\s*(\d{2,3})', text)
     if bp_match:
-        data['systolic'] = float(bp_match.group(1))
-        data['diastolic'] = float(bp_match.group(2))
+        data['systolic_bp'] = float(bp_match.group(1))
+        data['diastolic_bp'] = float(bp_match.group(2))
         
     # 4. BMI
     bmi_match = re.search(r'(?i)(?:bmi|body mass index)[\s\.\,\:\=]+(\d{2}(?:\.\d+)?)', text)
