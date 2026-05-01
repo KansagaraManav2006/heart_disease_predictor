@@ -87,6 +87,11 @@ def parse_medical_data(text):
     if chol_match:
         data['cholesterol'] = float(chol_match.group(1))
 
+    # 7. Patient Name
+    name_match = re.search(r'(?i)(?:patient name|name)[\s\.\,\:\=]+([a-zA-Z\s]{3,30})(?:\n|\r|$)', text)
+    if name_match:
+        data['patientName'] = name_match.group(1).strip()
+
     return data
 
 def main():

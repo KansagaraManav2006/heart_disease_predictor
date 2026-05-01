@@ -45,7 +45,7 @@ const UploadReport = ({ onExtract }) => {
         try {
             const data = await uploadReport(file);
             if (data && data.extracted_data && Object.keys(data.extracted_data).length > 0) {
-                setSuccessMessage(`Successfully extracted ${Object.keys(data.extracted_data).length} parameters! You can review and edit them in the Manual Input tab.`);
+                setSuccessMessage(`Successfully extracted ${Object.keys(data.extracted_data).length} parameters! Auto-generating report...`);
                 // We pass the data up to the parent form state
                 onExtract(data.extracted_data);
             } else {
@@ -105,15 +105,15 @@ const UploadReport = ({ onExtract }) => {
                 </div>
             )}
             
-            <div className="flex justify-between items-center bg-blue-50 p-4 rounded-xl border border-blue-100 mb-8">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-blue-50 p-4 rounded-xl border border-blue-100 mb-8">
                 <div className="flex items-start gap-3">
-                    <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5" />
+                    <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                     <div>
                         <h4 className="text-sm font-bold text-blue-900">How Auto-Extract Works</h4>
-                        <p className="text-xs text-blue-800 mt-1 max-w-md">Our AI scans the document for standard markers like Glucose, HbA1c, and BP. Extracted values will populate the Manual form where you can verify them before running the prediction.</p>
+                        <p className="text-xs text-blue-800 mt-1">Our AI scans the document for standard markers like Glucose, HbA1c, and BP. Extracted values will populate the Manual form where you can verify them before running the prediction.</p>
                     </div>
                 </div>
-                <Button onClick={handleUpload} disabled={!file || loading} className="flex-shrink-0 min-w-[140px]">
+                <Button onClick={handleUpload} disabled={!file || loading} className="w-full sm:w-auto flex-shrink-0 min-w-[140px]">
                     {loading ? 'Scanning...' : 'Extract Data'}
                 </Button>
             </div>

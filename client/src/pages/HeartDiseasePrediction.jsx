@@ -109,8 +109,26 @@ const HeartDiseasePrediction = () => {
     };
 
     const handleExtract = (extracted) => {
-        setFormData(prev => ({ ...prev, ...extracted }));
-        setActiveTab('manual');
+        setFormData(prev => {
+            const mergedData = { ...prev, ...extracted };
+            
+            if (extracted.patientName) {
+                setTimeout(() => triggerPrediction(mergedData), 100);
+            } else {
+                setTimeout(() => {
+                    const name = window.prompt("Patient Name is required. Please enter Patient Name to generate the report:");
+                    if (name && name.trim() !== '') {
+                        const newData = { ...mergedData, patientName: name.trim() };
+                        setFormData(newData);
+                        triggerPrediction(newData);
+                    } else {
+                        setActiveTab('manual');
+                    }
+                }, 100);
+            }
+            
+            return mergedData;
+        });
     };
 
     const handleChatComplete = async (answers) => {
