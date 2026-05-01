@@ -3,6 +3,13 @@ import os
 import json
 import traceback
 
+# Set threading and OpenBLAS constraints BEFORE importing numpy/pandas
+os.environ['OPENBLAS_NUM_THREADS'] = '1'
+os.environ['OMP_NUM_THREADS'] = '1'
+os.environ['MKL_NUM_THREADS'] = '1'
+os.environ['NUMEXPR_NUM_THREADS'] = '1'
+os.environ['OPENBLAS_CORETYPE'] = 'HASWELL'
+
 # Ensure the current directory is in the path to find utils.py
 script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:

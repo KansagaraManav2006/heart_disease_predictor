@@ -42,6 +42,7 @@ function runPythonPrediction(type, data) {
         OMP_NUM_THREADS: '1',
         MKL_NUM_THREADS: '1',
         NUMEXPR_NUM_THREADS: '1',
+        OPENBLAS_CORETYPE: 'HASWELL',
       },
     });
 
@@ -112,7 +113,16 @@ app.post('/api/extract', upload.single('report'), async (req, res) => {
     const pythonProcess = spawn('python', [
       path.join(__dirname, '../ml/extract.py'),
       filePath
-    ]);
+    ], {
+      env: {
+        ...process.env,
+        OPENBLAS_NUM_THREADS: '1',
+        OMP_NUM_THREADS: '1',
+        MKL_NUM_THREADS: '1',
+        NUMEXPR_NUM_THREADS: '1',
+        OPENBLAS_CORETYPE: 'HASWELL',
+      },
+    });
 
     let outputData = '';
     let errorData = '';

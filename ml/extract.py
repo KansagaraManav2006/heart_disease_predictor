@@ -3,6 +3,12 @@ import json
 import re
 import os
 
+os.environ['OPENBLAS_NUM_THREADS'] = '1'
+os.environ['OMP_NUM_THREADS'] = '1'
+os.environ['MKL_NUM_THREADS'] = '1'
+os.environ['NUMEXPR_NUM_THREADS'] = '1'
+os.environ['OPENBLAS_CORETYPE'] = 'HASWELL'
+
 def extract_text(file_path):
     ext = os.path.splitext(file_path)[1].lower()
     text = ""

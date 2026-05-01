@@ -125,6 +125,26 @@
       },
       "prediction": 1,
       "probability": 0.76
+    },
+    {
+      "id": "1777648125489",
+      "date": "2026-05-01T15:08:45.489Z",
+      "userId": "user_1777643846763",
+      "userName": "Test Patient",
+      "type": "diabetes",
+      "inputs": {
+        "patientName": "Test Patient",
+        "age": "45",
+        "gender": "male",
+        "bmi": "25.5",
+        "smokingHistory": "never",
+        "hypertension": "1",
+        "heartDisease": "1",
+        "hba1c": "5.5",
+        "glucose": "100"
+      },
+      "prediction": 0,
+      "probability": 0.10626984126984126
     }
   ]
 }
