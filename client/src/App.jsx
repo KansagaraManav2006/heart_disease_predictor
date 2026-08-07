@@ -21,13 +21,19 @@ const AuditLog = lazy(() => import('./pages/admin/AuditLog'));
 const SystemHealth = lazy(() => import('./pages/admin/SystemHealth'));
 const MedicalKnowledge = lazy(() => import('./pages/knowledge/MedicalKnowledge'));
 
+// New medical pages
+const MedicationHub = lazy(() => import('./pages/MedicationHub'));
+const BiomarkerTrends = lazy(() => import('./pages/BiomarkerTrends'));
+const RiskPlanner = lazy(() => import('./pages/RiskPlanner'));
+const ConsultationExport = lazy(() => import('./pages/ConsultationExport'));
+
 const PageFallback = () => (
   <div className="w-full space-y-6 py-8" aria-label="Loading page contents">
-    <Skeleton variant="title" className="w-1/3" />
-    <Skeleton variant="text" className="w-2/3" />
+    <Skeleton className="h-8 w-1/3 rounded-lg" />
+    <Skeleton className="h-4 w-2/3 rounded-lg" />
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-      <Skeleton variant="card" className="h-60" />
-      <Skeleton variant="card" className="h-60" />
+      <Skeleton className="h-60 rounded-xl" />
+      <Skeleton className="h-60 rounded-xl" />
     </div>
   </div>
 );
@@ -86,6 +92,38 @@ function App() {
               element={
                 <WorkspaceShell>
                   <Dashboard />
+                </WorkspaceShell>
+              }
+            />
+            <Route
+              path="/medications"
+              element={
+                <WorkspaceShell>
+                  <MedicationHub />
+                </WorkspaceShell>
+              }
+            />
+            <Route
+              path="/biomarker-trends"
+              element={
+                <WorkspaceShell>
+                  <BiomarkerTrends />
+                </WorkspaceShell>
+              }
+            />
+            <Route
+              path="/risk-planner"
+              element={
+                <WorkspaceShell>
+                  <RiskPlanner />
+                </WorkspaceShell>
+              }
+            />
+            <Route
+              path="/consultation-export"
+              element={
+                <WorkspaceShell>
+                  <ConsultationExport />
                 </WorkspaceShell>
               }
             />

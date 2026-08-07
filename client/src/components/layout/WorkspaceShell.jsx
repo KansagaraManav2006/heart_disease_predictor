@@ -16,6 +16,10 @@ import {
   UserCheck,
   ChevronRight,
   Plus,
+  Pill,
+  TrendingUp,
+  Sliders,
+  FileText,
 } from 'lucide-react';
 import { useAuth } from '../../context/useAuth';
 import Footer from '../Footer';
@@ -52,6 +56,14 @@ const WorkspaceShell = ({ children, wide = false }) => {
         return 'Diabetes Risk Assessment';
       case '/heart':
         return 'Cardiac Health Assessment';
+      case '/medications':
+        return 'Medication & Treatment Hub';
+      case '/biomarker-trends':
+        return 'Longitudinal Biomarker Trends';
+      case '/risk-planner':
+        return 'Risk Reduction & Scenario Planner';
+      case '/consultation-export':
+        return 'Physician Consultation Export';
       case '/worklist':
         return 'Clinician Worklist & Triage';
       case '/models':
@@ -79,6 +91,15 @@ const WorkspaceShell = ({ children, wide = false }) => {
       ],
     },
     {
+      groupTitle: 'Clinical & Patient Care',
+      items: [
+        { to: '/medications', label: 'Medication Hub', icon: Pill },
+        { to: '/biomarker-trends', label: 'Biomarker Trends', icon: TrendingUp },
+        { to: '/risk-planner', label: 'Scenario Risk Planner', icon: Sliders },
+        { to: '/consultation-export', label: 'Physician Export', icon: FileText },
+      ],
+    },
+    {
       groupTitle: 'Intelligence & Guidelines',
       items: [
         { to: '/knowledge', label: 'Medical Guidelines', icon: BookOpen },
@@ -87,7 +108,7 @@ const WorkspaceShell = ({ children, wide = false }) => {
     ...(isClinicianOrAdmin
       ? [
           {
-            groupTitle: 'Clinical & Administration',
+            groupTitle: 'Clinical Triage & MLOps',
             items: [
               { to: '/worklist', label: 'Clinician Worklist', icon: Users },
               { to: '/models', label: 'Model Registry', icon: Cpu },
@@ -112,7 +133,7 @@ const WorkspaceShell = ({ children, wide = false }) => {
       </a>
 
       <div className="flex flex-1">
-        {/* Improved Desktop Sidebar */}
+        {/* Desktop Sidebar */}
         <aside
           className="hidden md:flex flex-col w-20 lg:w-64 bg-sidebar border-r border-sidebar-border h-screen sticky top-0 z-30 transition-all duration-300 select-none shadow-sm"
           aria-label="Workspace sidebar navigation"
@@ -134,7 +155,7 @@ const WorkspaceShell = ({ children, wide = false }) => {
             </NavLink>
           </div>
 
-          {/* Navigation Items with Active Left Bar Indicator */}
+          {/* Navigation Items */}
           <div className="flex-1 overflow-y-auto py-5 px-3 lg:px-4 space-y-6">
             {navGroups.map((group, idx) => (
               <div key={idx} className="space-y-1">
@@ -172,7 +193,7 @@ const WorkspaceShell = ({ children, wide = false }) => {
             ))}
           </div>
 
-          {/* Enhanced Account Profile Footer */}
+          {/* Account Profile Footer */}
           <div className="p-3 lg:p-4 border-t border-sidebar-border bg-card/60">
             <div className="flex items-center justify-between gap-2">
               <div className="hidden lg:flex items-center gap-2.5 truncate pr-1">
@@ -200,7 +221,7 @@ const WorkspaceShell = ({ children, wide = false }) => {
 
         {/* Workspace Main Body Wrapper */}
         <div className="flex-1 flex flex-col min-h-screen min-w-0">
-          {/* Improved Header Navigation Bar */}
+          {/* Header Bar */}
           <header className="sticky top-0 z-20 h-16 bg-card/95 backdrop-blur-md border-b border-border px-4 md:px-8 flex items-center justify-between shadow-sm">
             <div className="flex items-center gap-3">
               {/* Mobile Drawer Trigger */}
@@ -223,7 +244,7 @@ const WorkspaceShell = ({ children, wide = false }) => {
               <h2 className="text-sm font-bold text-foreground sm:hidden truncate font-serif">{getPageTitle()}</h2>
             </div>
 
-            {/* Quick Header Actions & Account Status Pill */}
+            {/* Quick Header Actions */}
             <div className="flex items-center gap-3">
               <div className="hidden lg:flex items-center gap-2 border-r border-border pr-3">
                 <button
