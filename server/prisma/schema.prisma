@@ -80,9 +80,12 @@ model PatientProfile {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
-  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  accesses    ClinicianAccess[]
-  assessments Assessment[]
+  user            User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accesses        ClinicianAccess[]
+  assessments     Assessment[]
+  medications     Medication[]
+  biomarkerTrends BiomarkerTrendPoint[]
+  riskScenarios   RiskScenario[]
 
   @@index([userId])
 }
@@ -213,4 +216,60 @@ model AuditEvent {
   @@index([actorId])
   @@index([action])
   @@index([createdAt])
+}
+
+// ---------------------------------------------------------------------------
+// New Medical Modules Database Models
+// ---------------------------------------------------------------------------
+
+model Medication {
+  id               String   @id @default(uuid())
+  patientProfileId String
+  name             String
+  dosage           String
+  frequency        String
+  category         String
+  status           String   @default("ACTIVE")
+  notes            String?
+  warning          String?
+  startDate        DateTime @default(now())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  patientProfile PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+
+  @@index([patientProfileId])
+  @@index([status])
+}
+
+model BiomarkerTrendPoint {
+  id               String   @id @default(uuid())
+  patientProfileId String
+  glucose          Float?
+  hba1c            Float?
+  systolicBp       Float?
+  diastolicBp      Float?
+  cholesterol      Float?
+  bmi              Float?
+  recordedAt       DateTime @default(now())
+
+  patientProfile PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+
+  @@index([patientProfileId])
+  @@index([recordedAt])
+}
+
+model RiskScenario {
+  id                 String   @id @default(uuid())
+  patientProfileId   String
+  bmiReduction       Float
+  bpReduction        Float
+  glucoseReduction   Float
+  exerciseHours      Float
+  projectedRiskDelta Float
+  createdAt          DateTime @default(now())
+
+  patientProfile PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+
+  @@index([patientProfileId])
 }

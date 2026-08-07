@@ -302,6 +302,73 @@ export const saveHistory = async (record) => {
 };
 
 // ---------------------------------------------------------------------------
+// Medications, Biomarkers & Risk Scenarios API (v1)
+// ---------------------------------------------------------------------------
+
+export const getMedications = async () => {
+  const response = await authenticatedFetch(`${API_BASE_URL}/v1/medications`);
+  if (!response.ok) throw new Error('Failed to fetch medications');
+  const data = await response.json();
+  return data.medications;
+};
+
+export const addMedication = async (medData) => {
+  const response = await authenticatedFetch(`${API_BASE_URL}/v1/medications`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(medData),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Failed to add medication');
+  return data.medication;
+};
+
+export const deleteMedication = async (id) => {
+  const response = await authenticatedFetch(`${API_BASE_URL}/v1/medications/${id}`, {
+    method: 'DELETE',
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Failed to delete medication');
+  return data;
+};
+
+export const getBiomarkerTrends = async () => {
+  const response = await authenticatedFetch(`${API_BASE_URL}/v1/biomarker-trends`);
+  if (!response.ok) throw new Error('Failed to fetch biomarker trends');
+  const data = await response.json();
+  return data.trends;
+};
+
+export const addBiomarkerTrendPoint = async (pointData) => {
+  const response = await authenticatedFetch(`${API_BASE_URL}/v1/biomarker-trends`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(pointData),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Failed to add biomarker trend point');
+  return data.point;
+};
+
+export const getRiskScenarios = async () => {
+  const response = await authenticatedFetch(`${API_BASE_URL}/v1/risk-scenarios`);
+  if (!response.ok) throw new Error('Failed to fetch risk scenarios');
+  const data = await response.json();
+  return data.scenarios;
+};
+
+export const saveRiskScenario = async (scenarioData) => {
+  const response = await authenticatedFetch(`${API_BASE_URL}/v1/risk-scenarios`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(scenarioData),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Failed to save risk scenario');
+  return data.scenario;
+};
+
+// ---------------------------------------------------------------------------
 // Guided Chatbot Helpers
 // ---------------------------------------------------------------------------
 

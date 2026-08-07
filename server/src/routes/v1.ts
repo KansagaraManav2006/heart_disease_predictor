@@ -8,6 +8,9 @@ import modelRegistryRouter from '../modules/modelRegistry/modelRegistry.router';
 import knowledgeRouter from '../modules/knowledge/knowledge.router';
 import auditRouter from '../modules/audit/audit.router';
 import systemHealthRouter from '../modules/systemHealth/systemHealth.router';
+import medicationRouter from '../modules/medication/medication.router';
+import biomarkerTrendRouter from '../modules/biomarkerTrend/biomarkerTrend.router';
+import riskScenarioRouter from '../modules/riskScenario/riskScenario.router';
 
 const router = Router();
 
@@ -21,5 +24,8 @@ router.use('/models', modelRegistryRouter);
 router.use('/knowledge', knowledgeRouter);
 router.use('/audit', auditRouter);
 router.use('/system-health', systemHealthRouter);
+router.use('/medications', medicationRouter);
+router.use('/biomarker-trends', biomarkerTrendRouter);
+router.use('/risk-scenarios', riskScenarioRouter);
 
 export default router;
