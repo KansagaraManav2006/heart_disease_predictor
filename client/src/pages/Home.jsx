@@ -10,14 +10,14 @@ const Home = () => {
 
   return (
     <div className="space-y-12 animate-fade-in">
-      {/* Restrained Hero Glass Panel */}
+      {/* Maximum Radius Hero Glass Panel (24px squircle) */}
       <Surface variant="hero" accent="teal" className="text-center py-12 md:py-16 px-6 relative">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/15 border border-teal-500/30 text-teal-300 text-xs font-semibold mb-6">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-teal-500/15 border border-teal-500/30 text-teal-300 text-xs font-semibold mb-6">
           <Sparkles className="w-3.5 h-3.5" />
           <span>Research Platform · Calibrated Risk Stratification</span>
         </div>
 
-        <h1 className="text-3xl md:text-5xl font-black tracking-tight text-slate-100 mb-4 max-w-4xl mx-auto leading-tight">
+        <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-slate-100 mb-4 max-w-4xl mx-auto leading-tight">
           Clinical Decision Support for <span className="text-teal-400">Cardiovascular</span> &amp; <span className="text-amber-400">Diabetic</span> Health
         </h1>
 
@@ -50,7 +50,7 @@ const Home = () => {
         <Surface variant="flat" accent="teal" className="flex flex-col justify-between h-full">
           <div>
             <div className="flex items-center justify-between gap-2 mb-4">
-              <div className="p-3 rounded-2xl bg-teal-500/15 text-teal-400 border border-teal-500/30">
+              <div className="w-12 h-12 rounded-xl bg-teal-500/20 text-teal-400 border border-teal-500/30 flex items-center justify-center shadow-inner">
                 <Activity className="w-6 h-6" />
               </div>
               <StatusBadge label="Condition Identity: Glycemic" status="processing" size="sm" />
@@ -91,7 +91,7 @@ const Home = () => {
         <Surface variant="flat" accent="amber" className="flex flex-col justify-between h-full">
           <div>
             <div className="flex items-center justify-between gap-2 mb-4">
-              <div className="p-3 rounded-2xl bg-amber-500/15 text-amber-400 border border-amber-500/30">
+              <div className="w-12 h-12 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center shadow-inner">
                 <Heart className="w-6 h-6" />
               </div>
               <StatusBadge label="Condition Identity: Cardiac" status="secondary" size="sm" />
@@ -135,7 +135,7 @@ const Home = () => {
         <h2 className="text-xl font-bold text-slate-100 text-center mb-8">Platform Governance &amp; Research Foundations</h2>
         <div className="grid md:grid-cols-3 gap-6">
           <Surface variant="flat" className="p-6">
-            <div className="p-2.5 rounded-xl bg-slate-900 text-teal-400 border border-slate-800 w-fit mb-4">
+            <div className="w-10 h-10 rounded-xl bg-slate-800 text-teal-400 border border-slate-700/80 flex items-center justify-center mb-4">
               <Shield className="w-5 h-5" />
             </div>
             <h3 className="text-sm font-bold text-slate-200 mb-2">Calibrated Models</h3>
@@ -145,7 +145,7 @@ const Home = () => {
           </Surface>
 
           <Surface variant="flat" className="p-6">
-            <div className="p-2.5 rounded-xl bg-slate-900 text-amber-400 border border-slate-800 w-fit mb-4">
+            <div className="w-10 h-10 rounded-xl bg-slate-800 text-amber-400 border border-slate-700/80 flex items-center justify-center mb-4">
               <Clock className="w-5 h-5" />
             </div>
             <h3 className="text-sm font-bold text-slate-200 mb-2">Explainable AI (SHAP)</h3>
@@ -155,7 +155,7 @@ const Home = () => {
           </Surface>
 
           <Surface variant="flat" className="p-6">
-            <div className="p-2.5 rounded-xl bg-slate-900 text-cyan-400 border border-slate-800 w-fit mb-4">
+            <div className="w-10 h-10 rounded-xl bg-slate-800 text-cyan-400 border border-slate-700/80 flex items-center justify-center mb-4">
               <FileText className="w-5 h-5" />
             </div>
             <h3 className="text-sm font-bold text-slate-200 mb-2">Data Privacy &amp; Security</h3>

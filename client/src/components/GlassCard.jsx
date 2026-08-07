@@ -1,14 +1,9 @@
 import React from 'react';
 import Surface from './Surface';
 
-const GlassCard = ({ children, className = '', strong = false, style, ...props }) => {
+const GlassCard = ({ children, className = '', ...props }) => {
   return (
-    <Surface
-      variant={strong ? 'raised' : 'flat'}
-      className={className}
-      style={style}
-      {...props}
-    >
+    <Surface variant="glass" className={className} {...props}>
       {children}
     </Surface>
   );

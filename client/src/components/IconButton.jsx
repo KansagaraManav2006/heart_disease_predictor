@@ -15,10 +15,10 @@ const IconButton = ({
   }
 
   const sizeClasses = {
-    sm: 'w-8 h-8 p-1.5',
-    md: 'w-11 h-11 p-2.5',
-    lg: 'w-12 h-12 p-3',
-  }[size] || 'w-11 h-11 p-2.5';
+    sm: 'w-9 h-9 p-2 rounded-lg',
+    md: 'w-11 h-11 p-2.5 rounded-xl min-w-[44px] min-h-[44px]',
+    lg: 'w-12 h-12 p-3 rounded-xl min-w-[48px] min-h-[48px]',
+  }[size] || 'w-11 h-11 p-2.5 rounded-xl min-w-[44px] min-h-[44px]';
 
   const iconSizes = {
     sm: 'w-4 h-4',
@@ -27,11 +27,11 @@ const IconButton = ({
   }[size] || 'w-5 h-5';
 
   const variantClasses = {
-    secondary: 'bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/80',
-    ghost: 'bg-transparent hover:bg-slate-800/80 text-slate-400 hover:text-white border border-transparent',
-    teal: 'bg-teal-600/20 hover:bg-teal-600/30 text-teal-300 border border-teal-500/40',
-    coral: 'bg-coral-600/20 hover:bg-coral-600/30 text-coral-300 border border-coral-500/40',
-  }[variant] || 'bg-slate-800 hover:bg-slate-700 text-slate-300';
+    secondary: 'bg-slate-850 hover:bg-slate-800 text-slate-200 border border-slate-700/80 shadow-sm',
+    ghost: 'bg-transparent hover:bg-slate-800/80 text-slate-400 hover:text-slate-100 border border-transparent',
+    teal: 'bg-teal-500/20 hover:bg-teal-500/30 text-teal-300 border border-teal-500/40',
+    coral: 'bg-coral-500/20 hover:bg-coral-500/30 text-coral-300 border border-coral-500/40',
+  }[variant] || 'bg-slate-850 hover:bg-slate-800 text-slate-200';
 
   return (
     <button
@@ -39,7 +39,7 @@ const IconButton = ({
       onClick={onClick}
       disabled={disabled}
       aria-label={ariaLabel}
-      className={`inline-flex items-center justify-center rounded-xl transition-all duration-200 focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed ${sizeClasses} ${variantClasses} ${className}`}
+      className={`inline-flex items-center justify-center transition-all duration-200 focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed ${sizeClasses} ${variantClasses} ${className}`}
       {...props}
     >
       {Icon && <Icon className={iconSizes} />}

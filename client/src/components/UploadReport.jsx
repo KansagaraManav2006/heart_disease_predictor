@@ -65,7 +65,7 @@ const UploadReport = ({ onExtract }) => {
   return (
     <Surface variant="flat" className="w-full my-4">
       <div
-        className="border-2 border-dashed border-slate-700 hover:border-teal-400 bg-slate-900/60 hover:bg-slate-900 transition-colors duration-200 rounded-2xl p-8 mb-6 text-center cursor-pointer relative"
+        className="border-2 border-dashed border-slate-700 hover:border-teal-400 bg-slate-900/60 hover:bg-slate-900 transition-colors duration-200 rounded-2xl p-8 mb-6 text-center cursor-pointer relative min-h-[160px] flex flex-col items-center justify-center"
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onClick={() => fileInputRef.current?.click()}
@@ -86,14 +86,18 @@ const UploadReport = ({ onExtract }) => {
 
         {file ? (
           <div className="flex flex-col items-center">
-            <FileText className="w-12 h-12 text-teal-400 mb-3" />
+            <div className="w-12 h-12 rounded-xl bg-teal-500/20 text-teal-400 border border-teal-500/30 flex items-center justify-center mb-3">
+              <FileText className="w-6 h-6" />
+            </div>
             <p className="text-slate-100 font-semibold text-base">{file.name}</p>
-            <p className="text-slate-400 text-xs mt-1">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+            <p className="text-slate-400 text-xs mt-1 font-mono">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
             <p className="text-teal-400 text-xs mt-3 font-semibold hover:underline">Click to change file</p>
           </div>
         ) : (
           <div className="flex flex-col items-center">
-            <UploadCloud className="w-14 h-14 text-slate-500 mb-3" />
+            <div className="w-14 h-14 rounded-2xl bg-slate-800 text-slate-400 border border-slate-700 flex items-center justify-center mb-3 shadow-inner">
+              <UploadCloud className="w-7 h-7" />
+            </div>
             <h3 className="text-base font-bold text-slate-200 mb-1">Upload Lab Report (PDF / Image)</h3>
             <p className="text-slate-400 text-xs mb-4 max-w-sm">
               Drag and drop your clinical lab document here, or click to browse files.

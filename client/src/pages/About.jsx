@@ -1,7 +1,6 @@
 import React from 'react';
 import Surface from '../components/Surface';
 import PageHeader from '../components/PageHeader';
-import StatusBadge from '../components/StatusBadge';
 import { Component, Server, Database, Shield, AlertTriangle, Cpu } from 'lucide-react';
 
 const About = () => {
@@ -16,7 +15,7 @@ const About = () => {
       {/* Research Use Disclaimer */}
       <Surface variant="flat" accent="amber" className="bg-amber-500/10 border-amber-500/30 text-amber-200">
         <div className="flex items-start gap-4">
-          <div className="p-3 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex-shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center flex-shrink-0">
             <AlertTriangle className="w-6 h-6" />
           </div>
           <div>
@@ -48,7 +47,7 @@ const About = () => {
         </h2>
         <div className="grid md:grid-cols-3 gap-6">
           <Surface variant="flat" accent="teal" className="p-6">
-            <div className="p-3 rounded-xl bg-slate-900 text-teal-400 border border-slate-800 w-fit mb-4">
+            <div className="w-10 h-10 rounded-xl bg-slate-900 text-teal-400 border border-slate-800 flex items-center justify-center mb-4">
               <Component className="w-5 h-5" />
             </div>
             <h3 className="text-sm font-bold text-slate-200 mb-3">Frontend Architecture</h3>
@@ -62,7 +61,7 @@ const About = () => {
           </Surface>
 
           <Surface variant="flat" accent="amber" className="p-6">
-            <div className="p-3 rounded-xl bg-slate-900 text-amber-400 border border-slate-800 w-fit mb-4">
+            <div className="w-10 h-10 rounded-xl bg-slate-900 text-amber-400 border border-slate-800 flex items-center justify-center mb-4">
               <Server className="w-5 h-5" />
             </div>
             <h3 className="text-sm font-bold text-slate-200 mb-3">Backend Gateway &amp; Auth</h3>
@@ -76,7 +75,7 @@ const About = () => {
           </Surface>
 
           <Surface variant="flat" accent="coral" className="p-6">
-            <div className="p-3 rounded-xl bg-slate-900 text-coral-400 border border-slate-800 w-fit mb-4">
+            <div className="w-10 h-10 rounded-xl bg-slate-900 text-coral-400 border border-slate-800 flex items-center justify-center mb-4">
               <Cpu className="w-5 h-5" />
             </div>
             <h3 className="text-sm font-bold text-slate-200 mb-3">Machine Learning Engine</h3>

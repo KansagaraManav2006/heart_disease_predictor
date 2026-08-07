@@ -59,9 +59,9 @@ const Dashboard = () => {
     const trendLabel = `${diff > 0 ? '+' : ''}${diff.toFixed(1)}${unit} (${isImprovement ? 'improved' : 'elevated'})`;
 
     return (
-      <div className="flex items-center justify-between p-3 bg-slate-900/90 rounded-xl border border-slate-800 text-xs">
+      <div className="flex items-center justify-between p-3 bg-slate-950 rounded-xl border border-slate-800 text-xs">
         <span className="font-medium text-slate-300">{label}</span>
-        <div className="flex items-center gap-2 font-mono">
+        <div className="flex items-center gap-2 font-mono tabular-nums">
           <span className="text-slate-400">{previous}{unit}</span>
           <span className="text-slate-600 font-bold">→</span>
           <span className="text-slate-100 font-bold">{current}{unit}</span>
@@ -107,7 +107,7 @@ const Dashboard = () => {
 
       {error && <ErrorState title="Data Load Failure" message={error} />}
 
-      {/* Compact Top Metric Tiles */}
+      {/* Compact Top Metric Tiles (Squircle Icons + Tabular Numerals) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricTile
           title="Total Assessments"
@@ -158,7 +158,7 @@ const Dashboard = () => {
           <Surface variant="flat" accent="teal" className="flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-3 pb-4 mb-6 border-b border-slate-800">
-                <div className="p-2.5 rounded-xl bg-teal-500/20 text-teal-400 border border-teal-500/30">
+                <div className="w-10 h-10 rounded-xl bg-teal-500/20 text-teal-400 border border-teal-500/30 flex items-center justify-center flex-shrink-0 shadow-inner">
                   <Activity className="w-5 h-5" />
                 </div>
                 <div>
@@ -191,7 +191,7 @@ const Dashboard = () => {
                     {diabetesHistory.map((item, idx) => (
                       <div
                         key={idx}
-                        className="p-3 bg-slate-900/90 rounded-xl border border-slate-800 flex items-center justify-between"
+                        className="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between"
                       >
                         <div className="flex items-center gap-2.5">
                           <Clock className="w-4 h-4 text-slate-500" />
@@ -218,7 +218,7 @@ const Dashboard = () => {
           <Surface variant="flat" accent="amber" className="flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-3 pb-4 mb-6 border-b border-slate-800">
-                <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center flex-shrink-0 shadow-inner">
                   <Heart className="w-5 h-5" />
                 </div>
                 <div>
@@ -250,7 +250,7 @@ const Dashboard = () => {
                     {heartHistory.map((item, idx) => (
                       <div
                         key={idx}
-                        className="p-3 bg-slate-900/90 rounded-xl border border-slate-800 flex items-center justify-between"
+                        className="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between"
                       >
                         <div className="flex items-center gap-2.5">
                           <Clock className="w-4 h-4 text-slate-500" />

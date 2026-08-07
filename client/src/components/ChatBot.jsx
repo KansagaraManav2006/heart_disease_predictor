@@ -1,154 +1,227 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Bot, User, Send } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
 import Surface from './Surface';
 import Button from './Button';
+import InputField from './InputField';
+import StatusBadge from './StatusBadge';
+import { getBotQuestions, processBotAnswers } from '../services/api';
+import { Sparkles, Bot, Send, CheckCircle, RefreshCw } from 'lucide-react';
 
-const ChatBot = ({ questions, initialData, onComplete }) => {
-  const [messages, setMessages] = useState([
-    {
-      text: "Hello! I am your HealthLens AI guided assessment assistant. I'll walk you through a quick series of questions to populate your clinical parameters.",
-      sender: 'bot',
-    },
-    { text: questions[0].question, sender: 'bot', key: questions[0].key },
-  ]);
-  const [inputValue, setInputValue] = useState('');
-  const [currentStep, setCurrentStep] = useState(0);
-  const [answers, setAnswers] = useState(initialData || {});
-  const [isComplete, setIsComplete] = useState(false);
-  const messagesEndRef = useRef(null);
+const ChatBot = ({ condition = 'diabetes', onComplete }) => {
+  const [questions, setQuestions] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [messages, setMessages] = useState([]);
+  const [inputVal, setInputVal] = useState('');
+  const [answers, setAnswers] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [processing, setProcessing] = useState(false);
+  const [completed, setCompleted] = useState(false);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  const chatEndRef = useRef(null);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const handleSend = () => {
-    if (isComplete || !inputValue.trim()) return;
-
-    const currentQ = questions[currentStep];
-    const newAnswers = { ...answers, [currentQ.key]: inputValue.trim() };
-    setAnswers(newAnswers);
-
-    const newMessages = [...messages, { text: inputValue, sender: 'user' }];
-    setInputValue('');
-
-    const nextStep = currentStep + 1;
-    if (nextStep < questions.length) {
-      setTimeout(() => {
+    const fetchQuestions = async () => {
+      try {
+        const qList = await getBotQuestions(condition);
+        setQuestions(qList || []);
+        if (qList && qList.length > 0) {
+          setMessages([
+            {
+              sender: 'bot',
+              text: `Welcome to the guided ${condition} screening assistant. Let's step through your biometrics one by one.`,
+            },
+            {
+              sender: 'bot',
+              text: qList[0].text,
+            },
+          ]);
+        }
+      } catch (err) {
+        console.error('Failed to load bot questions:', err);
         setMessages([
-          ...newMessages,
-          { text: questions[nextStep].question, sender: 'bot', key: questions[nextStep].key },
-        ]);
-        setCurrentStep(nextStep);
-      }, 400);
-    } else {
-      setIsComplete(true);
-      setTimeout(() => {
-        setMessages([
-          ...newMessages,
           {
-            text: 'Thank you! All guided parameters have been captured. Review your values in the form above and click Submit Assessment.',
             sender: 'bot',
+            text: 'Unable to initialize guided questions. Please switch to manual form entry.',
           },
         ]);
-        onComplete(newAnswers);
-      }, 400);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchQuestions();
+  }, [condition]);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const handleSend = (e) => {
+    e.preventDefault();
+    if (!inputVal.trim() || completed) return;
+
+    const currentQ = questions[currentIndex];
+    const userText = inputVal.trim();
+    const numVal = parseFloat(userText);
+
+    if (isNaN(numVal)) {
+      setMessages((prev) => [
+        ...prev,
+        { sender: 'user', text: userText },
+        { sender: 'bot', text: `Please enter a valid numeric value for ${currentQ.label || currentQ.key}.` },
+      ]);
+      setInputVal('');
+      return;
+    }
+
+    const updatedAnswers = { ...answers, [currentQ.key]: numVal };
+    setAnswers(updatedAnswers);
+
+    const newMessages = [
+      ...messages,
+      { sender: 'user', text: `${userText} ${currentQ.unit || ''}`.trim() },
+    ];
+
+    const nextIdx = currentIndex + 1;
+    if (nextIdx < questions.length) {
+      setCurrentIndex(nextIdx);
+      newMessages.push({ sender: 'bot', text: questions[nextIdx].text });
+      setMessages(newMessages);
+      setInputVal('');
+    } else {
+      setCompleted(true);
+      newMessages.push({
+        sender: 'bot',
+        text: 'All biometric questions completed! Click below to process your assessment.',
+      });
+      setMessages(newMessages);
+      setInputVal('');
     }
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && !isComplete) {
-      handleSend();
+  const handleFinish = async () => {
+    setProcessing(true);
+    try {
+      const result = await processBotAnswers(condition, answers);
+      if (onComplete) {
+        onComplete(result);
+      }
+    } catch (err) {
+      console.error('Error processing bot answers:', err);
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleReset = () => {
+    setCurrentIndex(0);
+    setAnswers({});
+    setCompleted(false);
+    setInputVal('');
+    if (questions.length > 0) {
+      setMessages([
+        {
+          sender: 'bot',
+          text: `Guided ${condition} screening reset. Let's begin again.`,
+        },
+        {
+          sender: 'bot',
+          text: questions[0].text,
+        },
+      ]);
     }
   };
 
   return (
-    <Surface variant="flat" className="flex flex-col h-[520px] p-0 overflow-hidden shadow-xl animate-fade-in-up">
-      {/* Header */}
-      <div className="bg-slate-900 px-6 py-4 flex items-center justify-between border-b border-slate-800">
-        <div className="flex items-center gap-3">
-          <div className="bg-amber-500/20 p-2 rounded-xl text-amber-400 border border-amber-500/30">
+    <Surface variant="flat" className="my-4 space-y-4">
+      {/* Header with Amber Guided AI Identity */}
+      <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div className="flex items-center gap-2.5">
+          <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center flex-shrink-0 shadow-inner">
             <Bot className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-slate-100 font-bold text-sm">Guided Clinical Assistant</h3>
-            <p className="text-slate-400 text-xs font-mono">Step {currentStep + 1} of {questions.length}</p>
+            <h3 className="text-sm font-bold text-slate-100">Guided Screening Assistant</h3>
+            <p className="text-[11px] text-slate-400">Step-by-step interactive questionnaire</p>
           </div>
         </div>
-        <span className="px-2.5 py-1 text-[10px] font-bold rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
-          AI INTERACTION
-        </span>
+        <StatusBadge label="Amber Guided AI" status="attention" size="sm" />
       </div>
 
-      {/* Messages Feed */}
-      <div className="flex-1 p-6 overflow-y-auto flex flex-col gap-4 bg-slate-950/60">
-        {messages.map((msg, idx) => (
-          <div
-            key={idx}
-            className={`flex items-end gap-3 ${msg.sender === 'user' ? 'self-end flex-row-reverse' : 'self-start'}`}
-          >
+      {/* Messages Viewport */}
+      <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800/80 h-72 overflow-y-auto space-y-3 font-sans">
+        {loading ? (
+          <div className="text-xs text-slate-400 italic text-center py-8">Loading bot questions...</div>
+        ) : (
+          messages.map((msg, idx) => (
             <div
-              className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-                msg.sender === 'user'
-                  ? 'bg-teal-600 text-white'
-                  : 'bg-slate-800 text-amber-400 border border-slate-700'
-              }`}
+              key={idx}
+              className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
-              {msg.sender === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
+              <div
+                className={`max-w-[80%] p-3 rounded-2xl text-xs leading-relaxed ${
+                  msg.sender === 'user'
+                    ? 'bg-teal-600 text-slate-950 font-semibold rounded-tr-none shadow-sm'
+                    : 'bg-slate-900 text-slate-200 border border-slate-800 rounded-tl-none'
+                }`}
+              >
+                {msg.text}
+              </div>
             </div>
-            <div
-              className={`px-4 py-3 rounded-2xl max-w-[82%] text-xs md:text-sm leading-relaxed ${
-                msg.sender === 'user'
-                  ? 'bg-teal-600 text-white rounded-br-none shadow-md'
-                  : 'bg-slate-900 text-slate-200 border border-slate-800 shadow-sm rounded-bl-none space-y-2'
-              }`}
-            >
-              <p>{msg.text}</p>
-              {!isComplete && msg.sender === 'bot' && idx === messages.length - 1 && questions[currentStep]?.options && (
-                <div className="flex flex-wrap gap-2 mt-3 text-xs">
-                  {questions[currentStep].options.map((opt) => (
-                    <button
-                      key={opt.value}
-                      onClick={() => setInputValue(opt.value)}
-                      className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-teal-500/30 text-teal-300 rounded-lg font-medium transition-colors"
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+          ))
+        )}
+        <div ref={chatEndRef} />
+      </div>
+
+      {/* Input or Complete Actions */}
+      {!completed ? (
+        <form onSubmit={handleSend} className="flex gap-2">
+          <div className="flex-1">
+            <InputField
+              value={inputVal}
+              onChange={(e) => setInputVal(e.target.value)}
+              placeholder={
+                questions[currentIndex]
+                  ? `Enter ${questions[currentIndex].label || questions[currentIndex].key} (${questions[currentIndex].unit || 'number'})...`
+                  : 'Type answer...'
+              }
+              unit={questions[currentIndex]?.unit}
+              disabled={loading}
+              className="mb-0"
+            />
           </div>
-        ))}
-        <div ref={messagesEndRef} />
-      </div>
-
-      {/* Input bar */}
-      <div className="p-4 bg-slate-900 border-t border-slate-800 flex gap-3">
-        <input
-          type="text"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder={isComplete ? 'Guided assessment complete — review values above.' : 'Type your answer...'}
-          disabled={isComplete}
-          aria-label="Guided chatbot answer input"
-          className="flex-1 px-4 py-2.5 bg-slate-950 text-slate-100 placeholder-slate-500 border border-slate-800 rounded-xl text-xs md:text-sm focus:border-teal-400 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-        />
-        <Button
-          onClick={handleSend}
-          disabled={!inputValue.trim() || isComplete}
-          variant="primary"
-          size="sm"
-          icon={Send}
-          aria-label="Send response"
-        >
-          Send
-        </Button>
-      </div>
+          <Button
+            type="submit"
+            disabled={!inputVal.trim() || loading}
+            variant="ai"
+            icon={Send}
+            className="flex-shrink-0 font-bold"
+          >
+            Submit
+          </Button>
+        </form>
+      ) : (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-900 p-4 rounded-xl border border-slate-800">
+          <div className="flex items-center gap-2 text-xs text-teal-400 font-semibold">
+            <CheckCircle className="w-4 h-4" />
+            <span>Questionnaire Complete ({Object.keys(answers).length} fields captured)</span>
+          </div>
+          <div className="flex gap-2 w-full sm:w-auto">
+            <Button onClick={handleReset} variant="ghost" size="sm" icon={RefreshCw}>
+              Restart
+            </Button>
+            <Button
+              onClick={handleFinish}
+              loading={processing}
+              loadingLabel="Processing..."
+              variant="primary"
+              size="sm"
+              icon={Sparkles}
+            >
+              Run Risk Analysis
+            </Button>
+          </div>
+        </div>
+      )}
     </Surface>
   );
 };

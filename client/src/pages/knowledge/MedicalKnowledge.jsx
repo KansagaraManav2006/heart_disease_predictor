@@ -6,7 +6,7 @@ import Button from '../../components/Button';
 import StatusBadge from '../../components/StatusBadge';
 import ErrorState from '../../components/ErrorState';
 import { queryKnowledge, getKnowledgeDocuments } from '../../services/api';
-import { BookOpen, Search, AlertOctagon, ExternalLink, ShieldCheck, FileText, Sparkles } from 'lucide-react';
+import { BookOpen, Search, AlertOctagon, ExternalLink, FileText, Sparkles } from 'lucide-react';
 
 const MedicalKnowledge = () => {
   const [query, setQuery] = useState('');
@@ -53,7 +53,7 @@ const MedicalKnowledge = () => {
         badge={{ label: 'Guideline Index Active', status: 'healthy' }}
       />
 
-      {/* Single Primary Pill Search Bar Interaction */}
+      {/* Single Primary Search Bar Interaction */}
       <Surface variant="flat" accent="teal" className="p-6">
         <form onSubmit={handleSearch} className="space-y-3">
           <label htmlFor="knowledge-search-input" className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
@@ -92,16 +92,16 @@ const MedicalKnowledge = () => {
       {response?.isEmergency && (
         <Surface variant="flat" accent="coral" className="bg-coral-950/40 border-coral-500/50 p-6 text-coral-200">
           <div className="flex items-start gap-4">
-            <div className="p-3 rounded-2xl bg-coral-500/20 text-coral-400 border border-coral-500/40 flex-shrink-0">
-              <AlertOctagon className="w-8 h-8" />
+            <div className="w-12 h-12 rounded-xl bg-coral-500/20 text-coral-400 border border-coral-500/40 flex items-center justify-center flex-shrink-0">
+              <AlertOctagon className="w-6 h-6" />
             </div>
             <div>
               <StatusBadge label="CRITICAL EMERGENCY ALERT" status="high_risk" className="mb-2" />
-              <h3 className="text-lg font-black text-slate-100 mb-2">Immediate Medical Attention Required</h3>
+              <h3 className="text-lg font-bold text-slate-100 mb-2">Immediate Medical Attention Required</h3>
               <p className="text-xs md:text-sm text-slate-200 leading-relaxed mb-4">
                 {response.emergencyEscalationMessage}
               </p>
-              <div className="bg-slate-950/80 p-3 rounded-xl border border-coral-500/30 text-xs font-bold text-coral-300 inline-block">
+              <div className="bg-slate-950 p-3 rounded-xl border border-coral-500/30 text-xs font-bold text-coral-300 inline-block">
                 Immediate Action Required: Call 911 or your local emergency hotline immediately.
               </div>
             </div>
@@ -122,7 +122,7 @@ const MedicalKnowledge = () => {
             <StatusBadge label="Evidence Grounded" status="warning" size="sm" />
           </div>
 
-          <div className="bg-slate-900/90 p-5 rounded-2xl border border-slate-800 text-xs md:text-sm text-slate-200 leading-relaxed font-medium">
+          <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 text-xs md:text-sm text-slate-200 leading-relaxed font-medium">
             <span className="text-slate-400 block text-xs mb-2">Target Query: "{response.query}"</span>
             <p className="leading-relaxed">{response.answer}</p>
           </div>
@@ -161,7 +161,7 @@ const MedicalKnowledge = () => {
             </div>
           )}
 
-          <div className="text-[11px] text-slate-400 bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+          <div className="text-[11px] text-slate-400 bg-slate-950 p-3 rounded-xl border border-slate-800">
             <strong className="text-slate-300">Governance Disclaimer:</strong> {response.disclaimer}
           </div>
         </Surface>
@@ -185,7 +185,7 @@ const MedicalKnowledge = () => {
               </div>
 
               <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-xs">
-                <span className="text-slate-400 font-mono">Year: {doc.publicationYear}</span>
+                <span className="text-slate-400 font-mono tabular-nums">Year: {doc.publicationYear}</span>
                 <a
                   href={doc.url}
                   target="_blank"

@@ -70,14 +70,14 @@ const ClinicianWorklist = () => {
             <span>Filter Risk:</span>
           </div>
 
-          <div className="flex gap-1 bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs">
+          <div className="flex gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
             {['ALL', 'HIGH', 'MODERATE', 'LOW'].map((filter) => (
               <button
                 key={filter}
                 onClick={() => setRiskFilter(filter)}
                 className={`px-3 py-1 rounded-lg font-semibold transition-all ${
                   riskFilter === filter
-                    ? 'bg-slate-800 text-teal-400 shadow-sm border border-teal-500/30'
+                    ? 'bg-slate-850 text-teal-400 shadow-sm border border-teal-500/30 font-bold'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -86,13 +86,13 @@ const ClinicianWorklist = () => {
             ))}
           </div>
 
-          <div className="px-3 py-1 rounded-xl bg-slate-900 border border-slate-800 text-xs font-mono text-slate-300">
+          <div className="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono tabular-nums text-slate-300">
             {filteredPatients.length} patient{filteredPatients.length === 1 ? '' : 's'}
           </div>
         </div>
       </Surface>
 
-      {/* Worklist Main Area */}
+      {/* Worklist Main Table (16px outer rounded container) */}
       {loading ? (
         <TableSkeleton rows={4} cols={5} />
       ) : error ? (
@@ -108,12 +108,12 @@ const ClinicianWorklist = () => {
           {/* Desktop Semantic Table */}
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left text-xs" aria-label="Clinician assigned patient worklist">
-              <thead className="bg-slate-900 text-slate-400 border-b border-slate-800 sticky top-0 font-semibold uppercase tracking-wider">
+              <thead className="bg-slate-900/90 text-slate-400 border-b border-slate-800 sticky top-0 font-semibold uppercase tracking-wider">
                 <tr>
                   <th className="p-4">Patient Name &amp; Contact</th>
                   <th className="p-4">Access Granted</th>
                   <th className="p-4">Latest Condition Assessment</th>
-                  <th className="p-4">Probability / Model</th>
+                  <th className="p-4 text-right">Probability / Model</th>
                   <th className="p-4">Risk Stratum Priority</th>
                   <th className="p-4 text-right">Actions</th>
                 </tr>
@@ -131,7 +131,7 @@ const ClinicianWorklist = () => {
                         <div className="text-slate-400 text-[11px] font-mono">{patient.user?.email}</div>
                       </td>
                       <td className="p-4 text-slate-400">
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-1.5 font-mono tabular-nums">
                           <Calendar className="w-3.5 h-3.5 text-slate-500" />
                           <span>{new Date(grantedAt).toLocaleDateString()}</span>
                         </div>
@@ -140,7 +140,7 @@ const ClinicianWorklist = () => {
                         {latest ? (
                           <div className="flex items-center gap-2">
                             {latest.condition === 'DIABETES' ? (
-                              <Activity className="w-4 h-4 text-teal-400" />
+                              <Activity className="w-4 h-4 text-cyan-400" />
                             ) : (
                               <Heart className="w-4 h-4 text-violet-400" />
                             )}
@@ -152,11 +152,13 @@ const ClinicianWorklist = () => {
                           <span className="text-slate-500 italic">No Assessment</span>
                         )}
                       </td>
-                      <td className="p-4 font-mono text-slate-300">
+                      <td className="p-4 font-mono tabular-nums text-slate-300 text-right">
                         {latest ? (
                           <div>
-                            <span className="font-bold">{(latest.probability * 100).toFixed(1)}%</span>
-                            <span className="text-slate-500 text-[10px] block">{latest.modelVersion}</span>
+                            <span className="font-bold text-sm text-slate-100">
+                              {(latest.probability * 100).toFixed(1)}%
+                            </span>
+                            <span className="text-slate-500 text-[10px] block font-mono">{latest.modelVersion}</span>
                           </div>
                         ) : (
                           '—'
@@ -201,16 +203,16 @@ const ClinicianWorklist = () => {
                   </div>
 
                   {latest ? (
-                    <div className="bg-slate-900 p-3 rounded-xl border border-slate-800 text-xs flex items-center justify-between">
-                      <div className="flex items-center gap-2">
+                    <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs flex items-center justify-between font-mono tabular-nums">
+                      <div className="flex items-center gap-2 font-sans">
                         {latest.condition === 'DIABETES' ? (
-                          <Activity className="w-4 h-4 text-teal-400" />
+                          <Activity className="w-4 h-4 text-cyan-400" />
                         ) : (
                           <Heart className="w-4 h-4 text-violet-400" />
                         )}
                         <span className="font-semibold text-slate-300">{latest.condition}</span>
                       </div>
-                      <span className="font-mono font-bold text-slate-200">
+                      <span className="font-bold text-slate-200">
                         {(latest.probability * 100).toFixed(1)}%
                       </span>
                     </div>

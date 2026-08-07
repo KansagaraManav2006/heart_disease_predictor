@@ -300,3 +300,38 @@ export const saveHistory = async (record) => {
   if (!response.ok) throw new Error('Failed to save history');
   return await response.json();
 };
+
+// ---------------------------------------------------------------------------
+// Guided Chatbot Helpers
+// ---------------------------------------------------------------------------
+
+export const getBotQuestions = async (condition) => {
+  if (condition === 'diabetes') {
+    return [
+      { key: 'pregnancies', text: 'How many pregnancies have you had? (Enter 0 if not applicable)', label: 'Pregnancies', unit: 'count' },
+      { key: 'glucose', text: 'What is your fasting blood glucose level in mg/dL?', label: 'Fasting Glucose', unit: 'mg/dL' },
+      { key: 'bloodPressure', text: 'What is your diastolic blood pressure in mmHg?', label: 'Diastolic BP', unit: 'mmHg' },
+      { key: 'skinThickness', text: 'What is your triceps skin fold thickness in mm?', label: 'Skin Thickness', unit: 'mm' },
+      { key: 'insulin', text: 'What is your 2-Hour serum insulin level in mu U/ml?', label: '2-Hour Insulin', unit: 'mu U/ml' },
+      { key: 'bmi', text: 'What is your Body Mass Index (BMI) in kg/m²?', label: 'BMI', unit: 'kg/m²' },
+      { key: 'dpf', text: 'What is your Diabetes Pedigree Function score (0.05 to 2.5)?', label: 'Diabetes Pedigree Function', unit: 'score' },
+      { key: 'age', text: 'What is your age in years?', label: 'Age', unit: 'years' },
+    ];
+  } else {
+    return [
+      { key: 'age', text: 'What is your age in years?', label: 'Age', unit: 'years' },
+      { key: 'systolic_bp', text: 'What is your resting systolic blood pressure in mmHg?', label: 'Systolic BP', unit: 'mmHg' },
+      { key: 'cholesterol', text: 'What is your serum cholesterol in mg/dL?', label: 'Cholesterol', unit: 'mg/dL' },
+      { key: 'max_heart_rate', text: 'What is your maximum heart rate achieved?', label: 'Max Heart Rate', unit: 'bpm' },
+      { key: 'st_depression', text: 'What is your ST depression induced by exercise relative to rest?', label: 'ST Depression', unit: 'mm' },
+    ];
+  }
+};
+
+export const processBotAnswers = async (condition, answers) => {
+  if (condition === 'diabetes') {
+    return await predictDiabetes(answers);
+  } else {
+    return await predictHeartDisease(answers);
+  }
+};
