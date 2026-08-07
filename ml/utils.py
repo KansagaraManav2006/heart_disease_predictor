@@ -1,11 +1,9 @@
 """Utility helpers for the disease prediction system.
 
-Stage 0 Status (HealthLens AI Roadmap):
-  - heart `id` feature: RETAINED temporarily until Stage 3 retraining.
-    The current heart_model.pkl and heart_scaler.pkl expect 15 features
-    (id first). Removing `id` requires a retrained model — tracked as
-    TODO:STAGE3-REMOVE-ID.
-  - Diabetes features match the current scaler contract (13 features).
+Stage 3 Status (HealthLens AI Roadmap):
+  - heart `id` feature: REMOVED completely in Stage 3 model retraining.
+    The retrained heart_model.pkl and heart_scaler.pkl expect 14 clean features.
+  - Diabetes features match the deduplicated diabetes_scaler.pkl contract (13 features).
 """
 
 from pathlib import Path
@@ -68,7 +66,7 @@ def build_diabetes_features(
 ) -> pd.DataFrame:
     """Compose the diabetes feature frame from raw UI inputs.
 
-    Produces 13 columns matching the current diabetes_scaler.pkl contract:
+    Produces 13 columns matching the diabetes_scaler.pkl contract:
       age, hypertension, heart_disease, bmi, HbA1c_level,
       blood_glucose_level, gender_Male, gender_Other,
       smoking_history_current, smoking_history_ever,
@@ -121,16 +119,9 @@ def build_heart_features(
 ) -> Tuple[pd.DataFrame, float]:
     """Compose the heart disease feature frame and BMI from raw UI inputs.
 
-    Produces 15 columns matching the current heart_scaler.pkl contract:
-      id (DEPRECATED placeholder — always 0), age, height, weight,
-      systolic_bp, diastolic_bp, smoke, alco, active, bmi,
+    Produces 14 columns matching retrained Stage 3 heart_scaler.pkl:
+      age, height, weight, systolic_bp, diastolic_bp, smoke, alco, active, bmi,
       gender_2, cholesterol_2, cholesterol_3, gluc_2, gluc_3
-
-    TODO:STAGE3-REMOVE-ID — The dataset row `id` is a meaningless identifier
-    that was included in the original training data. It must be removed once
-    the heart model is retrained in Stage 3 without this column. Until then
-    we supply a constant 0 so that the existing 15-feature scaler/model
-    contract is satisfied.
     """
     # Guard against division by zero — height must be a positive number.
     height_cm = float(height_cm)
@@ -158,8 +149,6 @@ def build_heart_features(
         glucose_cat = 3
 
     feature_row = {
-        # TODO:STAGE3-REMOVE-ID: constant placeholder until retrained model.
-        "id": 0,
         "age": float(age),
         "gender": int(gender_val),
         "height": int(height_cm),
@@ -179,13 +168,8 @@ def build_heart_features(
     # One-hot encode categorical features to match training format.
     df = pd.get_dummies(df, columns=["gender", "cholesterol", "gluc"], drop_first=True)
 
-    # Ensure all expected columns exist (even if zero) and in the correct order.
-    # Order MUST match heart_scaler.pkl:
-    #   id, age, height, weight, systolic_bp, diastolic_bp,
-    #   smoke, alco, active, bmi, gender_2,
-    #   cholesterol_2, cholesterol_3, gluc_2, gluc_3
     expected_columns = [
-        "id", "age", "height", "weight", "systolic_bp", "diastolic_bp",
+        "age", "height", "weight", "systolic_bp", "diastolic_bp",
         "smoke", "alco", "active", "bmi",
         "gender_2", "cholesterol_2", "cholesterol_3", "gluc_2", "gluc_3",
     ]
