@@ -343,11 +343,14 @@ const DiabetesPrediction = () => {
                         prediction={result.prediction}
                         probability={result.probability}
                         riskLevel={result.risk_level}
+                        riskBand={result.risk_band || (result.prediction === 1 ? 'HIGH' : 'LOW')}
+                        explanation={result.explanation}
                         suggestions={suggestions}
                         extras={[
                             { label: 'Patient', value: formData.patientName || 'Anonymous' },
                             { label: 'BMI', value: formData.bmi },
-                            { label: 'HbA1c', value: `${formData.hba1c}%` }
+                            { label: 'HbA1c', value: `${formData.hba1c}%` },
+                            { label: 'Glucose', value: `${formData.glucose} mg/dL` }
                         ]}
                     />
                 </div>

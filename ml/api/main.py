@@ -1,4 +1,4 @@
-"""Internal FastAPI Service for HealthLens AI ML Inference.
+"""Internal FastAPI Service for HealthLens AI ML Inference & Explainability.
 
 Loads trained scikit-learn model & scaler artifacts into memory ONCE at startup,
 eliminating per-request process spawning overhead.
@@ -8,17 +8,19 @@ Endpoints:
   GET  /internal/v1/health/ready
   POST /internal/v1/predict/diabetes
   POST /internal/v1/predict/heart
+  POST /internal/v1/explain/diabetes
+  POST /internal/v1/explain/heart
 """
 
 from contextlib import asynccontextmanager
 import sys
 from pathlib import Path
-from typing import Literal, Optional
+from typing import Optional
 
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field
 
-# Ensure ml directory is on sys.path to import utils
+# Ensure ml directory is on sys.path to import utils and explain
 ML_DIR = Path(__file__).resolve().parent.parent
 if str(ML_DIR) not in sys.path:
     sys.path.insert(0, str(ML_DIR))
@@ -33,6 +35,7 @@ from utils import (
     predict_diabetes,
     predict_heart,
 )
+from explain import explain_diabetes, explain_heart
 
 # Global in-memory artifact storage
 artifacts = {}
@@ -92,7 +95,9 @@ class PredictionResponse(BaseModel):
     prediction: int
     probability: float
     risk_level: str
+    risk_band: str
     model_version: str
+    explanation: dict
 
 
 @app.get("/internal/v1/health/live")
@@ -116,6 +121,14 @@ def health_ready():
     return {"status": "ready", "artifacts_loaded": len(artifacts)}
 
 
+def get_risk_band(prob: float) -> str:
+    if prob < 0.25:
+        return "LOW"
+    if prob < 0.65:
+        return "MODERATE"
+    return "HIGH"
+
+
 @app.post("/internal/v1/predict/diabetes", response_model=PredictionResponse)
 def predict_diabetes_endpoint(payload: DiabetesInput):
     try:
@@ -132,12 +145,21 @@ def predict_diabetes_endpoint(payload: DiabetesInput):
         pred, prob = predict_diabetes(
             artifacts["diabetes_model"], artifacts["diabetes_scaler"], features
         )
+        raw_dict = payload.model_dump()
+        explanation = explain_diabetes(
+            artifacts["diabetes_model"], artifacts["diabetes_scaler"], features, raw_dict
+        )
+
+        risk_band = get_risk_band(prob)
+
         return {
             "condition": "diabetes",
             "prediction": pred,
             "probability": round(prob, 4),
             "risk_level": "High Risk" if pred == 1 else "Low Risk",
+            "risk_band": risk_band,
             "model_version": "diabetes-v3.0",
+            "explanation": explanation,
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -162,12 +184,21 @@ def predict_heart_endpoint(payload: HeartInput):
         pred, prob = predict_heart(
             artifacts["heart_model"], artifacts["heart_scaler"], features
         )
+        raw_dict = payload.model_dump()
+        explanation = explain_heart(
+            artifacts["heart_model"], artifacts["heart_scaler"], features, raw_dict
+        )
+
+        risk_band = get_risk_band(prob)
+
         return {
             "condition": "heart",
             "prediction": pred,
             "probability": round(prob, 4),
             "risk_level": "High Risk" if pred == 1 else "Low Risk",
+            "risk_band": risk_band,
             "model_version": "heart-v3.0",
+            "explanation": explanation,
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

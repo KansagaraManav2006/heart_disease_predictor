@@ -277,11 +277,14 @@ const HeartDiseasePrediction = () => {
                         prediction={result.prediction}
                         probability={result.probability}
                         riskLevel={result.risk_level}
+                        riskBand={result.risk_band || (result.prediction === 1 ? 'HIGH' : 'LOW')}
+                        explanation={result.explanation}
                         suggestions={suggestions}
                         extras={[
                             { label: 'Patient', value: formData.patientName || 'Anonymous' },
-                            { label: 'BMI', value: result.bmi_val ? `${result.bmi_val}` : 'N/A' },
-                            { label: 'Blood Pressure', value: `${formData.systolic_bp}/${formData.diastolic_bp}` }
+                            { label: 'Blood Pressure', value: `${formData.systolic_bp}/${formData.diastolic_bp} mmHg` },
+                            { label: 'Cholesterol', value: `${formData.cholesterol} mg/dL` },
+                            { label: 'Calculated BMI', value: result.bmi_val ? `${result.bmi_val}` : 'N/A' }
                         ]}
                     />
                 </div>
