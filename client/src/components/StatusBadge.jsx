@@ -14,14 +14,14 @@ const StatusBadge = ({
   const isProcessing = status === 'processing' || status === 'info';
 
   const styleClasses = isHealthy
-    ? 'bg-teal-500/15 text-teal-300 border-teal-500/30'
+    ? 'bg-red-950/40 text-red-300 border-red-800/40'
     : isAttention
-    ? 'bg-amber-500/15 text-amber-300 border-amber-500/30'
+    ? 'bg-amber-950/40 text-amber-300 border-amber-800/40'
     : isDanger
-    ? 'bg-coral-500/15 text-coral-300 border-coral-500/30'
+    ? 'bg-destructive/20 text-destructive-foreground border-destructive/40'
     : isProcessing
-    ? 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30'
-    : 'bg-violet-500/15 text-violet-300 border-violet-500/30';
+    ? 'bg-amber-900/30 text-amber-200 border-amber-700/40'
+    : 'bg-muted text-foreground border-border';
 
   const iconMap = {
     healthy: CheckCircle2,
@@ -39,11 +39,11 @@ const StatusBadge = ({
   };
 
   const IconComponent = iconMap[status] || Info;
-  const sizeClass = size === 'sm' ? 'px-2.5 py-0.5 text-[11px] gap-1' : 'px-3 py-1 text-xs gap-1.5';
+  const sizeClass = size === 'sm' ? 'px-2 py-0.5 text-[11px] gap-1' : 'px-2.5 py-1 text-xs gap-1.5';
 
   return (
     <span
-      className={`inline-flex items-center font-semibold rounded-full border ${styleClasses} ${sizeClass} ${className}`}
+      className={`inline-flex items-center font-semibold rounded-md border ${styleClasses} ${sizeClass} ${className}`}
     >
       {showIcon && <IconComponent className={size === 'sm' ? 'w-3 h-3 flex-shrink-0' : 'w-3.5 h-3.5 flex-shrink-0'} />}
       <span>{label}</span>
