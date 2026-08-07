@@ -6,7 +6,7 @@ import Button from '../components/Button';
 import ResultCard from '../components/ResultCard';
 import UploadReport from '../components/UploadReport';
 import ChatBot from '../components/ChatBot';
-import { predictHeartDisease, saveHistory } from '../services/api';
+import { predictHeartDisease, saveHistory, recordAssessment } from '../services/api';
 import { generateSuggestions } from '../utils/suggestionEngine';
 import { Heart, FileText, Keyboard, MessageSquare } from 'lucide-react';
 
@@ -88,7 +88,7 @@ const HeartDiseasePrediction = () => {
               localStorage.setItem("userId", userId);
             }
 
-            // Save to history
+            // Save to session history (legacy bridge)
             saveHistory({
                 userId: userId,
                 userName: dataToPredict.patientName || 'Anonymous',
@@ -97,6 +97,21 @@ const HeartDiseasePrediction = () => {
                 prediction: predictionResponse.prediction,
                 probability: predictionResponse.probability
             }).catch(e => console.error("Failed to save history:", e));
+
+            // Persist to PostgreSQL via v1 API
+            recordAssessment({
+                condition: 'HEART',
+                inputPayload: dataToPredict,
+                modelVersion: 'heart-v1.0',
+                probability: predictionResponse.probability,
+                riskBand: predictionResponse.prediction === 1 ? 'HIGH' : 'LOW',
+                observations: [
+                    { name: 'systolic_bp', value: Number(dataToPredict.systolic_bp || 0), unit: 'mmHg' },
+                    { name: 'diastolic_bp', value: Number(dataToPredict.diastolic_bp || 0), unit: 'mmHg' },
+                    { name: 'cholesterol', value: Number(dataToPredict.cholesterol || 0), unit: 'mg/dL' },
+                    { name: 'glucose', value: Number(dataToPredict.glucose || 0), unit: 'mg/dL' },
+                ],
+            }).catch(e => console.log('Assessment record (unauthenticated or guest session):', e.message));
         } catch (_err) {
             setError('Failed to connect to the prediction server. Please try again later.');
         } finally {

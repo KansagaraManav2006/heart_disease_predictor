@@ -10,6 +10,8 @@ import About from './pages/About';
 import Dashboard from './pages/Dashboard';
 import SignIn from './pages/auth/SignIn';
 import Register from './pages/auth/Register';
+import ClinicianWorklist from './pages/clinician/ClinicianWorklist';
+import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 
 function App() {
@@ -37,6 +39,14 @@ function App() {
                   <Route path="/diabetes" element={<DiabetesPrediction />} />
                   <Route path="/heart" element={<HeartDiseasePrediction />} />
                   <Route path="/dashboard" element={<Dashboard />} />
+                  <Route
+                    path="/worklist"
+                    element={
+                      <ProtectedRoute allowedRoles={['CLINICIAN', 'ADMIN']}>
+                        <ClinicianWorklist />
+                      </ProtectedRoute>
+                    }
+                  />
                   <Route path="/about" element={<About />} />
                 </Routes>
               </div>

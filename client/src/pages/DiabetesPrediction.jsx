@@ -6,7 +6,7 @@ import Button from '../components/Button';
 import ResultCard from '../components/ResultCard';
 import UploadReport from '../components/UploadReport';
 import ChatBot from '../components/ChatBot';
-import { predictDiabetes, saveHistory } from '../services/api';
+import { predictDiabetes, saveHistory, recordAssessment } from '../services/api';
 import { generateSuggestions } from '../utils/suggestionEngine';
 import { Activity, FileText, Keyboard, MessageSquare } from 'lucide-react';
 
@@ -75,7 +75,7 @@ const DiabetesPrediction = () => {
               localStorage.setItem("userId", userId);
             }
 
-            // Save to history
+            // Save to session history (legacy bridge)
             saveHistory({
                 userId: userId,
                 userName: dataToPredict.patientName || 'Anonymous',
@@ -84,6 +84,20 @@ const DiabetesPrediction = () => {
                 prediction: predictionResponse.prediction,
                 probability: predictionResponse.probability
             }).catch(e => console.error("Failed to save history:", e));
+
+            // Persist to PostgreSQL via v1 API
+            recordAssessment({
+                condition: 'DIABETES',
+                inputPayload: dataToPredict,
+                modelVersion: 'diabetes-v1.0',
+                probability: predictionResponse.probability,
+                riskBand: predictionResponse.prediction === 1 ? 'HIGH' : 'LOW',
+                observations: [
+                    { name: 'glucose', value: Number(dataToPredict.glucose || 0), unit: 'mg/dL' },
+                    { name: 'hba1c', value: Number(dataToPredict.hba1c || 0), unit: '%' },
+                    { name: 'bmi', value: Number(dataToPredict.bmi || 0), unit: 'kg/m²' },
+                ],
+            }).catch(e => console.log('Assessment record (unauthenticated or guest session):', e.message));
             
         } catch (_err) {
             setError('Failed to connect to the prediction server. Please try again later.');

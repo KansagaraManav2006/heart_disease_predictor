@@ -109,6 +109,87 @@ export const verifyEmail = async (token) => {
 };
 
 // ---------------------------------------------------------------------------
+// Patient & Access Grants API (v1)
+// ---------------------------------------------------------------------------
+
+export const getMyProfile = async () => {
+  const response = await authenticatedFetch(`${API_BASE_URL}/v1/patient/me`);
+  if (!response.ok) throw new Error('Failed to fetch patient profile');
+  const data = await response.json();
+  return data.profile;
+};
+
+export const updateMyProfile = async (profileData) => {
+  const response = await authenticatedFetch(`${API_BASE_URL}/v1/patient/me`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(profileData),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Failed to update profile');
+  return data.profile;
+};
+
+export const grantClinicianAccess = async (clinicianEmail) => {
+  const response = await authenticatedFetch(`${API_BASE_URL}/v1/access/grants`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ clinicianEmail }),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Failed to grant clinician access');
+  return data.grant;
+};
+
+export const revokeClinicianAccess = async (grantId) => {
+  const response = await authenticatedFetch(`${API_BASE_URL}/v1/access/grants/${grantId}`, {
+    method: 'DELETE',
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Failed to revoke access');
+  return data.grant;
+};
+
+export const getAssignedPatients = async () => {
+  const response = await authenticatedFetch(`${API_BASE_URL}/v1/access/assigned-patients`);
+  if (!response.ok) throw new Error('Failed to fetch assigned patients');
+  const data = await response.json();
+  return data.patients;
+};
+
+// ---------------------------------------------------------------------------
+// Assessments API (v1)
+// ---------------------------------------------------------------------------
+
+export const recordAssessment = async (assessmentData) => {
+  const response = await authenticatedFetch(`${API_BASE_URL}/v1/assessments`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(assessmentData),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Failed to record assessment');
+  return data.assessment;
+};
+
+export const getMyAssessments = async (condition) => {
+  const url = condition
+    ? `${API_BASE_URL}/v1/assessments?condition=${condition}`
+    : `${API_BASE_URL}/v1/assessments`;
+  const response = await authenticatedFetch(url);
+  if (!response.ok) throw new Error('Failed to fetch assessments');
+  const data = await response.json();
+  return data.assessments;
+};
+
+export const getAssessmentById = async (id) => {
+  const response = await authenticatedFetch(`${API_BASE_URL}/v1/assessments/${id}`);
+  if (!response.ok) throw new Error('Failed to fetch assessment details');
+  const data = await response.json();
+  return data.assessment;
+};
+
+// ---------------------------------------------------------------------------
 // Predictions & OCR
 // ---------------------------------------------------------------------------
 
