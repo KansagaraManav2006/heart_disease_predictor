@@ -1,17 +1,40 @@
 {
-    "name": "disease-predictor-server",
-    "version": "3.0.0",
-    "description": "Express Backend for HealthPredict Risk Screening Tool",
-    "main": "index.js",
-    "scripts": {
-        "start": "node index.js",
-        "dev": "node --watch index.js"
-    },
-    "dependencies": {
-        "cors": "^2.8.5",
-        "dotenv": "^16.4.5",
-        "express": "^4.22.2",
-        "morgan": "^1.11.0",
-        "multer": "^2.2.0"
-    }
+  "name": "healthlens-server",
+  "version": "3.1.0",
+  "description": "TypeScript Express Backend for HealthLens AI Medical Intelligence Platform",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:seed": "ts-node prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.3.1",
+    "argon2": "^0.41.1",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.22.2",
+    "express-rate-limit": "^7.5.0",
+    "morgan": "^1.11.0",
+    "multer": "^2.2.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.8",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/morgan": "^1.9.9",
+    "@types/multer": "^1.4.12",
+    "@types/node": "^22.13.4",
+    "prisma": "^6.3.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.7.3"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  }
 }

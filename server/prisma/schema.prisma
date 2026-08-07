@@ -1,0 +1,216 @@
+// HealthLens AI Platform Prisma Schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  PATIENT
+  CLINICIAN
+  ADMIN
+}
+
+enum UserStatus {
+  PENDING_VERIFICATION
+  ACTIVE
+  SUSPENDED
+}
+
+enum ConditionType {
+  DIABETES
+  HEART
+}
+
+enum RiskBand {
+  LOW
+  MODERATE
+  HIGH
+}
+
+model User {
+  id               String       @id @default(uuid())
+  email            String       @unique
+  passwordHash     String
+  role             Role         @default(PATIENT)
+  status           UserStatus   @default(PENDING_VERIFICATION)
+  emailVerifyToken String?
+  resetToken       String?
+  resetTokenExpiry DateTime?
+  verifiedAt       DateTime?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  sessions           Session[]
+  patientProfile     PatientProfile?
+  clinicianAccesses  ClinicianAccess[]     @relation("ClinicianGrants")
+  createdAssessments Assessment[]          @relation("CreatedAssessments")
+  createdInvitations ClinicianInvitation[] @relation("CreatedInvitations")
+  auditEvents        AuditEvent[]          @relation("UserAuditEvents")
+
+  @@index([email])
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  userId    String
+  data      Json?
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  userAgent String?
+  ipHash    String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model PatientProfile {
+  id             String    @id @default(uuid())
+  userId         String    @unique
+  fullName       String
+  dateOfBirth    DateTime?
+  biologicalSex  String?
+  emergencyPhone String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accesses    ClinicianAccess[]
+  assessments Assessment[]
+
+  @@index([userId])
+}
+
+model ClinicianAccess {
+  id               String    @id @default(uuid())
+  patientProfileId String
+  clinicianId      String
+  grantedAt        DateTime  @default(now())
+  revokedAt        DateTime?
+
+  patientProfile PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Cascade, map: "fk_clinicianaccess_patientprofile")
+  clinicianUser  User           @relation("ClinicianGrants", fields: [clinicianId], references: [id], onDelete: Cascade, map: "fk_clinicianaccess_clinicianuser")
+
+  @@unique([patientProfileId, clinicianId])
+}
+
+model ClinicianInvitation {
+  id        String    @id @default(uuid())
+  email     String
+  tokenHash String    @unique
+  createdBy String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  creator User @relation("CreatedInvitations", fields: [createdBy], references: [id], onDelete: Cascade)
+}
+
+model Assessment {
+  id                 String        @id @default(uuid())
+  patientProfileId   String?
+  creatorId          String
+  condition          ConditionType
+  inputSchemaVersion String        @default("1.0")
+  inputPayload       Json
+  modelVersion       String
+  probability        Float
+  riskBand           RiskBand
+  outOfDistribution  Boolean       @default(false)
+  topContributors    Json?
+  limitations        Json?
+  createdAt          DateTime      @default(now())
+
+  patientProfile PatientProfile? @relation(fields: [patientProfileId], references: [id], onDelete: SetNull)
+  creator        User           @relation("CreatedAssessments", fields: [creatorId], references: [id], onDelete: Cascade)
+  observations   Observation[]
+  report         Report?
+  alerts         Alert[]
+
+  @@index([patientProfileId])
+  @@index([creatorId])
+  @@index([condition])
+  @@index([createdAt])
+}
+
+model Observation {
+  id           String   @id @default(uuid())
+  assessmentId String
+  name         String
+  value        Float
+  unit         String
+  source       String   @default("MANUAL") // MANUAL | OCR | CHAT
+  observedAt   DateTime @default(now())
+
+  assessment Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+
+  @@index([assessmentId])
+}
+
+model ModelVersion {
+  id           String        @id @default(uuid())
+  condition    ConditionType
+  versionName  String        @unique
+  artifactUri  String
+  artifactHash String
+  metrics      Json
+  isCurrent    Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+
+  @@index([condition, isCurrent])
+}
+
+model DatasetVersion {
+  id         String   @id @default(uuid())
+  name       String   @unique
+  provenance String
+  license    String
+  checksum   String
+  rowCount   Int
+  schema     Json
+  createdAt  DateTime @default(now())
+}
+
+model Report {
+  id           String   @id @default(uuid())
+  assessmentId String   @unique
+  reportNumber String   @unique
+  pdfPath      String?
+  createdAt    DateTime @default(now())
+
+  assessment Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+}
+
+model Alert {
+  id           String    @id @default(uuid())
+  assessmentId String
+  severity     String    // LOW | MEDIUM | HIGH
+  message      String
+  resolvedAt   DateTime?
+  createdAt    DateTime  @default(now())
+
+  assessment Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+}
+
+model AuditEvent {
+  id         String   @id @default(uuid())
+  actorId    String?
+  action     String
+  entityType String
+  entityId   String?
+  metadata   Json?
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  actor User? @relation("UserAuditEvents", fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([actorId])
+  @@index([action])
+  @@index([createdAt])
+}

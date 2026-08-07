@@ -1,0 +1,31 @@
+name: healthlens-ai
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: healthlens-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: healthlens_db
+      POSTGRES_USER: healthlens
+      POSTGRES_PASSWORD: healthlens_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U healthlens -d healthlens_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: healthlens-mailhog
+    restart: unless-stopped
+    ports:
+      - "1025:1025" # SMTP port
+      - "8025:8025" # Web UI
+
+volumes:
+  pgdata:

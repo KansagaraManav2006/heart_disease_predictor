@@ -8,39 +8,46 @@ import DiabetesPrediction from './pages/DiabetesPrediction';
 import HeartDiseasePrediction from './pages/HeartDiseasePrediction';
 import About from './pages/About';
 import Dashboard from './pages/Dashboard';
+import SignIn from './pages/auth/SignIn';
+import Register from './pages/auth/Register';
+import { AuthProvider } from './context/AuthContext';
 
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-background text-textMain flex font-sans">
-        
-        {/* Sidebar Left */}
-        <Sidebar className="hidden md:block" />
-
-        {/* Main Wrapper */}
-        <div className="flex-1 flex flex-col md:ml-64 min-h-screen transition-all duration-300">
+      <AuthProvider>
+        <div className="min-h-screen bg-background text-textMain flex font-sans">
           
-          {/* Top Header */}
-          <Header />
+          {/* Sidebar Left */}
+          <Sidebar className="hidden md:block" />
 
-          {/* Page Content */}
-          <main className="flex-1 p-4 md:p-8 relative">
-            <div className="max-w-5xl mx-auto flex flex-col min-h-full">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/diabetes" element={<DiabetesPrediction />} />
-                <Route path="/heart" element={<HeartDiseasePrediction />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/about" element={<About />} />
-              </Routes>
-            </div>
-          </main>
+          {/* Main Wrapper */}
+          <div className="flex-1 flex flex-col md:ml-64 min-h-screen transition-all duration-300">
+            
+            {/* Top Header */}
+            <Header />
 
-          {/* Footer at bottom */}
-          <Footer />
+            {/* Page Content */}
+            <main className="flex-1 p-4 md:p-8 relative">
+              <div className="max-w-5xl mx-auto flex flex-col min-h-full">
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/login" element={<SignIn />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/diabetes" element={<DiabetesPrediction />} />
+                  <Route path="/heart" element={<HeartDiseasePrediction />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/about" element={<About />} />
+                </Routes>
+              </div>
+            </main>
 
+            {/* Footer at bottom */}
+            <Footer />
+
+          </div>
         </div>
-      </div>
+      </AuthProvider>
     </Router>
   );
 }
