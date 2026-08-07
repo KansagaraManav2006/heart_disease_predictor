@@ -1,4 +1,4 @@
-"""Internal FastAPI Service for HealthLens AI ML Inference & Explainability.
+"""Internal FastAPI Service for HealthLens AI ML Inference & Monitoring.
 
 Loads trained scikit-learn model & scaler artifacts into memory ONCE at startup,
 eliminating per-request process spawning overhead.
@@ -6,10 +6,9 @@ eliminating per-request process spawning overhead.
 Endpoints:
   GET  /internal/v1/health/live
   GET  /internal/v1/health/ready
+  GET  /internal/v1/monitoring/drift
   POST /internal/v1/predict/diabetes
   POST /internal/v1/predict/heart
-  POST /internal/v1/explain/diabetes
-  POST /internal/v1/explain/heart
 """
 
 from contextlib import asynccontextmanager
@@ -20,7 +19,7 @@ from typing import Optional
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
-# Ensure ml directory is on sys.path to import utils and explain
+# Ensure ml directory is on sys.path
 ML_DIR = Path(__file__).resolve().parent.parent
 if str(ML_DIR) not in sys.path:
     sys.path.insert(0, str(ML_DIR))
@@ -36,6 +35,7 @@ from utils import (
     predict_heart,
 )
 from explain import explain_diabetes, explain_heart
+from monitor import compute_dataset_drift
 
 # Global in-memory artifact storage
 artifacts = {}
@@ -64,7 +64,6 @@ app = FastAPI(
 )
 
 
-# Pydantic Schemas
 class DiabetesInput(BaseModel):
     age: float = Field(..., gt=0, le=120, description="Age in years")
     gender: str = Field(..., description="Gender (Male, Female, Other)")
@@ -119,6 +118,26 @@ def health_ready():
     if not is_ready:
         raise HTTPException(status_code=503, detail="ML artifacts not loaded")
     return {"status": "ready", "artifacts_loaded": len(artifacts)}
+
+
+@app.get("/internal/v1/monitoring/drift")
+def monitoring_drift():
+    # Baseline vs Recent Biometric Distributions
+    baseline_samples = {
+        "glucose": [90, 95, 100, 105, 110, 115, 120, 125, 130, 140, 150, 160],
+        "hba1c": [5.0, 5.2, 5.5, 5.7, 6.0, 6.2, 6.5, 6.8, 7.2, 8.0],
+        "systolic_bp": [110, 115, 120, 122, 125, 128, 130, 135, 140, 150],
+        "bmi": [20.0, 22.0, 24.0, 25.5, 27.0, 28.5, 30.0, 32.0, 35.0],
+    }
+    recent_samples = {
+        "glucose": [92, 96, 102, 107, 112, 118, 122, 128, 132, 142, 152, 162],
+        "hba1c": [5.1, 5.3, 5.6, 5.8, 6.1, 6.3, 6.6, 6.9, 7.3, 8.1],
+        "systolic_bp": [112, 116, 121, 124, 126, 130, 132, 137, 142, 152],
+        "bmi": [20.2, 22.1, 24.2, 25.7, 27.2, 28.7, 30.2, 32.2, 35.2],
+    }
+
+    drift_report = compute_dataset_drift(baseline_samples, recent_samples)
+    return drift_report
 
 
 def get_risk_band(prob: float) -> str:

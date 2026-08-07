@@ -13,6 +13,7 @@ import Register from './pages/auth/Register';
 import ClinicianWorklist from './pages/clinician/ClinicianWorklist';
 import ModelAnalytics from './pages/admin/ModelAnalytics';
 import AuditLog from './pages/admin/AuditLog';
+import SystemHealth from './pages/admin/SystemHealth';
 import MedicalKnowledge from './pages/knowledge/MedicalKnowledge';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
@@ -56,6 +57,14 @@ function App() {
                     element={
                       <ProtectedRoute allowedRoles={['CLINICIAN', 'ADMIN']}>
                         <AuditLog />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/system-health"
+                    element={
+                      <ProtectedRoute allowedRoles={['CLINICIAN', 'ADMIN']}>
+                        <SystemHealth />
                       </ProtectedRoute>
                     }
                   />

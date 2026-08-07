@@ -7,6 +7,7 @@ import assessmentRouter from '../modules/assessment/assessment.router';
 import modelRegistryRouter from '../modules/modelRegistry/modelRegistry.router';
 import knowledgeRouter from '../modules/knowledge/knowledge.router';
 import auditRouter from '../modules/audit/audit.router';
+import systemHealthRouter from '../modules/systemHealth/systemHealth.router';
 
 const router = Router();
 
@@ -19,5 +20,6 @@ router.use('/assessments', assessmentRouter);
 router.use('/models', modelRegistryRouter);
 router.use('/knowledge', knowledgeRouter);
 router.use('/audit', auditRouter);
+router.use('/system-health', systemHealthRouter);
 
 export default router;

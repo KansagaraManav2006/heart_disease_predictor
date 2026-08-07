@@ -158,6 +158,16 @@ export const getAssignedPatients = async () => {
 };
 
 // ---------------------------------------------------------------------------
+// System Health & Drift API (v1)
+// ---------------------------------------------------------------------------
+
+export const getSystemHealth = async () => {
+  const response = await authenticatedFetch(`${API_BASE_URL}/v1/system-health`);
+  if (!response.ok) throw new Error('Failed to fetch system health & drift report');
+  return await response.json();
+};
+
+// ---------------------------------------------------------------------------
 // Audit Events API (v1)
 // ---------------------------------------------------------------------------
 
