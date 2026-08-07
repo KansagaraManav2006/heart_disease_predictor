@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   Activity,
   Heart,
@@ -15,6 +15,7 @@ import {
   X,
   UserCheck,
   ChevronRight,
+  Plus,
 } from 'lucide-react';
 import { useAuth } from '../../context/useAuth';
 import Footer from '../Footer';
@@ -23,6 +24,7 @@ const WorkspaceShell = ({ children, wide = false }) => {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const { user, signOut } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const toggleBtnRef = useRef(null);
   const isClinicianOrAdmin = user?.role === 'CLINICIAN' || user?.role === 'ADMIN';
@@ -77,7 +79,7 @@ const WorkspaceShell = ({ children, wide = false }) => {
       ],
     },
     {
-      groupTitle: 'Intelligence & Research',
+      groupTitle: 'Intelligence & Guidelines',
       items: [
         { to: '/knowledge', label: 'Medical Guidelines', icon: BookOpen },
       ],
@@ -96,10 +98,12 @@ const WorkspaceShell = ({ children, wide = false }) => {
         ]
       : []),
     {
-      groupTitle: 'Platform',
-      items: [{ to: '/about', label: 'Platform & Safety', icon: Info }],
+      groupTitle: 'Platform & Governance',
+      items: [{ to: '/about', label: 'Platform Methodology', icon: Info }],
     },
   ];
+
+  const userInitial = user?.email ? user.email.charAt(0).toUpperCase() : 'U';
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-primary/30 selection:text-primary">
@@ -108,28 +112,33 @@ const WorkspaceShell = ({ children, wide = false }) => {
       </a>
 
       <div className="flex flex-1">
-        {/* Desktop Sidebar */}
+        {/* Improved Desktop Sidebar */}
         <aside
-          className="hidden md:flex flex-col w-20 lg:w-64 bg-sidebar border-r border-sidebar-border h-screen sticky top-0 z-30 transition-all duration-300 select-none"
+          className="hidden md:flex flex-col w-20 lg:w-64 bg-sidebar border-r border-sidebar-border h-screen sticky top-0 z-30 transition-all duration-300 select-none shadow-sm"
           aria-label="Workspace sidebar navigation"
         >
-          {/* Workspace Brand Header */}
-          <div className="h-16 px-4 lg:px-6 flex items-center justify-between border-b border-sidebar-border">
-            <NavLink to="/" className="flex items-center gap-3 group focus-visible:ring-2 focus-visible:ring-sidebar-ring rounded-md px-1">
-              <div className="bg-primary/10 p-2 rounded-md text-primary border border-primary/30">
+          {/* Workspace Brand Tile */}
+          <div className="h-16 px-4 lg:px-6 flex items-center justify-between border-b border-sidebar-border bg-card/50">
+            <NavLink to="/" className="flex items-center gap-3 group focus-visible:ring-2 focus-visible:ring-sidebar-ring rounded-md px-1 py-1">
+              <div className="bg-primary text-primary-foreground p-2 rounded-md shadow-md border border-red-800/40 flex items-center justify-center flex-shrink-0 group-hover:bg-red-700 transition-colors">
                 <Activity className="w-5 h-5" />
               </div>
-              <span className="hidden lg:inline text-lg font-bold tracking-tight text-sidebar-foreground font-serif">
-                Health<span className="text-primary">Lens AI</span>
-              </span>
+              <div className="hidden lg:flex items-center gap-2">
+                <span className="text-base font-bold tracking-tight text-sidebar-foreground font-serif">
+                  Health<span className="text-primary">Lens</span>
+                </span>
+                <span className="bg-accent/20 text-amber-500 border border-amber-500/40 text-[10px] px-1.5 py-0.5 rounded font-mono font-bold">
+                  AI
+                </span>
+              </div>
             </NavLink>
           </div>
 
-          {/* Navigation Items */}
-          <div className="flex-1 overflow-y-auto py-6 px-3 lg:px-4 space-y-6">
+          {/* Navigation Items with Active Left Bar Indicator */}
+          <div className="flex-1 overflow-y-auto py-5 px-3 lg:px-4 space-y-6">
             {navGroups.map((group, idx) => (
               <div key={idx} className="space-y-1">
-                <h3 className="hidden lg:block text-[10px] font-bold text-muted-foreground uppercase tracking-wider px-3 mb-2">
+                <h3 className="hidden lg:block text-[10px] font-bold text-muted-foreground uppercase tracking-widest px-3 mb-2">
                   {group.groupTitle}
                 </h3>
                 {group.items.map((item) => {
@@ -140,15 +149,22 @@ const WorkspaceShell = ({ children, wide = false }) => {
                       to={item.to}
                       title={item.label}
                       className={({ isActive }) =>
-                        `flex items-center gap-3 px-3 py-2.5 rounded-md transition-all duration-200 text-xs font-semibold ${
+                        `flex items-center justify-between px-3 py-2.5 rounded-md transition-all duration-200 text-xs font-semibold relative ${
                           isActive
-                            ? 'bg-card text-primary border border-primary/40 shadow-sm'
-                            : 'text-muted-foreground hover:text-foreground hover:bg-card/50 border border-transparent'
+                            ? 'bg-card text-primary border border-primary/40 shadow-sm font-bold before:absolute before:left-0 before:top-2 before:bottom-2 before:w-1 before:bg-primary before:rounded-r'
+                            : 'text-muted-foreground hover:text-foreground hover:bg-muted/70 border border-transparent'
                         }`
                       }
                     >
-                      <Icon className="w-4 h-4 flex-shrink-0" />
-                      <span className="hidden lg:inline truncate">{item.label}</span>
+                      <div className="flex items-center gap-3 truncate">
+                        <Icon className="w-4 h-4 flex-shrink-0" />
+                        <span className="hidden lg:inline truncate">{item.label}</span>
+                      </div>
+                      {item.badge && (
+                        <span className="hidden lg:inline-block text-[10px] px-1.5 py-0.5 rounded-full bg-accent/20 text-amber-500 border border-amber-500/30 font-bold">
+                          {item.badge}
+                        </span>
+                      )}
                     </NavLink>
                   );
                 })}
@@ -156,20 +172,25 @@ const WorkspaceShell = ({ children, wide = false }) => {
             ))}
           </div>
 
-          {/* Account Profile Footer */}
-          <div className="p-3 lg:p-4 border-t border-sidebar-border bg-card/40">
-            <div className="flex items-center justify-between">
-              <div className="hidden lg:flex flex-col truncate pr-2">
-                <span className="text-xs font-bold text-sidebar-foreground truncate">{user?.email?.split('@')[0]}</span>
-                <span className="text-[10px] text-primary font-mono font-medium uppercase tracking-wide">
-                  {user?.role || 'GUEST'}
-                </span>
+          {/* Enhanced Account Profile Footer */}
+          <div className="p-3 lg:p-4 border-t border-sidebar-border bg-card/60">
+            <div className="flex items-center justify-between gap-2">
+              <div className="hidden lg:flex items-center gap-2.5 truncate pr-1">
+                <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground font-bold text-xs flex items-center justify-center flex-shrink-0 shadow-inner">
+                  {userInitial}
+                </div>
+                <div className="flex flex-col truncate">
+                  <span className="text-xs font-bold text-sidebar-foreground truncate">{user?.email?.split('@')[0]}</span>
+                  <span className="text-[10px] text-primary font-mono font-medium uppercase tracking-wide">
+                    {user?.role || 'GUEST'}
+                  </span>
+                </div>
               </div>
               <button
                 onClick={signOut}
                 title="Sign Out"
                 aria-label="Sign Out"
-                className="p-2 rounded-md text-muted-foreground hover:text-destructive hover:bg-muted transition-colors"
+                className="p-2 rounded-md text-muted-foreground hover:text-destructive hover:bg-muted transition-colors flex-shrink-0"
               >
                 <LogOut className="w-4 h-4" />
               </button>
@@ -179,8 +200,8 @@ const WorkspaceShell = ({ children, wide = false }) => {
 
         {/* Workspace Main Body Wrapper */}
         <div className="flex-1 flex flex-col min-h-screen min-w-0">
-          {/* Header */}
-          <header className="sticky top-0 z-20 h-16 bg-card/90 backdrop-blur-md border-b border-border px-4 md:px-8 flex items-center justify-between">
+          {/* Improved Header Navigation Bar */}
+          <header className="sticky top-0 z-20 h-16 bg-card/95 backdrop-blur-md border-b border-border px-4 md:px-8 flex items-center justify-between shadow-sm">
             <div className="flex items-center gap-3">
               {/* Mobile Drawer Trigger */}
               <button
@@ -195,15 +216,30 @@ const WorkspaceShell = ({ children, wide = false }) => {
               </button>
 
               <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium hidden sm:flex">
-                <span>Workspace</span>
+                <span className="text-muted-foreground font-semibold">Workspace</span>
                 <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/60" />
-                <h2 className="text-sm font-bold text-foreground">{getPageTitle()}</h2>
+                <h2 className="text-sm font-bold text-foreground font-serif">{getPageTitle()}</h2>
               </div>
-              <h2 className="text-sm font-bold text-foreground sm:hidden truncate">{getPageTitle()}</h2>
+              <h2 className="text-sm font-bold text-foreground sm:hidden truncate font-serif">{getPageTitle()}</h2>
             </div>
 
-            {/* Account Info Pill */}
+            {/* Quick Header Actions & Account Status Pill */}
             <div className="flex items-center gap-3">
+              <div className="hidden lg:flex items-center gap-2 border-r border-border pr-3">
+                <button
+                  onClick={() => navigate('/diabetes')}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold bg-muted hover:bg-card text-foreground border border-border transition-colors"
+                >
+                  <Plus className="w-3.5 h-3.5 text-primary" /> Diabetes Scan
+                </button>
+                <button
+                  onClick={() => navigate('/heart')}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold bg-muted hover:bg-card text-foreground border border-border transition-colors"
+                >
+                  <Plus className="w-3.5 h-3.5 text-primary" /> Cardiac Scan
+                </button>
+              </div>
+
               {user && (
                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted border border-border text-xs">
                   <UserCheck className="w-3.5 h-3.5 text-primary" />
@@ -239,8 +275,10 @@ const WorkspaceShell = ({ children, wide = false }) => {
               >
                 <div>
                   <div className="flex items-center justify-between pb-6 border-b border-sidebar-border">
-                    <div className="flex items-center gap-2">
-                      <Activity className="w-5 h-5 text-primary" />
+                    <div className="flex items-center gap-2.5">
+                      <div className="bg-primary text-primary-foreground p-2 rounded-md shadow-md">
+                        <Activity className="w-4 h-4" />
+                      </div>
                       <span className="font-bold text-sidebar-foreground text-base font-serif">HealthLens AI</span>
                     </div>
                     <button
@@ -268,7 +306,7 @@ const WorkspaceShell = ({ children, wide = false }) => {
                               className={({ isActive }) =>
                                 `flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-semibold ${
                                   isActive
-                                    ? 'bg-card text-primary border border-primary/30'
+                                    ? 'bg-card text-primary border border-primary/40 font-bold'
                                     : 'text-sidebar-foreground hover:bg-card/50'
                                 }`
                               }
