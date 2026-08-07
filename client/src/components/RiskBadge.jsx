@@ -9,18 +9,18 @@ const RiskBadge = ({ riskBand = 'LOW', score = null, size = 'md', className = ''
 
   const config = isHigh
     ? {
-        bg: 'bg-coral-500/15 border-coral-500/30 text-coral-300',
+        bg: 'bg-destructive/20 border-destructive/40 text-destructive-foreground font-bold',
         label: 'HIGH RISK',
         Icon: ShieldAlert,
       }
     : isModerate
     ? {
-        bg: 'bg-amber-500/15 border-amber-500/30 text-amber-300',
+        bg: 'bg-accent/20 border-accent/40 text-accent-foreground font-bold',
         label: 'MODERATE RISK',
         Icon: AlertTriangle,
       }
     : {
-        bg: 'bg-teal-500/15 border-teal-500/30 text-teal-300',
+        bg: 'bg-muted text-foreground border-border font-semibold',
         label: 'LOW RISK',
         Icon: ShieldCheck,
       };
@@ -28,10 +28,10 @@ const RiskBadge = ({ riskBand = 'LOW', score = null, size = 'md', className = ''
   const { Icon } = config;
 
   const sizeClasses = size === 'lg'
-    ? 'px-4 py-2 text-base rounded-xl gap-2 font-bold'
+    ? 'px-4 py-2 text-base rounded-md gap-2 font-bold'
     : size === 'sm'
-    ? 'px-2 py-0.5 text-xs rounded-lg gap-1 font-semibold'
-    : 'px-3 py-1.5 text-xs rounded-xl gap-1.5 font-semibold';
+    ? 'px-2 py-0.5 text-xs rounded-md gap-1 font-semibold'
+    : 'px-3 py-1.5 text-xs rounded-md gap-1.5 font-semibold';
 
   return (
     <span className={`inline-flex items-center border ${config.bg} ${sizeClasses} ${className}`}>

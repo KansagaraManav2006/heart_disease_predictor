@@ -6,7 +6,7 @@ const MetricTile = ({
   title,
   value,
   unit = '',
-  trend = null, // { direction: 'up' | 'down' | 'neutral', label: string, isPositive: boolean }
+  trend = null,
   icon: Icon = null,
   accent = 'none',
   subtitle = null,
@@ -14,8 +14,8 @@ const MetricTile = ({
 }) => {
   const getTrendColor = () => {
     if (!trend) return '';
-    if (trend.direction === 'neutral') return 'text-slate-400';
-    return trend.isPositive ? 'text-teal-400' : 'text-coral-400';
+    if (trend.direction === 'neutral') return 'text-muted-foreground';
+    return trend.isPositive ? 'text-emerald-400' : 'text-destructive';
   };
 
   const TrendIcon = trend
@@ -29,21 +29,21 @@ const MetricTile = ({
   return (
     <Surface variant="flat" accent={accent} className={`p-5 flex flex-col justify-between ${className}`}>
       <div className="flex items-center justify-between gap-2 mb-3">
-        <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">{title}</span>
+        <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{title}</span>
         {Icon && (
-          <div className="p-2 rounded-xl bg-slate-800 text-teal-400 border border-slate-700/60">
+          <div className="p-2 rounded-md bg-muted text-primary border border-border">
             <Icon className="w-4 h-4" />
           </div>
         )}
       </div>
 
       <div className="flex items-baseline gap-2 my-1">
-        <span className="text-2xl md:text-3xl font-black text-slate-100 tracking-tight font-mono">{value}</span>
-        {unit && <span className="text-xs font-medium text-slate-400">{unit}</span>}
+        <span className="text-2xl md:text-3xl font-black text-foreground tracking-tight font-mono">{value}</span>
+        {unit && <span className="text-xs font-medium text-muted-foreground">{unit}</span>}
       </div>
 
       {(trend || subtitle) && (
-        <div className="flex items-center justify-between text-xs mt-2 pt-2 border-t border-slate-800/80">
+        <div className="flex items-center justify-between text-xs mt-2 pt-2 border-t border-border">
           {trend ? (
             <div className={`flex items-center gap-1.5 font-medium ${getTrendColor()}`}>
               {TrendIcon && <TrendIcon className="w-3.5 h-3.5" />}
@@ -51,7 +51,7 @@ const MetricTile = ({
               <span className="sr-only">({trend.isPositive ? 'positive indicator' : 'attention indicator'})</span>
             </div>
           ) : (
-            <span className="text-slate-400">{subtitle}</span>
+            <span className="text-muted-foreground">{subtitle}</span>
           )}
         </div>
       )}

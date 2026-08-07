@@ -29,9 +29,9 @@ const SelectField = ({
       {label && (
         <label
           htmlFor={selectId}
-          className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2"
+          className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2"
         >
-          {label} {required && <span className="text-coral-400 font-bold" aria-hidden="true">*</span>}
+          {label} {required && <span className="text-destructive font-bold" aria-hidden="true">*</span>}
         </label>
       )}
 
@@ -45,15 +45,15 @@ const SelectField = ({
           disabled={disabled}
           aria-invalid={hasError}
           aria-describedby={describedBy}
-          className={`w-full appearance-none bg-slate-900/90 text-slate-100 placeholder-slate-500 rounded-xl px-4 py-3 pr-10 text-sm border transition-all duration-200 focus:outline-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
+          className={`w-full appearance-none bg-input/40 text-foreground rounded-md px-4 py-3 pr-10 text-sm border transition-all duration-200 focus:outline-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
             hasError
-              ? 'border-coral-500/80 focus:border-coral-400 focus:ring-2 focus:ring-coral-500/30'
-              : 'border-slate-700/80 hover:border-slate-600 focus:border-teal-400 focus:ring-2 focus:ring-teal-400/20'
+              ? 'border-destructive focus:border-destructive focus:ring-2 focus:ring-destructive/30'
+              : 'border-border hover:border-stone-500 focus:border-primary focus:ring-2 focus:ring-primary/20'
           }`}
           {...props}
         >
           {placeholder && (
-            <option value="" disabled className="bg-slate-900 text-slate-500">
+            <option value="" disabled className="bg-card text-muted-foreground">
               {placeholder}
             </option>
           )}
@@ -61,25 +61,25 @@ const SelectField = ({
             <option
               key={typeof opt === 'object' ? opt.value : opt}
               value={typeof opt === 'object' ? opt.value : opt}
-              className="bg-slate-900 text-slate-100"
+              className="bg-card text-foreground"
             >
               {typeof opt === 'object' ? opt.label : opt}
             </option>
           ))}
         </select>
-        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3.5 text-slate-400">
+        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3.5 text-muted-foreground">
           <ChevronDown className="w-4 h-4" />
         </div>
       </div>
 
       {error && (
-        <p id={errorId} className="mt-1.5 text-xs text-coral-400 font-medium flex items-center gap-1">
+        <p id={errorId} className="mt-1.5 text-xs text-destructive font-medium flex items-center gap-1">
           <span aria-hidden="true">⚠</span> {error}
         </p>
       )}
 
       {!error && helperText && (
-        <p id={helperId} className="mt-1.5 text-xs text-slate-400">
+        <p id={helperId} className="mt-1.5 text-xs text-muted-foreground">
           {helperText}
         </p>
       )}

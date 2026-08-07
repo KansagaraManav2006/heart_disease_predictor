@@ -3,7 +3,7 @@ import Surface from './Surface';
 import Button from './Button';
 import RiskBadge from './RiskBadge';
 import StatusBadge from './StatusBadge';
-import { AlertTriangle, Info, TrendingUp, ShieldCheck, FileSpreadsheet, Eye, Activity, Sparkles, CheckCircle2 } from 'lucide-react';
+import { AlertTriangle, Info, TrendingUp, ShieldCheck, FileSpreadsheet, Eye, Activity, Sparkles } from 'lucide-react';
 
 let _sessionReportCounter = 0;
 
@@ -33,7 +33,7 @@ const ResultCard = ({ prediction, probability, riskBand = 'LOW', explanation = n
       const reportId = `SR-${Date.now()}-${String(_sessionReportCounter).padStart(3, '0')}`;
 
       // Header Ribbon
-      doc.setFillColor(13, 148, 136); // Teal
+      doc.setFillColor(185, 28, 28); // Sturdy Crimson
       doc.rect(0, 0, 210, 40, 'F');
 
       doc.setTextColor(255, 255, 255);
@@ -84,7 +84,7 @@ const ResultCard = ({ prediction, probability, riskBand = 'LOW', explanation = n
         head: [['Clinical Metric / Biomarker', 'Recorded Input']],
         body: tableBody,
         theme: 'striped',
-        headStyles: { fillStyle: [13, 148, 136] },
+        headStyles: { fillStyle: [185, 28, 28] },
       });
 
       // Footer Disclaimer
@@ -109,31 +109,31 @@ const ResultCard = ({ prediction, probability, riskBand = 'LOW', explanation = n
   return (
     <Surface variant="hero" accent={surfaceAccent} className="mt-8 shadow-2xl animate-fade-in-up">
       {/* View Mode Toggle Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-border">
         <div>
-          <span className="text-[11px] font-bold text-teal-400 uppercase tracking-wider block mb-1">
+          <span className="text-[11px] font-bold text-primary uppercase tracking-wider block mb-1">
             HealthLens AI Calibrated Risk Engine
           </span>
-          <h2 className="text-xl md:text-2xl font-black text-slate-100">Screening Assessment Result</h2>
+          <h2 className="text-xl md:text-2xl font-black text-foreground font-serif">Screening Assessment Result</h2>
         </div>
 
-        <div className="bg-slate-900 p-1 rounded-xl flex text-xs font-semibold border border-slate-800">
+        <div className="bg-muted p-1 rounded-md flex text-xs font-semibold border border-border">
           <button
             onClick={() => setViewMode('patient')}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all ${
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-md transition-all ${
               viewMode === 'patient'
-                ? 'bg-slate-800 text-teal-400 shadow-sm border border-teal-500/30'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-card text-primary shadow-sm border border-primary/30 font-bold'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             <Eye className="w-3.5 h-3.5" /> Patient View
           </button>
           <button
             onClick={() => setViewMode('clinician')}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all ${
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-md transition-all ${
               viewMode === 'clinician'
-                ? 'bg-slate-800 text-teal-400 shadow-sm border border-teal-500/30'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-card text-primary shadow-sm border border-primary/30 font-bold'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             <Activity className="w-3.5 h-3.5" /> SHAP Attribution
@@ -143,7 +143,7 @@ const ResultCard = ({ prediction, probability, riskBand = 'LOW', explanation = n
 
       {/* Out-Of-Distribution Warning Banner */}
       {explanation?.out_of_distribution && (
-        <div className="flex items-start gap-3 bg-amber-500/10 border border-amber-500/30 text-amber-300 p-4 rounded-xl my-6 text-xs">
+        <div className="flex items-start gap-3 bg-amber-500/10 border border-amber-500/30 text-amber-300 p-4 rounded-md my-6 text-xs">
           <AlertTriangle className="text-amber-400 flex-shrink-0 w-4 h-4 mt-0.5" />
           <div>
             <span className="font-bold block mb-1">Out-Of-Distribution Parameter Notice:</span>
@@ -159,60 +159,60 @@ const ResultCard = ({ prediction, probability, riskBand = 'LOW', explanation = n
       {/* Primary Risk Stratification Grid */}
       <div className="grid md:grid-cols-2 gap-6 my-6">
         {/* Calibrated Probability Box */}
-        <div className="bg-slate-900/90 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
-          <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+        <div className="bg-card p-6 rounded-md border border-border flex flex-col justify-between shadow-sm">
+          <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
             Calibrated Event Stratification
           </span>
           <div className="flex items-center gap-4 my-2">
             <RiskBadge riskBand={riskBand} score={probPercent} size="lg" />
           </div>
-          <p className="text-xs text-slate-400 mt-3 leading-relaxed">
+          <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
             Probability score calibrated via 5-fold cross-validation on validated population cohort data.
           </p>
         </div>
 
         {/* View Mode Context Box */}
         {viewMode === 'patient' ? (
-          <div className="bg-slate-900/90 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-teal-400 mb-2">
+          <div className="bg-card p-6 rounded-md border border-border flex flex-col justify-between shadow-sm">
+            <span className="text-xs font-semibold uppercase tracking-wider text-primary mb-2">
               Patient Guidance Summary
             </span>
-            <p className="text-xs md:text-sm text-slate-300 leading-relaxed mb-3">
+            <p className="text-xs md:text-sm text-foreground leading-relaxed mb-3">
               {isHighRisk
                 ? 'The predictive model identified biometric factors associated with an elevated risk profile. Please schedule an evaluation with your healthcare provider.'
                 : 'Your entered parameters align with a lower risk category relative to benchmark population reference values.'}
             </p>
-            <div className="text-xs text-slate-400 bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+            <div className="text-xs text-muted-foreground bg-muted p-3 rounded-md border border-border">
               <strong>Notice:</strong> Statistical risk screening tool for clinical decision support. Not a standalone diagnosis.
             </div>
           </div>
         ) : (
-          <div className="bg-slate-950 p-6 rounded-2xl border border-slate-800 font-mono text-xs text-slate-300 flex flex-col justify-between">
+          <div className="bg-muted p-6 rounded-md border border-border font-mono text-xs text-foreground flex flex-col justify-between">
             <div className="space-y-2">
-              <span className="text-teal-400 font-bold uppercase tracking-wider block font-sans">
+              <span className="text-primary font-bold uppercase tracking-wider block font-sans">
                 Clinician Attribution Metadata
               </span>
               <div>Model Architecture: HistGradientBoosting (Calibrated)</div>
               <div>Pipeline Version: {explanation?.condition || 'model'}-v3.0</div>
               <div>OOD Status: {explanation?.out_of_distribution ? 'TRUE (Exceeds Bounds)' : 'FALSE (In Bounds)'}</div>
             </div>
-            <div className="text-slate-500 text-[11px] mt-4 font-sans">
+            <div className="text-muted-foreground text-[11px] mt-4 font-sans">
               SHAP feature attributions calculate exact Shapley marginal contributions to calibrated log-odds.
             </div>
           </div>
         )}
       </div>
 
-      {/* Single Amber Hero Surface for AI Recommendations */}
+      {/* Amber Surface for AI Recommendations */}
       {suggestions && suggestions.length > 0 && (
-        <div className="my-6 bg-amber-500/10 border border-amber-500/30 rounded-2xl p-5 text-xs text-slate-200">
+        <div className="my-6 bg-accent/20 border border-accent/40 rounded-md p-5 text-xs text-foreground">
           <div className="flex items-center gap-2 mb-3">
             <Sparkles className="w-4 h-4 text-amber-400" />
-            <h4 className="font-bold text-amber-300 uppercase tracking-wider text-xs">
+            <h4 className="font-bold text-amber-300 uppercase tracking-wider text-xs font-sans">
               AI Decision Support &amp; Clinical Recommendations
             </h4>
           </div>
-          <ul className="space-y-2 text-slate-300 list-disc list-inside">
+          <ul className="space-y-2 text-foreground/90 list-disc list-inside">
             {suggestions.map((sug, idx) => (
               <li key={idx} className="leading-relaxed">
                 {sug}
@@ -224,21 +224,21 @@ const ResultCard = ({ prediction, probability, riskBand = 'LOW', explanation = n
 
       {/* SHAP Feature Attribution Breakdown */}
       {explanation && (
-        <div className="my-6 pt-6 border-t border-slate-800">
-          <h3 className="text-sm font-bold text-slate-200 mb-4 flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-teal-400" /> Feature Attribution Breakdown (SHAP Analysis)
+        <div className="my-6 pt-6 border-t border-border">
+          <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2 font-serif">
+            <TrendingUp className="w-4 h-4 text-primary" /> Feature Attribution Breakdown (SHAP Analysis)
           </h3>
 
           {viewMode === 'patient' ? (
             <div className="grid md:grid-cols-2 gap-6">
               {/* Primary Risk Drivers */}
-              <div className="bg-coral-950/20 p-5 rounded-2xl border border-coral-500/30">
-                <h4 className="text-xs font-bold text-coral-300 mb-3 flex items-center gap-2 uppercase tracking-wider">
-                  <AlertTriangle className="w-4 h-4 text-coral-400" /> Primary Risk Drivers
+              <div className="bg-destructive/10 p-5 rounded-md border border-destructive/30">
+                <h4 className="text-xs font-bold text-destructive-foreground mb-3 flex items-center gap-2 uppercase tracking-wider">
+                  <AlertTriangle className="w-4 h-4 text-destructive" /> Primary Risk Drivers
                 </h4>
                 <ul className="space-y-2 text-xs">
                   {explanation.patient_explanation?.primary_risk_drivers?.map((driver, idx) => (
-                    <li key={idx} className="bg-slate-900/90 p-2.5 rounded-xl border border-coral-500/20 text-slate-200 font-medium">
+                    <li key={idx} className="bg-card p-2.5 rounded-md border border-border text-foreground font-medium">
                       {driver}
                     </li>
                   ))}
@@ -246,13 +246,13 @@ const ResultCard = ({ prediction, probability, riskBand = 'LOW', explanation = n
               </div>
 
               {/* Favorable Factors */}
-              <div className="bg-teal-950/20 p-5 rounded-2xl border border-teal-500/30">
-                <h4 className="text-xs font-bold text-teal-300 mb-3 flex items-center gap-2 uppercase tracking-wider">
-                  <ShieldCheck className="w-4 h-4 text-teal-400" /> Favorable Indicators
+              <div className="bg-muted p-5 rounded-md border border-border">
+                <h4 className="text-xs font-bold text-foreground mb-3 flex items-center gap-2 uppercase tracking-wider">
+                  <ShieldCheck className="w-4 h-4 text-primary" /> Favorable Indicators
                 </h4>
                 <ul className="space-y-2 text-xs">
                   {explanation.patient_explanation?.favorable_factors?.map((factor, idx) => (
-                    <li key={idx} className="bg-slate-900/90 p-2.5 rounded-xl border border-teal-500/20 text-slate-200 font-medium">
+                    <li key={idx} className="bg-card p-2.5 rounded-md border border-border text-foreground font-medium">
                       {factor}
                     </li>
                   ))}
@@ -260,9 +260,9 @@ const ResultCard = ({ prediction, probability, riskBand = 'LOW', explanation = n
               </div>
             </div>
           ) : (
-            <div className="overflow-x-auto rounded-xl border border-slate-800">
+            <div className="overflow-x-auto rounded-md border border-border">
               <table className="w-full text-left text-xs font-mono">
-                <thead className="bg-slate-900 text-slate-400 border-b border-slate-800">
+                <thead className="bg-muted text-muted-foreground border-b border-border">
                   <tr>
                     <th className="p-3">Feature Name</th>
                     <th className="p-3">Recorded Input</th>
@@ -270,12 +270,12 @@ const ResultCard = ({ prediction, probability, riskBand = 'LOW', explanation = n
                     <th className="p-3">Attribution Direction</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800 bg-slate-950/60">
+                <tbody className="divide-y divide-border bg-card">
                   {explanation.top_risk_contributors?.concat(explanation.top_protective_factors || []).map((item, idx) => (
-                    <tr key={idx} className="hover:bg-slate-900/40">
-                      <td className="p-3 font-semibold text-slate-200">{item.feature}</td>
-                      <td className="p-3 text-slate-400">{item.raw_value}</td>
-                      <td className={`p-3 font-bold ${item.is_risk_factor ? 'text-coral-400' : 'text-teal-400'}`}>
+                    <tr key={idx} className="hover:bg-muted/50">
+                      <td className="p-3 font-semibold text-foreground">{item.feature}</td>
+                      <td className="p-3 text-muted-foreground">{item.raw_value}</td>
+                      <td className={`p-3 font-bold ${item.is_risk_factor ? 'text-destructive' : 'text-primary'}`}>
                         {item.shap_attribution > 0 ? `+${item.shap_attribution}` : item.shap_attribution}
                       </td>
                       <td className="p-3">
@@ -295,9 +295,9 @@ const ResultCard = ({ prediction, probability, riskBand = 'LOW', explanation = n
       )}
 
       {/* Model Limitations Box */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-4 my-6 text-xs text-slate-400">
-        <span className="font-bold text-slate-200 flex items-center gap-1.5 mb-1">
-          <Info className="w-4 h-4 text-teal-400" /> Model Scope &amp; Boundaries:
+      <div className="bg-muted border border-border rounded-md p-4 my-6 text-xs text-muted-foreground">
+        <span className="font-bold text-foreground flex items-center gap-1.5 mb-1 font-serif">
+          <Info className="w-4 h-4 text-primary" /> Model Scope &amp; Boundaries:
         </span>
         <ul className="list-disc list-inside space-y-0.5">
           {explanation?.limitations?.map((lim, idx) => (
@@ -308,8 +308,8 @@ const ResultCard = ({ prediction, probability, riskBand = 'LOW', explanation = n
         </ul>
       </div>
 
-      {/* Download Action (Verb-Led "Download assessment report") */}
-      <div className="flex justify-end pt-4 border-t border-slate-800">
+      {/* Download Action */}
+      <div className="flex justify-end pt-4 border-t border-border">
         <Button
           onClick={generatePDF}
           loading={downloading}

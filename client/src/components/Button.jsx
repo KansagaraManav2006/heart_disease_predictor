@@ -17,12 +17,7 @@ const Button = ({
   'aria-label': ariaLabel,
   ...props
 }) => {
-  // Enforce aria-label for icon-only buttons
-  if (variant === 'icon' && !ariaLabel && typeof children !== 'string') {
-    // default aria-label if not provided
-  }
-
-  const baseClasses = 'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-200 focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 min-h-[44px] min-w-[44px]';
+  const baseClasses = 'inline-flex items-center justify-center font-semibold rounded-md transition-all duration-200 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 min-h-[44px] min-w-[44px] shadow-sm';
 
   const sizeClasses = {
     sm: 'px-3 py-1.5 text-xs gap-1.5',
@@ -31,13 +26,13 @@ const Button = ({
   }[size] || 'px-4 py-2.5 text-sm gap-2';
 
   const variantClasses = {
-    primary: 'bg-teal-600 hover:bg-teal-500 text-white shadow-md shadow-teal-900/20 border border-teal-500/30',
-    ai: 'bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-md shadow-amber-950/30 border border-amber-400/40 font-bold',
-    secondary: 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700/80 hover:border-slate-600 shadow-sm',
-    ghost: 'bg-transparent hover:bg-slate-800/60 text-slate-300 hover:text-white border border-transparent',
-    danger: 'bg-coral-600 hover:bg-coral-500 text-white shadow-md shadow-coral-950/20 border border-coral-500/30',
-    icon: 'p-2.5 bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/60 rounded-xl',
-  }[variant] || 'bg-teal-600 hover:bg-teal-500 text-white';
+    primary: 'bg-primary hover:bg-red-700 text-primary-foreground border border-red-800/40 shadow-md',
+    ai: 'bg-accent hover:bg-amber-600 text-accent-foreground border border-amber-500/40 font-bold',
+    secondary: 'bg-card hover:bg-muted text-foreground border border-border hover:border-stone-500 shadow-sm',
+    ghost: 'bg-transparent hover:bg-muted text-foreground border border-transparent shadow-none',
+    danger: 'bg-destructive hover:bg-red-600 text-destructive-foreground shadow-md border border-red-500/40',
+    icon: 'p-2.5 bg-card hover:bg-muted text-foreground border border-border rounded-md shadow-sm',
+  }[variant] || 'bg-primary hover:bg-red-700 text-primary-foreground';
 
   const widthClass = fullWidth ? 'w-full' : '';
   const isDisabled = disabled || loading;

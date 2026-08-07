@@ -32,9 +32,9 @@ const InputField = ({
       {label && (
         <label
           htmlFor={inputId}
-          className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2"
+          className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2"
         >
-          {label} {required && <span className="text-coral-400 font-bold" aria-hidden="true">*</span>}
+          {label} {required && <span className="text-destructive font-bold" aria-hidden="true">*</span>}
         </label>
       )}
 
@@ -53,28 +53,28 @@ const InputField = ({
           disabled={disabled}
           aria-invalid={hasError}
           aria-describedby={describedBy}
-          className={`w-full bg-slate-900/90 text-slate-100 placeholder-slate-500 rounded-xl px-4 py-3 text-sm border transition-all duration-200 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed ${
+          className={`w-full bg-input/40 text-foreground placeholder:text-muted-foreground/60 rounded-md px-4 py-3 text-sm border transition-all duration-200 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed ${
             hasError
-              ? 'border-coral-500/80 focus:border-coral-400 focus:ring-2 focus:ring-coral-500/30'
-              : 'border-slate-700/80 hover:border-slate-600 focus:border-teal-400 focus:ring-2 focus:ring-teal-400/20'
+              ? 'border-destructive focus:border-destructive focus:ring-2 focus:ring-destructive/30'
+              : 'border-border hover:border-stone-500 focus:border-primary focus:ring-2 focus:ring-primary/20'
           } ${unit ? 'pr-14' : ''}`}
           {...props}
         />
         {unit && (
-          <span className="absolute right-3 text-xs font-medium text-slate-400 pointer-events-none select-none px-2 py-1 rounded bg-slate-800 border border-slate-700">
+          <span className="absolute right-3 text-xs font-medium text-muted-foreground pointer-events-none select-none px-2 py-1 rounded bg-muted border border-border">
             {unit}
           </span>
         )}
       </div>
 
       {error && (
-        <p id={errorId} className="mt-1.5 text-xs text-coral-400 font-medium flex items-center gap-1">
+        <p id={errorId} className="mt-1.5 text-xs text-destructive font-medium flex items-center gap-1">
           <span aria-hidden="true">⚠</span> {error}
         </p>
       )}
 
       {!error && helperText && (
-        <p id={helperId} className="mt-1.5 text-xs text-slate-400">
+        <p id={helperId} className="mt-1.5 text-xs text-muted-foreground">
           {helperText}
         </p>
       )}
