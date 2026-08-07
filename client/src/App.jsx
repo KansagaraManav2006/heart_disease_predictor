@@ -12,6 +12,7 @@ import SignIn from './pages/auth/SignIn';
 import Register from './pages/auth/Register';
 import ClinicianWorklist from './pages/clinician/ClinicianWorklist';
 import ModelAnalytics from './pages/admin/ModelAnalytics';
+import MedicalKnowledge from './pages/knowledge/MedicalKnowledge';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 
@@ -49,6 +50,7 @@ function App() {
                     }
                   />
                   <Route path="/models" element={<ModelAnalytics />} />
+                  <Route path="/knowledge" element={<MedicalKnowledge />} />
                   <Route path="/about" element={<About />} />
                 </Routes>
               </div>

@@ -5,6 +5,7 @@ import patientRouter from '../modules/patient/patient.router';
 import accessGrantRouter from '../modules/accessGrant/accessGrant.router';
 import assessmentRouter from '../modules/assessment/assessment.router';
 import modelRegistryRouter from '../modules/modelRegistry/modelRegistry.router';
+import knowledgeRouter from '../modules/knowledge/knowledge.router';
 
 const router = Router();
 
@@ -15,5 +16,6 @@ router.use('/patient', patientRouter);
 router.use('/access', accessGrantRouter);
 router.use('/assessments', assessmentRouter);
 router.use('/models', modelRegistryRouter);
+router.use('/knowledge', knowledgeRouter);
 
 export default router;

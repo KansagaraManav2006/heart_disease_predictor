@@ -158,6 +158,28 @@ export const getAssignedPatients = async () => {
 };
 
 // ---------------------------------------------------------------------------
+// Knowledge & Guidelines RAG API (v1)
+// ---------------------------------------------------------------------------
+
+export const queryKnowledge = async (query) => {
+  const response = await authenticatedFetch(`${API_BASE_URL}/v1/knowledge/query`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query }),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Failed to query medical knowledge');
+  return data;
+};
+
+export const getKnowledgeDocuments = async () => {
+  const response = await authenticatedFetch(`${API_BASE_URL}/v1/knowledge/documents`);
+  if (!response.ok) throw new Error('Failed to fetch guideline documents');
+  const data = await response.json();
+  return data.documents;
+};
+
+// ---------------------------------------------------------------------------
 // Model Registry API (v1)
 // ---------------------------------------------------------------------------
 
