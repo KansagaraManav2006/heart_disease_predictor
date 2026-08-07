@@ -8,6 +8,8 @@ import { spawn } from 'child_process';
 import fs from 'fs';
 import { promises as fsAsync } from 'fs';
 
+import helmet from 'helmet';
+
 import { ENV } from './config/env';
 import v1Router from './routes/v1';
 import { errorHandler, APIError } from './middleware/errorHandler';
@@ -18,6 +20,7 @@ const app = express();
 // ---------------------------------------------------------------------------
 // Security & Middleware Stack
 // ---------------------------------------------------------------------------
+app.use(helmet());
 app.use(
   cors({
     origin: (origin, callback) => {

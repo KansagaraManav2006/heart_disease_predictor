@@ -158,6 +158,16 @@ export const getAssignedPatients = async () => {
 };
 
 // ---------------------------------------------------------------------------
+// Audit Events API (v1)
+// ---------------------------------------------------------------------------
+
+export const getAuditEvents = async () => {
+  const response = await authenticatedFetch(`${API_BASE_URL}/v1/audit`);
+  if (!response.ok) throw new Error('Failed to fetch audit trail events');
+  return await response.json();
+};
+
+// ---------------------------------------------------------------------------
 // Knowledge & Guidelines RAG API (v1)
 // ---------------------------------------------------------------------------
 
