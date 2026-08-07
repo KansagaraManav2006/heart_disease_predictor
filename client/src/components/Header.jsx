@@ -1,21 +1,22 @@
 import React from 'react';
-import { Menu } from 'lucide-react';
+import { Activity } from 'lucide-react';
+import { useAuth } from '../context/useAuth';
 
 const Header = () => {
-    return (
-        <header className="bg-card border-b border-borderLight h-20 flex items-center justify-between px-8 sticky top-0 z-30 shadow-sm w-full">
-            <div className="flex items-center gap-4">
-                <button className="md:hidden p-2 text-slate-500 hover:text-slate-800 rounded-lg hover:bg-slate-50 transition-colors">
-                    <Menu size={24} />
-                </button>
-                <div>
-                    <h2 className="text-xl font-bold text-slate-800">Disease Prediction System</h2>
-                    <p className="text-xs text-slate-500 font-medium hidden sm:block">AI-Based Health Risk Assessment</p>
-                </div>
-            </div>
-            {/* Kept header clean right side */}
-        </header>
-    );
+  const { user } = useAuth();
+  return (
+    <header className="bg-slate-950/80 backdrop-blur-md border-b border-slate-800/80 h-16 flex items-center justify-between px-6 sticky top-0 z-30 w-full">
+      <div className="flex items-center gap-3">
+        <Activity className="w-5 h-5 text-teal-400" />
+        <h2 className="text-sm font-bold text-slate-100">HealthLens AI Research Workspace</h2>
+      </div>
+      {user && (
+        <span className="text-xs text-slate-400 font-mono">
+          {user.email} ({user.role})
+        </span>
+      )}
+    </header>
+  );
 };
 
 export default Header;

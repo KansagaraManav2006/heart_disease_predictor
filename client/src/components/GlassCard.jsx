@@ -1,12 +1,17 @@
 import React from 'react';
+import Surface from './Surface';
 
-const GlassCard = ({ children, className = '', strong = false, style }) => {
-    const baseClass = strong ? 'glass-strong' : 'glass';
-    return (
-        <div className={`${baseClass} p-6 md:p-8 ${className}`} style={style}>
-            {children}
-        </div>
-    );
+const GlassCard = ({ children, className = '', strong = false, style, ...props }) => {
+  return (
+    <Surface
+      variant={strong ? 'raised' : 'flat'}
+      className={className}
+      style={style}
+      {...props}
+    >
+      {children}
+    </Surface>
+  );
 };
 
 export default GlassCard;

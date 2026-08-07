@@ -1,133 +1,155 @@
 import React, { useState, useEffect } from 'react';
-import GlassCard from '../../components/GlassCard';
+import Surface from '../../components/Surface';
+import PageHeader from '../../components/PageHeader';
+import SearchBar from '../../components/SearchBar';
+import StatusBadge from '../../components/StatusBadge';
+import EmptyState from '../../components/EmptyState';
+import ErrorState from '../../components/ErrorState';
+import { TableSkeleton } from '../../components/Skeleton';
 import { getAuditEvents } from '../../services/api';
-import { ShieldCheck, Search, Lock, AlertTriangle, Clock, User, FileText } from 'lucide-react';
+import { Lock, FileText, Calendar, User, ShieldCheck, Clock } from 'lucide-react';
 
 const AuditLog = () => {
-    const [events, setEvents] = useState([]);
-    const [total, setTotal] = useState(0);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
+  const [events, setEvents] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-    useEffect(() => {
-        const fetchAudit = async () => {
-            try {
-                const data = await getAuditEvents();
-                setEvents(data.events || []);
-                setTotal(data.total || 0);
-            } catch (err) {
-                setError(err.message || 'Failed to load audit events.');
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchAudit();
-    }, []);
+  useEffect(() => {
+    const fetchAudit = async () => {
+      try {
+        const data = await getAuditEvents();
+        setEvents(data.events || []);
+        setTotal(data.total || 0);
+      } catch (err) {
+        setError(err.message || 'Failed to load append-only audit trail.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAudit();
+  }, []);
 
-    const filteredEvents = events.filter((evt) => {
-        const term = searchTerm.toLowerCase();
-        return (
-            evt.action?.toLowerCase().includes(term) ||
-            evt.entityType?.toLowerCase().includes(term) ||
-            evt.actor?.email?.toLowerCase().includes(term)
-        );
-    });
-
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center py-20 text-slate-500">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mr-3" />
-                <span>Loading security &amp; access audit trail...</span>
-            </div>
-        );
-    }
-
+  const filteredEvents = events.filter((evt) => {
+    const term = searchTerm.toLowerCase();
     return (
-        <div className="max-w-5xl mx-auto animate-fade-in-up pb-12">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                <div>
-                    <h1 className="text-3xl font-black text-slate-800 flex items-center gap-3">
-                        <Lock className="text-blue-600" size={32} />
-                        Security &amp; Access Audit Trail
-                    </h1>
-                    <p className="text-slate-600 text-sm mt-1">Append-only audit logging of system access, authorization grants, and data modifications</p>
-                </div>
-                <div className="bg-blue-50 text-blue-800 border border-blue-200 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2">
-                    <ShieldCheck size={16} /> OWASP ASVS L2 Verified
-                </div>
-            </div>
-
-            {/* Filter Box */}
-            <GlassCard className="mb-8 border border-slate-200">
-                <div className="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-200">
-                    <Search size={18} className="text-slate-400" />
-                    <input
-                        type="text"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        placeholder="Search audit trail by action (e.g. USER_LOGGED_IN, ASSESSMENT_CREATED) or email..."
-                        className="w-full bg-transparent text-sm text-slate-800 focus:outline-none"
-                    />
-                </div>
-            </GlassCard>
-
-            {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl mb-6 text-sm flex items-center gap-3">
-                    <AlertTriangle size={20} />
-                    <span>{error}</span>
-                </div>
-            )}
-
-            {/* Audit Log Table / Timeline */}
-            <GlassCard>
-                <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-200">
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2">
-                        <FileText size={16} className="text-blue-600" />
-                        Audit Events ({filteredEvents.length} of {total})
-                    </h3>
-                    <span className="text-xs text-slate-500 font-mono">Log Storage: PostgreSQL (Append-Only)</span>
-                </div>
-
-                <div className="space-y-3">
-                    {filteredEvents.map((evt) => (
-                        <div key={evt.id} className="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
-                            <div className="flex items-start gap-3">
-                                <div className="p-2 bg-blue-100 text-blue-700 rounded-lg font-bold mt-0.5">
-                                    <Clock size={16} />
-                                </div>
-                                <div>
-                                    <div className="flex items-center gap-2">
-                                        <span className="font-bold text-slate-800 text-sm">{evt.action}</span>
-                                        <span className="bg-slate-200 text-slate-700 px-2 py-0.5 rounded font-mono text-[10px]">
-                                            {evt.entityType}
-                                        </span>
-                                    </div>
-                                    <div className="text-slate-600 mt-1 flex items-center gap-2">
-                                        <User size={13} className="text-slate-400" />
-                                        <span>Actor: {evt.actor?.email || evt.actorId || 'System'}</span>
-                                        <span className="text-slate-400">({evt.actor?.role || 'SYSTEM'})</span>
-                                    </div>
-                                    {evt.metadata && (
-                                        <div className="mt-2 text-[11px] font-mono text-slate-500 bg-white p-2 rounded border border-slate-200">
-                                            Metadata: {JSON.stringify(evt.metadata)}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div className="text-right text-slate-400 font-mono text-[11px] whitespace-nowrap">
-                                <div>{new Date(evt.createdAt).toLocaleDateString()}</div>
-                                <div>{new Date(evt.createdAt).toLocaleTimeString()}</div>
-                                <div className="text-slate-500">IP: {evt.ipAddress || '127.0.0.1'}</div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </GlassCard>
-        </div>
+      evt.action?.toLowerCase().includes(term) ||
+      evt.entityType?.toLowerCase().includes(term) ||
+      evt.actor?.email?.toLowerCase().includes(term)
     );
+  });
+
+  return (
+    <div className="space-y-8 animate-fade-in">
+      <PageHeader
+        title="Security Audit &amp; Compliance Trail"
+        subtitle="Append-only audit trail logging system access, role authorizations, and model assessment operations."
+        badge={{ label: 'OWASP ASVS L2', status: 'healthy' }}
+      />
+
+      {/* Toolbar Search Bar */}
+      <Surface variant="flat" className="p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="w-full sm:w-96">
+          <SearchBar
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onClear={() => setSearchTerm('')}
+            placeholder="Filter by action (e.g. USER_LOGGED_IN) or email..."
+            ariaLabel="Search audit events log"
+          />
+        </div>
+
+        <div className="text-xs font-mono text-slate-400">
+          Showing <span className="text-slate-100 font-bold">{filteredEvents.length}</span> of{' '}
+          <span className="text-slate-100 font-bold">{total}</span> events
+        </div>
+      </Surface>
+
+      {error && <ErrorState title="Audit Trail Error" message={error} />}
+
+      {/* Main Audit Log Content */}
+      {loading ? (
+        <TableSkeleton rows={5} cols={5} />
+      ) : filteredEvents.length === 0 ? (
+        <EmptyState
+          icon={Lock}
+          title="No Audit Events Found"
+          description="No security or access events matched your current search parameters."
+        />
+      ) : (
+        <Surface variant="flat" className="p-0 overflow-hidden">
+          {/* Desktop Table View */}
+          <div className="hidden md:block overflow-x-auto">
+            <table className="w-full text-left text-xs" aria-label="System security audit log">
+              <thead className="bg-slate-900 text-slate-400 border-b border-slate-800 sticky top-0 font-semibold uppercase tracking-wider">
+                <tr>
+                  <th className="p-4">Action Event</th>
+                  <th className="p-4">Entity Context</th>
+                  <th className="p-4">Actor / Role</th>
+                  <th className="p-4">Timestamp</th>
+                  <th className="p-4">Redacted Metadata</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800/80 bg-slate-950/40 font-mono">
+                {filteredEvents.map((evt) => (
+                  <tr key={evt.id} className="hover:bg-slate-900/60 transition-colors">
+                    <td className="p-4 font-sans font-bold text-slate-100 text-sm">
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-4 h-4 text-teal-400 flex-shrink-0" />
+                        <span>{evt.action}</span>
+                      </div>
+                    </td>
+                    <td className="p-4">
+                      <StatusBadge label={evt.entityType || 'SYSTEM'} status="secondary" size="sm" />
+                    </td>
+                    <td className="p-4 font-sans">
+                      <div className="text-slate-200 font-medium">{evt.actor?.email || evt.actorId || 'System'}</div>
+                      <div className="text-[10px] text-teal-400 font-mono font-bold uppercase">
+                        {evt.actor?.role || 'SYSTEM'}
+                      </div>
+                    </td>
+                    <td className="p-4 text-slate-400 text-[11px]">
+                      <div>{new Date(evt.createdAt).toLocaleDateString()}</div>
+                      <div className="text-slate-500">{new Date(evt.createdAt).toLocaleTimeString()}</div>
+                    </td>
+                    <td className="p-4">
+                      <div className="text-[11px] text-slate-400 bg-slate-900 p-2 rounded-lg border border-slate-800 max-w-xs truncate">
+                        {evt.metadata ? JSON.stringify(evt.metadata) : '—'}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile Cards List View */}
+          <div className="md:hidden divide-y divide-slate-800">
+            {filteredEvents.map((evt) => (
+              <div key={evt.id} className="p-4 space-y-2 text-xs">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-100 text-sm">{evt.action}</span>
+                  <StatusBadge label={evt.entityType || 'SYSTEM'} status="secondary" size="sm" />
+                </div>
+                <div className="text-slate-400 font-medium">
+                  Actor: <span className="text-slate-200">{evt.actor?.email || 'System'}</span> ({evt.actor?.role || 'SYSTEM'})
+                </div>
+                <div className="text-[11px] text-slate-500 font-mono">
+                  {new Date(evt.createdAt).toLocaleString()}
+                </div>
+                {evt.metadata && (
+                  <div className="text-[11px] font-mono text-slate-400 bg-slate-900 p-2 rounded-lg border border-slate-800 truncate">
+                    {JSON.stringify(evt.metadata)}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </Surface>
+      )}
+    </div>
+  );
 };
 
 export default AuditLog;

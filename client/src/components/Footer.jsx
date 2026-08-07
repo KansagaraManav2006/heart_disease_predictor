@@ -1,30 +1,34 @@
 import React from 'react';
-import { Activity } from 'lucide-react';
+import { Activity, Shield } from 'lucide-react';
 
 const Footer = () => {
-    return (
-        <footer className="mt-auto border-t border-borderLight bg-card/80 py-8 px-8 text-center sm:text-left mt-12 w-full">
-            <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-                <div className="flex flex-col gap-2 items-center md:items-start">
-                    <div className="flex items-center gap-2 text-slate-700">
-                        <Activity size={18} className="text-primary" />
-                        <span className="font-semibold text-sm">HealthPredict System</span>
-                    </div>
-                    <p className="text-xs text-slate-500 max-w-xs">
-                        An AI-driven platform for assessing risks of cardiovascular and diabetic conditions based on clinical data.
-                    </p>
-                </div>
+  return (
+    <footer className="mt-auto border-t border-slate-800/80 bg-slate-950/60 py-8 px-4 md:px-8 text-slate-400 text-xs">
+      <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="flex flex-col gap-1 items-center md:items-start text-center md:text-left">
+          <div className="flex items-center gap-2 text-slate-200 font-bold text-sm tracking-tight">
+            <Activity className="w-4 h-4 text-teal-400" />
+            <span>HealthLens AI Platform</span>
+          </div>
+          <p className="text-slate-400 text-xs max-w-md">
+            AI-driven clinical risk stratification decision support system for cardiovascular and diabetic conditions.
+          </p>
+        </div>
 
-                <div className="text-xs text-slate-500 flex flex-col gap-1 items-center md:items-end">
-                    <p>Powered by React, Express, & Python ML Models</p>
-                    <p>&copy; {new Date().getFullYear()} Disease Prediction Project. All Rights Reserved.</p>
-                </div>
-            </div>
-            <div className="max-w-4xl mx-auto text-[10px] text-slate-400 mt-6 pt-6 border-t border-borderLight/50 text-center">
-                <span className="font-semibold text-danger">Disclaimer:</span> The predictions provided by this system are for informational and educational purposes only. They are not a substitute for professional medical advice, diagnosis, or treatment. Always consult a healthcare professional.
-            </div>
-        </footer>
-    );
+        <div className="flex flex-col items-center md:items-end gap-1 text-slate-400 text-center md:text-right">
+          <p className="flex items-center gap-1.5 text-[11px] font-medium text-slate-300">
+            <Shield className="w-3.5 h-3.5 text-teal-400" />
+            Research Platform · Calibrated HistGradientBoosting Models
+          </p>
+          <p className="text-[11px]">&copy; {new Date().getFullYear()} HealthLens AI System. All rights reserved.</p>
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto text-[11px] text-slate-400 mt-6 pt-6 border-t border-slate-800/50 text-center leading-relaxed">
+        <span className="font-bold text-amber-400 uppercase tracking-wide">Research &amp; Decision Support Notice:</span> The predictions provided by this system are for research, educational, and screening support purposes only. They do not constitute a clinical diagnosis or medical treatment plan. Always consult a licensed healthcare professional.
+      </div>
+    </footer>
+  );
 };
 
 export default Footer;

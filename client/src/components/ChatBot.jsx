@@ -1,138 +1,156 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Bot, User, Send } from 'lucide-react';
+import Surface from './Surface';
+import Button from './Button';
 
 const ChatBot = ({ questions, initialData, onComplete }) => {
-    const [messages, setMessages] = useState([
-        { text: "Hello! I'm your healthcare assistant. I'll guide you through a few quick questions to complete your assessment. Let's start with the first one.", sender: 'bot' },
-        { text: questions[0].question, sender: 'bot', key: questions[0].key }
-    ]);
-    const [inputValue, setInputValue] = useState('');
-    const [currentStep, setCurrentStep] = useState(0);
-    const [answers, setAnswers] = useState(initialData || {});
-    const [isComplete, setIsComplete] = useState(false);
-    const messagesEndRef = useRef(null);
+  const [messages, setMessages] = useState([
+    {
+      text: "Hello! I am your HealthLens AI guided assessment assistant. I'll walk you through a quick series of questions to populate your clinical parameters.",
+      sender: 'bot',
+    },
+    { text: questions[0].question, sender: 'bot', key: questions[0].key },
+  ]);
+  const [inputValue, setInputValue] = useState('');
+  const [currentStep, setCurrentStep] = useState(0);
+  const [answers, setAnswers] = useState(initialData || {});
+  const [isComplete, setIsComplete] = useState(false);
+  const messagesEndRef = useRef(null);
 
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    };
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
-    useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
-    const handleSend = () => {
-        // Guard: do nothing if chat is already complete or input is empty.
-        if (isComplete || !inputValue.trim()) return;
+  const handleSend = () => {
+    if (isComplete || !inputValue.trim()) return;
 
-        const currentQ = questions[currentStep];
+    const currentQ = questions[currentStep];
+    const newAnswers = { ...answers, [currentQ.key]: inputValue.trim() };
+    setAnswers(newAnswers);
 
-        // Save user answer
-        const newAnswers = { ...answers, [currentQ.key]: inputValue.trim() };
-        setAnswers(newAnswers);
+    const newMessages = [...messages, { text: inputValue, sender: 'user' }];
+    setInputValue('');
 
-        // Add user message
-        const newMessages = [...messages, { text: inputValue, sender: 'user' }];
-        setInputValue('');
+    const nextStep = currentStep + 1;
+    if (nextStep < questions.length) {
+      setTimeout(() => {
+        setMessages([
+          ...newMessages,
+          { text: questions[nextStep].question, sender: 'bot', key: questions[nextStep].key },
+        ]);
+        setCurrentStep(nextStep);
+      }, 400);
+    } else {
+      setIsComplete(true);
+      setTimeout(() => {
+        setMessages([
+          ...newMessages,
+          {
+            text: 'Thank you! All guided parameters have been captured. Review your values in the form above and click Submit Assessment.',
+            sender: 'bot',
+          },
+        ]);
+        onComplete(newAnswers);
+      }, 400);
+    }
+  };
 
-        // Determine next step
-        const nextStep = currentStep + 1;
-        if (nextStep < questions.length) {
-            // Next question
-            setTimeout(() => {
-                setMessages([
-                    ...newMessages,
-                    { text: questions[nextStep].question, sender: 'bot', key: questions[nextStep].key }
-                ]);
-                setCurrentStep(nextStep);
-            }, 500);
-        } else {
-            // Assessment complete — lock the input before calling onComplete
-            setIsComplete(true);
-            setTimeout(() => {
-                setMessages([
-                    ...newMessages,
-                    { text: "Thank you! I have all the information I need. Review your answers in the form and click Submit to run the assessment.", sender: 'bot' }
-                ]);
-                onComplete(newAnswers);
-            }, 500);
-        }
-    };
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !isComplete) {
+      handleSend();
+    }
+  };
 
-    const handleKeyDown = (e) => {
-        if (e.key === 'Enter' && !isComplete) {
-            handleSend();
-        }
-    };
-
-    return (
-        <div className="flex flex-col bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden h-[500px] shadow-sm animate-fade-in-up">
-            {/* Chat header */}
-            <div className="bg-blue-600 px-6 py-4 flex items-center gap-4">
-                <div className="bg-white/20 p-2 rounded-xl text-white">
-                    <Bot size={24} />
-                </div>
-                <div>
-                    <h3 className="text-white font-bold text-lg">AI Health Assistant</h3>
-                    <p className="text-blue-100 text-sm">Guided Assessment</p>
-                </div>
-            </div>
-
-            {/* Chat messages */}
-            <div className="flex-1 p-6 overflow-y-auto flex flex-col gap-4">
-                {messages.map((msg, idx) => (
-                    <div key={idx} className={`flex items-end gap-3 ${msg.sender === 'user' ? 'self-end flex-row-reverse' : 'self-start'}`}>
-                        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${msg.sender === 'user' ? 'bg-slate-800 text-white' : 'bg-blue-100 text-blue-600 border border-blue-200'}`}>
-                            {msg.sender === 'user' ? <User size={16} /> : <Bot size={16} />}
-                        </div>
-                        <div className={`px-5 py-3 rounded-2xl max-w-[80%] ${
-                            msg.sender === 'user'
-                                ? 'bg-slate-800 text-white rounded-br-sm shadow-md'
-                                : 'bg-white text-slate-700 border border-slate-200 shadow-sm rounded-bl-sm space-y-2'
-                        }`}>
-                            <p>{msg.text}</p>
-                            {/* Option chips — only on the latest bot question, only while not complete */}
-                            {!isComplete && msg.sender === 'bot' && idx === messages.length - 1 && questions[currentStep]?.options && (
-                                <div className="flex flex-wrap gap-2 mt-3 text-sm">
-                                    {questions[currentStep].options.map(opt => (
-                                        <button
-                                            key={opt.value}
-                                            onClick={() => setInputValue(opt.value)}
-                                            className="px-3 py-1 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 rounded-full font-medium transition-colors"
-                                        >
-                                            {opt.label}
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                ))}
-                <div ref={messagesEndRef} />
-            </div>
-
-            {/* Input area — locked after completion */}
-            <div className="p-4 bg-white border-t border-slate-200 flex gap-3">
-                <input
-                    type="text"
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    placeholder={isComplete ? 'Assessment complete — review the form above.' : 'Type your answer here...'}
-                    disabled={isComplete}
-                    aria-disabled={isComplete}
-                    className="flex-1 px-4 py-3 bg-slate-100 border-none rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none text-slate-700 placeholder-slate-400 disabled:opacity-60 disabled:cursor-not-allowed"
-                />
-                <button
-                    onClick={handleSend}
-                    disabled={!inputValue.trim() || isComplete}
-                    aria-label="Send"
-                    className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white w-12 h-12 flex items-center justify-center rounded-xl shadow-md transition-all active:scale-95 flex-shrink-0"
-                >
-                    <Send size={20} className="ml-0.5" />
-                </button>
-            </div>
+  return (
+    <Surface variant="flat" className="flex flex-col h-[520px] p-0 overflow-hidden shadow-xl animate-fade-in-up">
+      {/* Header */}
+      <div className="bg-slate-900 px-6 py-4 flex items-center justify-between border-b border-slate-800">
+        <div className="flex items-center gap-3">
+          <div className="bg-amber-500/20 p-2 rounded-xl text-amber-400 border border-amber-500/30">
+            <Bot className="w-5 h-5" />
+          </div>
+          <div>
+            <h3 className="text-slate-100 font-bold text-sm">Guided Clinical Assistant</h3>
+            <p className="text-slate-400 text-xs font-mono">Step {currentStep + 1} of {questions.length}</p>
+          </div>
         </div>
-    );
+        <span className="px-2.5 py-1 text-[10px] font-bold rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+          AI INTERACTION
+        </span>
+      </div>
+
+      {/* Messages Feed */}
+      <div className="flex-1 p-6 overflow-y-auto flex flex-col gap-4 bg-slate-950/60">
+        {messages.map((msg, idx) => (
+          <div
+            key={idx}
+            className={`flex items-end gap-3 ${msg.sender === 'user' ? 'self-end flex-row-reverse' : 'self-start'}`}
+          >
+            <div
+              className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                msg.sender === 'user'
+                  ? 'bg-teal-600 text-white'
+                  : 'bg-slate-800 text-amber-400 border border-slate-700'
+              }`}
+            >
+              {msg.sender === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
+            </div>
+            <div
+              className={`px-4 py-3 rounded-2xl max-w-[82%] text-xs md:text-sm leading-relaxed ${
+                msg.sender === 'user'
+                  ? 'bg-teal-600 text-white rounded-br-none shadow-md'
+                  : 'bg-slate-900 text-slate-200 border border-slate-800 shadow-sm rounded-bl-none space-y-2'
+              }`}
+            >
+              <p>{msg.text}</p>
+              {!isComplete && msg.sender === 'bot' && idx === messages.length - 1 && questions[currentStep]?.options && (
+                <div className="flex flex-wrap gap-2 mt-3 text-xs">
+                  {questions[currentStep].options.map((opt) => (
+                    <button
+                      key={opt.value}
+                      onClick={() => setInputValue(opt.value)}
+                      className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-teal-500/30 text-teal-300 rounded-lg font-medium transition-colors"
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Input bar */}
+      <div className="p-4 bg-slate-900 border-t border-slate-800 flex gap-3">
+        <input
+          type="text"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={isComplete ? 'Guided assessment complete — review values above.' : 'Type your answer...'}
+          disabled={isComplete}
+          aria-label="Guided chatbot answer input"
+          className="flex-1 px-4 py-2.5 bg-slate-950 text-slate-100 placeholder-slate-500 border border-slate-800 rounded-xl text-xs md:text-sm focus:border-teal-400 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+        />
+        <Button
+          onClick={handleSend}
+          disabled={!inputValue.trim() || isComplete}
+          variant="primary"
+          size="sm"
+          icon={Send}
+          aria-label="Send response"
+        >
+          Send
+        </Button>
+      </div>
+    </Surface>
+  );
 };
 
 export default ChatBot;

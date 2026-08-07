@@ -1,101 +1,134 @@
 @import "tailwindcss";
 
 @theme {
-  --color-darkBg: #0f172a;
-  --color-background: #f5f7fa;
-  --color-card: #ffffff;
-  --color-primary: #1E88E5;
-  --color-primaryHover: #1565C0;
-  --color-secondary: #26A69A;
-  --color-danger: #EF5350;
-  --color-textMain: #1e293b;
-  --color-textMuted: #64748b;
-  --color-borderLight: #e2e8f0;
+  --color-canvas: #0b0f17;
+  --color-surface-flat: #141b27;
+  --color-surface-raised: #1c2536;
+  --color-surface-hero: rgba(28, 37, 54, 0.85);
+
+  --color-teal-main: #0d9488;
+  --color-teal-hover: #14b8a6;
+  --color-teal-light: #2dd4bf;
+  --color-teal-glow: rgba(45, 212, 191, 0.15);
+
+  --color-amber-main: #f59e0b;
+  --color-amber-hover: #fbbf24;
+  --color-amber-glow: rgba(245, 158, 11, 0.15);
+
+  --color-coral-main: #f43f5e;
+  --color-coral-hover: #fb7185;
+  --color-coral-glow: rgba(244, 63, 94, 0.15);
+
+  --color-cyan-main: #06b6d4;
+  --color-violet-main: #8b5cf6;
+
+  --color-text-primary: #f8fafc;
+  --color-text-muted: #94a3b8;
+  --color-text-subtle: #64748b;
+  --color-text-disabled: #475569;
+
+  --color-border-subtle: rgba(255, 255, 255, 0.08);
+  --color-border-normal: #334155;
+  --color-border-strong: #475569;
 }
 
 @layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    @apply bg-background text-textMain antialiased min-h-screen relative overflow-x-hidden;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #0b0f17;
+    color: #f8fafc;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image: 
+      radial-gradient(circle at 15% 15%, rgba(13, 148, 136, 0.04) 0%, transparent 40%),
+      radial-gradient(circle at 85% 85%, rgba(245, 158, 11, 0.03) 0%, transparent 40%);
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0b0f17;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+  }
+
+  /* Text selection */
+  ::selection {
+    background-color: rgba(45, 212, 191, 0.25);
+    color: #2dd4bf;
+  }
+
+  /* Focus visible accessibility ring */
+  *:focus-visible {
+    outline: none !important;
+    box-shadow: 0 0 0 2px #0b0f17, 0 0 0 4px #2dd4bf !important;
   }
 }
 
-@layer components {
+/* Accessibility & Utilities */
+.skip-to-content {
+  position: absolute;
+  top: -100px;
+  left: 1rem;
+  z-index: 100;
+  padding: 0.75rem 1.5rem;
+  background-color: #0d9488;
+  color: #ffffff;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transition: top 0.2s ease;
+}
+.skip-to-content:focus {
+  top: 1rem;
+}
 
-  /* Medical Solid primitives */
-  .glass {
-    @apply bg-card border border-borderLight rounded-xl shadow-sm;
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
-
-  .glass-strong {
-    @apply bg-white border border-borderLight rounded-xl shadow-md;
-  }
-
-  .glass-hover {
-    @apply transition-all duration-300 hover:border-primary/40 hover:-translate-y-1 hover:shadow-lg;
-  }
-
-  .glass-pill {
-    @apply bg-white border border-borderLight rounded-full transition-all duration-300 shadow-sm;
-  }
-
-  .glass-active {
-    @apply bg-danger/10 border-danger/30 text-danger shadow-sm;
-  }
-
-  .glass-input {
-    @apply w-full bg-white border border-slate-300 rounded-lg text-slate-800 p-3 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 placeholder-slate-400 shadow-sm;
-  }
-
-  .btn-primary {
-    @apply bg-primary hover:bg-primaryHover text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 transform hover:-translate-y-0.5 shadow-sm hover:shadow-md w-full disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center;
-  }
-
-  .btn-secondary {
-    @apply bg-white hover:bg-slate-50 text-slate-700 font-semibold py-3 px-6 rounded-lg border border-borderLight transition-all duration-200 shadow-sm hover:shadow hover:border-slate-400 w-full flex justify-center items-center;
-  }
 }
 
-/* Background effects - Removed space gradients for medical clean look */
-.bg-gradient-radial {
-  background: radial-gradient(circle at center, #ffffff 0%, #f5f7fa 100%);
+/* Custom Skeleton Pulse */
+@keyframes skeletonPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
 }
 
-.gradient-text {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary;
-}
-
-/* Fade-in animations used throughout the app */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0);    }
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.4s ease both;
-}
-
-.animate-fade-in-up {
-  animation: fadeInUp 0.5s ease both;
-}
-
-/* Custom scrollbar for history lists */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 4px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 4px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+.animate-skeleton {
+  animation: skeletonPulse 1.8s ease-in-out infinite;
 }
