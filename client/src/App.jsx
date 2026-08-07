@@ -11,6 +11,7 @@ import Dashboard from './pages/Dashboard';
 import SignIn from './pages/auth/SignIn';
 import Register from './pages/auth/Register';
 import ClinicianWorklist from './pages/clinician/ClinicianWorklist';
+import ModelAnalytics from './pages/admin/ModelAnalytics';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 
@@ -47,6 +48,7 @@ function App() {
                       </ProtectedRoute>
                     }
                   />
+                  <Route path="/models" element={<ModelAnalytics />} />
                   <Route path="/about" element={<About />} />
                 </Routes>
               </div>

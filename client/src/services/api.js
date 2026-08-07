@@ -158,6 +158,24 @@ export const getAssignedPatients = async () => {
 };
 
 // ---------------------------------------------------------------------------
+// Model Registry API (v1)
+// ---------------------------------------------------------------------------
+
+export const getModels = async () => {
+  const response = await authenticatedFetch(`${API_BASE_URL}/v1/models`);
+  if (!response.ok) throw new Error('Failed to fetch model registry list');
+  const data = await response.json();
+  return data.models;
+};
+
+export const getCurrentModel = async (condition) => {
+  const response = await authenticatedFetch(`${API_BASE_URL}/v1/models/${condition}/current`);
+  if (!response.ok) throw new Error('Failed to fetch current model metadata');
+  const data = await response.json();
+  return data.model;
+};
+
+// ---------------------------------------------------------------------------
 // Assessments API (v1)
 // ---------------------------------------------------------------------------
 
