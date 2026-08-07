@@ -45,11 +45,15 @@ const UploadReport = ({ onExtract }) => {
         try {
             const data = await uploadReport(file);
             if (data && data.extracted_data && Object.keys(data.extracted_data).length > 0) {
-                setSuccessMessage(`Successfully extracted ${Object.keys(data.extracted_data).length} parameters! Auto-generating report...`);
-                // We pass the data up to the parent form state
+                const count = Object.keys(data.extracted_data).length;
+                const confidence = data.confidence || 'unknown';
+                const warningText = data.warnings?.length ? ` Note: ${data.warnings.join(' ')}` : '';
+                setSuccessMessage(
+                    `Extracted ${count} field(s) with ${confidence} confidence. Please review all values before submitting.${warningText}`
+                );
                 onExtract(data.extracted_data);
             } else {
-                setError('Could not extract meaningful medical parameters from this file. Try entering manually.');
+                setError('No medical parameters could be extracted from this file. Please enter values manually.');
             }
         } catch (err) {
             setError(err.message || 'Failed to process the document. Server error or OCR dependency issue.');

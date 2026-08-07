@@ -31,6 +31,7 @@ const HeartDiseasePrediction = () => {
     const [error, setError] = useState('');
     const [activeTab, setActiveTab] = useState('manual');
     const [suggestions, setSuggestions] = useState([]);
+    const [ocrExtracted, setOcrExtracted] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -96,7 +97,7 @@ const HeartDiseasePrediction = () => {
                 prediction: predictionResponse.prediction,
                 probability: predictionResponse.probability
             }).catch(e => console.error("Failed to save history:", e));
-        } catch (err) {
+        } catch (_err) {
             setError('Failed to connect to the prediction server. Please try again later.');
         } finally {
             setLoading(false);
@@ -109,26 +110,13 @@ const HeartDiseasePrediction = () => {
     };
 
     const handleExtract = (extracted) => {
-        setFormData(prev => {
-            const mergedData = { ...prev, ...extracted };
-            
-            if (extracted.patientName) {
-                setTimeout(() => triggerPrediction(mergedData), 100);
-            } else {
-                setTimeout(() => {
-                    const name = window.prompt("Patient Name is required. Please enter Patient Name to generate the report:");
-                    if (name && name.trim() !== '') {
-                        const newData = { ...mergedData, patientName: name.trim() };
-                        setFormData(newData);
-                        triggerPrediction(newData);
-                    } else {
-                        setActiveTab('manual');
-                    }
-                }, 100);
-            }
-            
-            return mergedData;
-        });
+        // Never auto-trigger prediction after OCR. Always let the user review
+        // the extracted values in the manual form before submitting.
+        setFormData(prev => ({ ...prev, ...extracted }));
+        setActiveTab('manual');
+        setResult(null);
+        setError('');
+        setOcrExtracted(true);
     };
 
     const handleChatComplete = async (answers) => {
@@ -202,6 +190,16 @@ const HeartDiseasePrediction = () => {
 
             {activeTab === 'manual' && (
             <GlassCard className="mb-8 border-t-4 border-t-red-500/50">
+                {ocrExtracted && (
+                    <div className="flex items-start gap-3 bg-orange-50 border border-orange-200 rounded-xl p-4 mb-6">
+                        <svg className="w-5 h-5 text-orange-600 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <div>
+                            <p className="text-sm font-bold text-orange-900">Fields extracted from your document</p>
+                            <p className="text-xs text-orange-800 mt-0.5">Please review all values carefully — especially Height and Weight — before submitting. Correct any errors before running the assessment.</p>
+                        </div>
+                        <button onClick={() => setOcrExtracted(false)} className="ml-auto text-orange-400 hover:text-orange-700" aria-label="Dismiss">&times;</button>
+                    </div>
+                )}
                 <form onSubmit={handleSubmit}>
                     <h2 className="text-xl font-bold text-slate-800 mb-6 border-b border-borderLight pb-2">Biometric Data</h2>
 

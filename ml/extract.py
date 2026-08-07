@@ -2,6 +2,7 @@ import sys
 import json
 import re
 import os
+import struct
 
 os.environ['OPENBLAS_NUM_THREADS'] = '1'
 os.environ['OMP_NUM_THREADS'] = '1'
@@ -9,123 +10,248 @@ os.environ['MKL_NUM_THREADS'] = '1'
 os.environ['NUMEXPR_NUM_THREADS'] = '1'
 os.environ['OPENBLAS_CORETYPE'] = 'HASWELL'
 
-def extract_text(file_path):
-    ext = os.path.splitext(file_path)[1].lower()
-    text = ""
-    
-    if ext == '.pdf':
+# Maximum file size the server should enforce before calling this script.
+# This is a defence-in-depth guard at the Python layer.
+MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024  # 10 MB
+
+ALLOWED_MIME_TYPES = {'pdf', 'jpeg', 'png'}
+
+
+def detect_file_type(file_path: str) -> str:
+    """Detect file type from magic bytes, NOT the filename extension.
+
+    Returns one of: 'pdf', 'jpeg', 'png', or 'unknown'.
+    """
+    try:
+        with open(file_path, 'rb') as f:
+            header = f.read(8)
+    except OSError:
+        return 'unknown'
+
+    if header[:4] == b'%PDF':
+        return 'pdf'
+    if header[:3] == b'\xff\xd8\xff':
+        return 'jpeg'
+    if header[:8] == b'\x89PNG\r\n\x1a\n':
+        return 'png'
+    return 'unknown'
+
+
+def validate_file(file_path: str) -> str | None:
+    """Return an error string if the file is invalid, else None."""
+    try:
+        size = os.path.getsize(file_path)
+    except OSError as e:
+        return f"Cannot read file: {e}"
+
+    if size > MAX_FILE_SIZE_BYTES:
+        mb = size / 1024 / 1024
+        return f"File too large ({mb:.1f} MB). Maximum allowed size is 10 MB."
+
+    ftype = detect_file_type(file_path)
+    if ftype not in ALLOWED_MIME_TYPES:
+        return (
+            f"Unsupported file type (detected: {ftype!r}). "
+            "Only PDF, JPEG, and PNG are accepted."
+        )
+    return None
+
+
+def extract_text(file_path: str) -> tuple[str, str]:
+    """Extract raw text from a PDF or image file.
+
+    Returns (text, file_type). Raises RuntimeError on failure.
+    """
+    ftype = detect_file_type(file_path)
+
+    if ftype == 'pdf':
         try:
-            import fitz
+            import fitz  # PyMuPDF
+        except ImportError:
+            raise RuntimeError(
+                "PyMuPDF is not installed. Run: pip install PyMuPDF"
+            )
+        try:
             doc = fitz.open(file_path)
-            for page in doc:
-                text += page.get_text()
+            # Use 'text' mode to preserve line breaks (critical for name parsing).
+            pages = [page.get_text('text') for page in doc]
             doc.close()
-        except ImportError:
-            return {"error": "PyMuPDF (fitz) is not installed. Please run pip install PyMuPDF"}
+            return '\n'.join(pages), 'pdf'
         except Exception as e:
-            return {"error": str(e)}
-    elif ext in ['.jpg', '.jpeg', '.png', '.tiff', '.bmp']:
-        try:
-            from PIL import Image
-            import pytesseract
-            # Note: Tesseract-OCR binary must be installed on the system and in PATH
-            img = Image.open(file_path)
-            text = pytesseract.image_to_string(img)
-        except ImportError:
-            return {"error": "Pillow or pytesseract is not installed."}
-        except Exception as e:
-            return {"error": f"Image processing failed. Is Tesseract installed? Details: {str(e)}"}
-    else:
-        # Fallback by attempting to parse the file as pdf or image anyway, assuming extension might be missing
-        # We will assume it's an image first, since multer often uploads without extensions
-        try:
-            from PIL import Image
-            import pytesseract
-            img = Image.open(file_path)
-            text = pytesseract.image_to_string(img)
-        except:
-            try:
-                import fitz
-                doc = fitz.open(file_path)
-                for page in doc:
-                    text += page.get_text()
-                doc.close()
-            except Exception as e:
-                return {"error": "Unsupported file type and could not resolve automatically."}
-                
-    return text
+            raise RuntimeError(f"PDF extraction failed: {e}")
 
-def parse_medical_data(text):
+    if ftype in ('jpeg', 'png'):
+        try:
+            from PIL import Image
+            import pytesseract
+        except ImportError:
+            raise RuntimeError(
+                "Pillow or pytesseract is not installed. "
+                "Run: pip install Pillow pytesseract"
+            )
+        try:
+            img = Image.open(file_path)
+            text = pytesseract.image_to_string(img)
+            return text, ftype
+        except Exception as e:
+            raise RuntimeError(
+                f"Image OCR failed. Is Tesseract installed and in PATH? Details: {e}"
+            )
+
+    raise RuntimeError(
+        f"Unsupported file type: {ftype!r}. Only PDF, JPEG, and PNG are accepted."
+    )
+
+
+# ---------------------------------------------------------------------------
+# Required fields per disease type (for missing-field reporting)
+# ---------------------------------------------------------------------------
+DIABETES_REQUIRED = ['glucose', 'hba1c']
+HEART_REQUIRED = ['systolic_bp', 'diastolic_bp']
+ALL_EXTRACTABLE = ['glucose', 'hba1c', 'systolic_bp', 'diastolic_bp',
+                   'bmi', 'age', 'cholesterol', 'patientName']
+
+
+def parse_medical_data(text: str) -> dict:
+    """Extract structured fields from OCR text.
+
+    Newline boundaries are PRESERVED before calling this function.
+    Only targeted whitespace (leading/trailing per line) is normalised.
+    """
     data = {}
-    
-    # Text sanitization
-    # Replace common OCR misreads
-    text = text.replace('\n', ' ')
-    
-    # 1. Glucose
-    glucose_match = re.search(r'(?i)(?:glucose|sugar|fbs)[\s\.\,\:\=]+(\d+(?:\.\d+)?)', text)
-    if glucose_match:
-        data['glucose'] = float(glucose_match.group(1))
-        
-    # 2. HbA1c
-    hba1c_match = re.search(r'(?i)(?:hba1c|a1c|hemoglobin a1c)[\s\.\,\:\=]+(\d+(?:\.\d+)?)', text)
-    if hba1c_match:
-        data['hba1c'] = float(hba1c_match.group(1))
-        
-    # 3. BP (Systolic and Diastolic)
-    bp_match = re.search(r'(?i)(?:bp|blood pressure)[\s\.\,\:\=]*(\d{2,3})\s*[/\\\|\-]\s*(\d{2,3})', text)
-    if bp_match:
-        data['systolic_bp'] = float(bp_match.group(1))
-        data['diastolic_bp'] = float(bp_match.group(2))
-        
-    # 4. BMI
-    bmi_match = re.search(r'(?i)(?:bmi|body mass index)[\s\.\,\:\=]+(\d{2}(?:\.\d+)?)', text)
-    if bmi_match:
-        data['bmi'] = float(bmi_match.group(1))
-        
-    # 5. Age
-    age_match = re.search(r'(?i)age[\s\.\,\:\=]+(\d{1,3})', text)
-    if age_match:
-        data['age'] = int(age_match.group(1))
-        
-    # 6. Cholesterol
-    chol_match = re.search(r'(?i)(?:cholesterol|chol)[\s\.\,\:\=]+(\d+(?:\.\d+)?)', text)
-    if chol_match:
-        data['cholesterol'] = float(chol_match.group(1))
+    warnings = []
 
-    # 7. Patient Name
-    name_match = re.search(r'(?i)(?:patient name|name)[\s\.\,\:\=]+([a-zA-Z\s]{3,30})(?:\n|\r|$)', text)
-    if name_match:
-        data['patientName'] = name_match.group(1).strip()
+    # Normalise: trim each line but preserve the line structure for regex.
+    lines = [line.strip() for line in text.splitlines()]
+    # Also create a single-line version for patterns that span whitespace.
+    single = ' '.join(line for line in lines if line)
 
-    return data
+    # --- 1. Glucose ---
+    m = re.search(
+        r'(?i)(?:glucose|sugar|fbs)\s*[:\=\.\,]?\s*(\d+(?:\.\d+)?)',
+        single
+    )
+    if m:
+        data['glucose'] = float(m.group(1))
+
+    # --- 2. HbA1c ---
+    m = re.search(
+        r'(?i)(?:hba1c|a1c|hemoglobin\s+a1c)\s*[:\=\.\,]?\s*(\d+(?:\.\d+)?)',
+        single
+    )
+    if m:
+        data['hba1c'] = float(m.group(1))
+
+    # --- 3. Blood Pressure (Systolic / Diastolic) ---
+    m = re.search(
+        r'(?i)(?:bp|blood\s*pressure)\s*[:\=\.\,]?\s*(\d{2,3})\s*[/\\\|\-]\s*(\d{2,3})',
+        single
+    )
+    if m:
+        data['systolic_bp'] = float(m.group(1))
+        data['diastolic_bp'] = float(m.group(2))
+
+    # --- 4. BMI ---
+    m = re.search(
+        r'(?i)(?:bmi|body\s*mass\s*index)\s*[:\=\.\,]?\s*(\d{2}(?:\.\d+)?)',
+        single
+    )
+    if m:
+        data['bmi'] = float(m.group(1))
+
+    # --- 5. Age ---
+    m = re.search(
+        r'(?i)age\s*[:\=\.\,]?\s*(\d{1,3})',
+        single
+    )
+    if m:
+        data['age'] = int(m.group(1))
+
+    # --- 6. Cholesterol ---
+    m = re.search(
+        r'(?i)(?:cholesterol|chol)\s*[:\=\.\,]?\s*(\d+(?:\.\d+)?)',
+        single
+    )
+    if m:
+        data['cholesterol'] = float(m.group(1))
+
+    # --- 7. Patient Name (multiline-aware) ---
+    # Try each line: look for "Patient Name:" or "Name:" label followed by text.
+    name_pattern = re.compile(
+        r'(?i)(?:patient\s+name|name)\s*[:\=\.\,]\s*([A-Za-z][A-Za-z ]{1,38}?)(?:\s*(?:\n|\r|$|\b(?:Age|DOB|Date|Gender|ID|MRN|Phone|Email|Address|\d)))',
+        re.MULTILINE
+    )
+    m = name_pattern.search(text)  # use original text to respect line breaks
+    if m:
+        candidate = m.group(1).strip()
+        # Reject if it looks like a section header word
+        if len(candidate.split()) >= 1 and len(candidate) <= 40:
+            data['patientName'] = candidate
+        else:
+            warnings.append("Patient name found but appeared invalid; skipped.")
+    else:
+        warnings.append("Patient name not detected in document.")
+
+    return data, warnings
+
+
+def compute_confidence(extracted: dict, warnings: list) -> str:
+    """Return a rough confidence tier based on how many fields were extracted."""
+    found = len([k for k in ALL_EXTRACTABLE if k in extracted])
+    if found == 0:
+        return 'none'
+    if found <= 2 or warnings:
+        return 'low'
+    if found <= 4:
+        return 'medium'
+    return 'high'
+
 
 def main():
     if len(sys.argv) < 2:
         print(json.dumps({"error": "No file path provided"}))
         sys.exit(1)
-        
+
     file_path = sys.argv[1]
     if not os.path.exists(file_path):
         print(json.dumps({"error": "File not found"}))
         sys.exit(1)
-        
-    text_result = extract_text(file_path)
-    
-    if isinstance(text_result, dict) and "error" in text_result:
-        print(json.dumps(text_result))
+
+    # Validate size and type before doing any heavy processing
+    validation_error = validate_file(file_path)
+    if validation_error:
+        print(json.dumps({"error": validation_error}))
         sys.exit(1)
-        
-    parsed_data = parse_medical_data(text_result)
-    
-    # Also return the raw text mostly for debugging or future-proofing
+
+    try:
+        text, detected_type = extract_text(file_path)
+    except RuntimeError as e:
+        print(json.dumps({"error": str(e)}))
+        sys.exit(1)
+
+    extracted_data, warnings = parse_medical_data(text)
+
+    # Compute which required fields are still missing
+    missing_diabetes = [f for f in DIABETES_REQUIRED if f not in extracted_data]
+    missing_heart = [f for f in HEART_REQUIRED if f not in extracted_data]
+    confidence = compute_confidence(extracted_data, warnings)
+
+    # NOTE: raw_text is intentionally NOT returned — we never persist or
+    # transmit raw medical text to the client.
     out = {
         "success": True,
-        "extracted_data": parsed_data,
-        "raw_text": text_result[:500] + "..." if len(text_result) > 500 else text_result
+        "detected_type": detected_type,
+        "extracted_data": extracted_data,
+        "confidence": confidence,
+        "warnings": warnings,
+        "missing_fields": {
+            "diabetes": missing_diabetes,
+            "heart": missing_heart,
+        },
     }
-    
+
     print(json.dumps(out))
-    
+
+
 if __name__ == "__main__":
     main()

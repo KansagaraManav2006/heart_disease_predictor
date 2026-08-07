@@ -4,6 +4,9 @@ import Button from './Button';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
+// Session-scoped counter for stable report IDs (resets on page reload — no real IDs stored).
+let _sessionReportCounter = 0;
+
 const ResultCard = ({ prediction, probability, riskLevel, extras = [], suggestions = [] }) => {
     const isHighRisk = prediction === 1;
     const probPercent = (probability * 100).toFixed(1);
@@ -13,41 +16,43 @@ const ResultCard = ({ prediction, probability, riskLevel, extras = [], suggestio
         const date = new Date().toLocaleDateString();
         const time = new Date().toLocaleTimeString();
         const patientName = extras.find(e => e.label === 'Patient' || e.label === 'Patient Name')?.value || 'Anonymous';
+        _sessionReportCounter += 1;
+        const reportId = `SR-${Date.now()}-${String(_sessionReportCounter).padStart(3, '0')}`;
 
-        // 1. Header Ribbon (Medical Blue)
-        doc.setFillColor(30, 136, 229); // #1E88E5
+        // 1. Header Ribbon
+        doc.setFillColor(30, 136, 229);
         doc.rect(0, 0, 210, 40, 'F');
-        
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(24);
-        doc.setFont("helvetica", "bold");
-        doc.text('Disease Prediction System', 14, 20);
-        
-        doc.setFontSize(12);
-        doc.setFont("helvetica", "normal");
-        doc.text('Official Health Risk Assessment Report', 14, 28);
 
-        // 2. Patient Demographics Box
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(22);
+        doc.setFont("helvetica", "bold");
+        doc.text('HealthPredict — Risk Screening Tool', 14, 18);
+
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        doc.text('Risk Screening Summary (Research Use Only) — Not a clinical diagnosis', 14, 28);
+        doc.text(`Generated: ${date} ${time}`, 14, 35);
+
         doc.setDrawColor(200, 200, 200);
         doc.setFillColor(248, 250, 252);
-        doc.rect(14, 48, 182, 30, 'FD'); // Fill and border
-        
+        doc.rect(14, 48, 182, 30, 'FD');
+
         doc.setTextColor(50, 50, 50);
         doc.setFontSize(10);
         doc.setFont("helvetica", "bold");
-        doc.text('PATIENT DETAILS', 18, 55);
-        
+        doc.text('SUBJECT DETAILS', 18, 55);
+
         doc.setFont("helvetica", "normal");
         doc.text(`Name: ${patientName}`, 18, 64);
-        doc.text(`Date of Scan: ${date}`, 100, 64);
-        doc.text(`Time of Scan: ${time}`, 100, 72);
-        doc.text(`Report ID: #${Math.floor(Math.random() * 1000000)}`, 18, 72);
+        doc.text(`Date: ${date}`, 100, 64);
+        doc.text(`Time: ${time}`, 100, 72);
+        doc.text(`Report ID: ${reportId}`, 18, 72);
 
-        // 3. Clinical Prediction Results
+        // 3. Risk Screening Result
         doc.setFont("helvetica", "bold");
         doc.setFontSize(14);
         doc.setTextColor(30, 41, 59);
-        doc.text('Diagnostic Prediction', 14, 90);
+        doc.text('Risk Screening Result', 14, 90);
         doc.setLineWidth(0.5);
         doc.line(14, 92, 196, 92);
         
@@ -77,8 +82,8 @@ const ResultCard = ({ prediction, probability, riskLevel, extras = [], suggestio
         doc.setFontSize(10);
         doc.setTextColor(70, 70, 70);
         const summaryText = isHighRisk
-            ? "ATTENTION: The predictive model has identified patterns consistent with a significantly elevated risk profile. It is strongly recommended to use this report as a supplementary tool and consult a certified healthcare professional immediately for clinical diagnosis."
-            : "The parameters provided indicate a low risk profile corresponding to average healthy baselines. Continue to maintain a healthy lifestyle, focus on preventative care, and maintain standard regular medical check-ups.";
+            ? "The screening model identified patterns associated with an elevated risk profile. This is not a diagnosis. Please consult a qualified healthcare professional for a comprehensive clinical evaluation."
+            : "The parameters provided are consistent with a lower-risk profile. Continue healthy lifestyle practices and attend regular check-ups. This screening does not replace clinical judgment.";
         const splitText = doc.splitTextToSize(summaryText, 175);
         doc.text(splitText, 18, 126);
 
@@ -138,16 +143,18 @@ const ResultCard = ({ prediction, probability, riskLevel, extras = [], suggestio
         doc.setTextColor(100, 100, 100);
         doc.text("Attending Physician / Reviewer", 145, finalY + 6);
 
-        // 7. Footer (Applies to all pages)
+        // 7. Research Use Disclaimer Footer (all pages)
         const pageCount = doc.internal.getNumberOfPages();
         for (let i = 1; i <= pageCount; i++) {
             doc.setPage(i);
             doc.setFontSize(8);
             doc.setTextColor(150, 150, 150);
-            doc.line(14, doc.internal.pageSize.height - 15, 196, doc.internal.pageSize.height - 15);
-            const footerText = 'CONFIDENTIAL RECORD. Computed algorithmically. Do not replace professional medical judgment.';
-            doc.text(footerText, 14, doc.internal.pageSize.height - 10);
-            doc.text(`Page ${i} of ${pageCount}`, 185, doc.internal.pageSize.height - 10);
+            doc.line(14, doc.internal.pageSize.height - 18, 196, doc.internal.pageSize.height - 18);
+            const disclaimer1 = 'FOR RESEARCH USE ONLY. This output is not a medical diagnosis and must not be used as a substitute for professional clinical advice.';
+            const disclaimer2 = 'Consult a qualified healthcare professional before making any health decisions.';
+            doc.text(disclaimer1, 14, doc.internal.pageSize.height - 13);
+            doc.text(disclaimer2, 14, doc.internal.pageSize.height - 8);
+            doc.text(`Page ${i} of ${pageCount}`, 185, doc.internal.pageSize.height - 8);
         }
 
         doc.save(`${patientName.replace(/\s+/g, '_')}_Risk_Report.pdf`);

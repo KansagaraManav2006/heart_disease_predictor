@@ -1,7 +1,7 @@
 {
     "name": "disease-predictor-server",
-    "version": "1.0.0",
-    "description": "Express Backend for Disease Prediction System",
+    "version": "3.0.0",
+    "description": "Express Backend for HealthPredict Risk Screening Tool",
     "main": "index.js",
     "scripts": {
         "start": "node index.js",
@@ -9,10 +9,9 @@
     },
     "dependencies": {
         "cors": "^2.8.5",
-        "disease-predictor-fullstack": "file:..",
         "dotenv": "^16.4.5",
-        "express": "^4.19.2",
-        "morgan": "^1.10.1",
-        "multer": "^2.1.1"
+        "express": "^4.22.2",
+        "morgan": "^1.11.0",
+        "multer": "^2.2.0"
     }
 }

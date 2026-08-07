@@ -9,6 +9,7 @@ const ChatBot = ({ questions, initialData, onComplete }) => {
     const [inputValue, setInputValue] = useState('');
     const [currentStep, setCurrentStep] = useState(0);
     const [answers, setAnswers] = useState(initialData || {});
+    const [isComplete, setIsComplete] = useState(false);
     const messagesEndRef = useRef(null);
 
     const scrollToBottom = () => {
@@ -20,10 +21,11 @@ const ChatBot = ({ questions, initialData, onComplete }) => {
     }, [messages]);
 
     const handleSend = () => {
-        if (!inputValue.trim()) return;
+        // Guard: do nothing if chat is already complete or input is empty.
+        if (isComplete || !inputValue.trim()) return;
 
         const currentQ = questions[currentStep];
-        
+
         // Save user answer
         const newAnswers = { ...answers, [currentQ.key]: inputValue.trim() };
         setAnswers(newAnswers);
@@ -31,7 +33,7 @@ const ChatBot = ({ questions, initialData, onComplete }) => {
         // Add user message
         const newMessages = [...messages, { text: inputValue, sender: 'user' }];
         setInputValue('');
-        
+
         // Determine next step
         const nextStep = currentStep + 1;
         if (nextStep < questions.length) {
@@ -44,11 +46,12 @@ const ChatBot = ({ questions, initialData, onComplete }) => {
                 setCurrentStep(nextStep);
             }, 500);
         } else {
-            // Assessment complete
+            // Assessment complete — lock the input before calling onComplete
+            setIsComplete(true);
             setTimeout(() => {
                 setMessages([
                     ...newMessages,
-                    { text: "Thank you! I have all the information I need. Running prediction now...", sender: 'bot' }
+                    { text: "Thank you! I have all the information I need. Review your answers in the form and click Submit to run the assessment.", sender: 'bot' }
                 ]);
                 onComplete(newAnswers);
             }, 500);
@@ -56,7 +59,7 @@ const ChatBot = ({ questions, initialData, onComplete }) => {
     };
 
     const handleKeyDown = (e) => {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && !isComplete) {
             handleSend();
         }
     };
@@ -82,16 +85,16 @@ const ChatBot = ({ questions, initialData, onComplete }) => {
                             {msg.sender === 'user' ? <User size={16} /> : <Bot size={16} />}
                         </div>
                         <div className={`px-5 py-3 rounded-2xl max-w-[80%] ${
-                            msg.sender === 'user' 
-                                ? 'bg-slate-800 text-white rounded-br-sm shadow-md' 
+                            msg.sender === 'user'
+                                ? 'bg-slate-800 text-white rounded-br-sm shadow-md'
                                 : 'bg-white text-slate-700 border border-slate-200 shadow-sm rounded-bl-sm space-y-2'
                         }`}>
                             <p>{msg.text}</p>
-                            {/* If it's the current bot question and has options, show shortcut chips */}
-                            {msg.sender === 'bot' && idx === messages.length - 1 && questions[currentStep]?.options && (
+                            {/* Option chips — only on the latest bot question, only while not complete */}
+                            {!isComplete && msg.sender === 'bot' && idx === messages.length - 1 && questions[currentStep]?.options && (
                                 <div className="flex flex-wrap gap-2 mt-3 text-sm">
                                     {questions[currentStep].options.map(opt => (
-                                        <button 
+                                        <button
                                             key={opt.value}
                                             onClick={() => setInputValue(opt.value)}
                                             className="px-3 py-1 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 rounded-full font-medium transition-colors"
@@ -107,20 +110,22 @@ const ChatBot = ({ questions, initialData, onComplete }) => {
                 <div ref={messagesEndRef} />
             </div>
 
-            {/* Input area */}
+            {/* Input area — locked after completion */}
             <div className="p-4 bg-white border-t border-slate-200 flex gap-3">
-                <input 
-                    type="text" 
+                <input
+                    type="text"
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    placeholder="Type your answer here..."
-                    disabled={currentStep >= questions.length}
-                    className="flex-1 px-4 py-3 bg-slate-100 border-none rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none text-slate-700 placeholder-slate-400"
+                    placeholder={isComplete ? 'Assessment complete — review the form above.' : 'Type your answer here...'}
+                    disabled={isComplete}
+                    aria-disabled={isComplete}
+                    className="flex-1 px-4 py-3 bg-slate-100 border-none rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none text-slate-700 placeholder-slate-400 disabled:opacity-60 disabled:cursor-not-allowed"
                 />
-                <button 
+                <button
                     onClick={handleSend}
-                    disabled={!inputValue.trim() || currentStep >= questions.length}
+                    disabled={!inputValue.trim() || isComplete}
+                    aria-label="Send"
                     className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white w-12 h-12 flex items-center justify-center rounded-xl shadow-md transition-all active:scale-95 flex-shrink-0"
                 >
                     <Send size={20} className="ml-0.5" />
