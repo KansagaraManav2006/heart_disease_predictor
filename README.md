@@ -3,6 +3,7 @@
 > **Research & Decision-Support Prototype**  
 > *For research, educational, and portfolio demonstration purposes only. Not a regulated medical device or clinical diagnostic tool.*
 
+
 HealthLens AI is an explainable cardiometabolic risk-intelligence and decision-support research platform for evaluating **Diabetes** and **Cardiovascular Disease** risk profiles.
 
 ---
